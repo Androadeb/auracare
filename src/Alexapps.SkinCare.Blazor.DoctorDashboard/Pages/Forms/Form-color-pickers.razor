@@ -1,0 +1,185 @@
+@page "/form_color_pickers"
+@using BlazorColorPicker
+
+<link href="_content/BlazorColorPicker/colorpicker.css" rel="stylesheet" />
+<link href="_content/BlazorColorPicker/BlazorColorPicker.bundle.scp.css" rel="stylesheet" />
+
+<!-- Prism CSS -->
+<link rel="stylesheet" href="../assets/libs/prismjs/themes/prism-coy.min.css">
+
+    <!-- Page Header -->
+    <div class="block justify-between page-header md:flex">
+        <div>
+            <h3
+                class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.125rem] font-semibold">
+                Color Pickers</h3>
+        </div>
+        <ol class="flex items-center whitespace-nowrap min-w-0">
+            <li class="text-[0.813rem] ps-[0.5rem]">
+                <a class="flex items-center text-primary hover:text-primary dark:text-primary truncate"
+                    href="javascript:void(0);">
+                    Form Elements
+                    <i
+                        class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
+                </a>
+            </li>
+            <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-primary dark:text-[#8c9097] dark:text-white/50 "
+                aria-current="page">
+                Color Pickers
+            </li>
+        </ol>
+    </div>
+    <!-- Page Header Close -->
+
+    <!-- Start::row-1 -->
+    <div class="grid grid-cols-12 gap-6">
+        <div class="xl:col-span-3 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Tailwind colorpicker
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <input type="color"
+                        class="p-1 h-10 w-10 block bg-white dark:bg-bodybg border border-gray-200 cursor-pointer rounded-sm 
+                        disabled:opacity-50 disabled:pointer-events-none dark:bg-bgdark dark:border-white/10"
+                        id="hs-color-input" value="#5a66f1" title="Choose your color">
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">
+&lt;input type="color" class="p-1 h-10 w-10 block bg-white dark:bg-bodybg border border-gray-200 cursor-pointer rounded-sm 
+disabled:opacity-50 disabled:pointer-events-none dark:bg-bgdark dark:border-white/10" id="hs-color-input" value="#5a66f1"
+title="Choose your color"&gt;
+                    </code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-9 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Blazor Color Picker
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body flex justify-between">
+                    <a href="javascript:void(0);" @onclick="OpenModal">
+                        <div style="background-color:@color" class="buttonColor m-0"></div>
+                    </a>
+
+                    <a href="javascript:void(0);" @onclick="OpenModalCustom">
+                        <div style="background-color:@customColor" class="buttonColor m-0"></div>
+                    </a>
+
+                    <a href="javascript:void(0);" @onclick="OpenModalCustomSizes">
+                        <div style="background-color:@customColorSize" class="buttonColor m-0"></div>
+                    </a>
+                    <ColorPicker IsOpened="isOpened" 
+                                Closed="ClosedEvent" 
+                                MyColor="@color" />
+
+                    <ColorPicker IsOpened="isOpenedCustom" 
+                                Closed="ClosedCustomEvent" 
+                                MyColor="@customColor" 
+                                MyColorPallet="@colors" 
+                                OverwriteBackgroundColor="#CCCCCC" 
+                                Title="Custom Colors" />
+
+
+                    <ColorPicker IsOpened="isOpenedCustomSizes"
+                                Closed="ClosedEventCustomSize"
+                                MyColor="@customColorSize"
+                                Style="width:304px;height:304px" />
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">
+&lt;a href="javascript:void(0);" onclick="OpenModal"&gt;
+    &lt;div style="background-color:@color" class="buttonColor m-0"&gt;&lt;/div&gt;
+&lt;/a&gt;
+
+&lt;a href="javascript:void(0);" onclick="OpenModalCustom"&gt;
+    &lt;div style="background-color:@customColor" class="buttonColor m-0"&gt;&lt;/div&gt;
+&lt;/a&gt;
+
+&lt;a href="javascript:void(0);" onclick="OpenModalCustomSizes"&gt;
+    &lt;div style="background-color:@customColorSize" class="buttonColor m-0"&gt;&lt;/div&gt;
+&lt;/a&gt;
+&lt;ColorPicker IsOpened="isOpened" 
+            Closed="ClosedEvent" 
+            MyColor="@color" /&gt;
+
+&lt;ColorPicker IsOpened="isOpenedCustom" 
+            Closed="ClosedCustomEvent" 
+            MyColor="@customColor" 
+            MyColorPallet="@colors" 
+            OverwriteBackgroundColor="#CCCCCC" 
+            Title="Custom Colors" /&gt;
+
+
+&lt;ColorPicker IsOpened="isOpenedCustomSizes"
+            Closed="ClosedEventCustomSize"
+            MyColor="@customColorSize"
+            Style="width:304px;height:304px" /&gt;
+                    </code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End::row-1 -->
+
+ 
+@code {
+    string[] colors = new string[] { "#FFFFFF", "#000000", "#999999","#845adf" };
+    bool isOpened = false;
+    bool isOpenedCustom = false;
+    bool isOpenedCustomSizes = false;
+    string color = "#845adf";
+    string customColor = "rgb(35, 183, 229)";
+    string customColorSize = "#845adf";
+
+
+    void OpenModal() => isOpened = true;
+    
+    void ClosedEvent(string value)
+    {
+        color = value;
+        isOpened = false;
+    }
+
+    void OpenModalCustom() => isOpenedCustom = true;
+
+    void ClosedCustomEvent(string value)
+    {
+        customColor = value;
+        isOpenedCustom = false;
+    }
+
+
+    void OpenModalCustomSizes() => isOpenedCustomSizes = true;
+
+    void ClosedEventCustomSize(string value)
+    {
+        customColorSize = value;
+        isOpenedCustomSizes = false;
+    }
+
+}
+
+
+<!-- Prism JS -->
+<script src="../assets/libs/prismjs/prism.js"></script>
+<script src="../assets/js/prism-custom.js"></script>

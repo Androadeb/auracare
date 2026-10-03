@@ -1,0 +1,400 @@
+﻿@page "/admin/profile"
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Components.Forms
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService L
+@attribute [Authorize(Roles = "DOCTOR")]
+
+<div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <div class="w-20 h-20 rounded-full border-2 border-gray-100 overflow-hidden flex-shrink-0">
+                    <img src="@(string.IsNullOrEmpty(previewImageUrl) ? profileData.ProfilePictureUrl : previewImageUrl)"
+                         class="w-full h-full object-cover" />
+                </div>
+
+                @if (isEditMode)
+                {
+                    <label class="absolute bottom-0 left-0 bg-white p-1 rounded-full shadow-sm border border-gray-100 cursor-pointer">
+                        <i class="ri-camera-line text-gray-500 text-sm"></i>
+                        <InputFile OnChange="HandleProfileImageSelected" class="hidden" />
+                    </label>
+                }
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 dark:text-gray-200">@profileData.FullName</h2>
+                <p class="text-gray-400 text-sm">@profileData.Email</p>
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            @if (!isEditMode)
+            {
+                <button type="button" @onclick="ToggleEdit"
+                        class="px-8 py-2 rounded-lg text-white font-bold transition-all hover:opacity-90 active:scale-95 shadow-sm"
+                        style="background-color: #F1A68E !important; border: none !important; cursor: pointer !important; min-width: 120px;">
+                    @L["Edit Profile"]
+                </button>
+            }
+            else
+            {
+                <button type="button" @onclick="CancelEdit"
+                        class="px-6 py-2 rounded-lg bg-gray-100 text-gray-600 font-bold transition-all hover:bg-gray-200">
+                    @L["Cancel"]
+                </button>
+                <button type="button" @onclick="SaveProfile"
+                        class="px-8 py-2 rounded-lg text-white font-bold transition-all hover:opacity-90 active:scale-95 shadow-sm"
+                        style="background-color: #F1A68E !important; border: none !important; cursor: pointer !important; min-width: 120px;">
+                    @L["Save Changes"]
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="space-y-6 mt-6">
+        <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] p-8 mb-6 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">@L["Full Name"]</label>
+                    @if (isEditMode)
+                    {
+                        <input type="text" @bind="profileData.FullName" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-100" />
+                    }
+                    else
+                    {
+                        <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600 border border-transparent">@profileData.FullName</p>
+                    }
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">@L["Phone Number"]</label>
+                    <div class="relative flex items-center">
+                        @if (isEditMode)
+                        {
+                            <div class="flex items-center w-full bg-gray-50 border border-gray-100 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-orange-100">
+                                <div class="flex items-center gap-1 px-3 border-r border-gray-200 bg-white relative min-w-[100px] justify-center">
+                                    <img src="https://flagcdn.com/w40/@(selectedCountryIso?.ToLower() ?? "ae").png" class="w-6 shadow-sm" alt="flag" />
+                                    <span class="text-xs font-bold text-gray-700">@("+" + selectedPhoneCode?.Replace("+", ""))</span>
+                                    <select @onchange="OnCountryChange" class="absolute inset-0 opacity-0 cursor-pointer w-full">
+                                        @foreach (var country in allCountries)
+                                        {
+                                            <option value="@country.CountryShortCode" selected="@(country.CountryShortCode == selectedCountryIso)">
+                                                @($"{country.CountryName} (+{country.PhoneCode.Replace("+", "")})")
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                                <input type="text" @bind="profileData.PhoneNumber" dir="ltr"
+                                       class="w-full px-4 py-3 bg-transparent outline-none"
+                                       placeholder="50XXXXXXX" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="flex items-center gap-2 px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600 border border-transparent w-full">
+                                <img src="https://flagcdn.com/w40/@(selectedCountryIso?.ToLower() ?? "ae").png" class="w-5" />
+                                <span dir="ltr" class="font-medium text-slate-700">
+                                    @("+" + selectedPhoneCode?.Replace("+", "")) @profileData.PhoneNumber
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">@L["Email"]</label>
+                    @if (isEditMode)
+                    {
+                        <input type="email" @bind="profileData.Email" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none" />
+                    }
+                    else
+                    {
+                        <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600">@profileData.Email</p>
+                    }
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">@L["Specialty"]</label>
+                    @if (isEditMode)
+                    {
+                        <select @bind="profileData.SpecialtyId"
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-100 appearance-none">
+                            <option value="">-- @L["Select Specialty"] --</option>
+                            @foreach (var spec in Specialties)
+                            {
+                                <option value="@spec.Id">@spec.Name</option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600">
+                            @{
+                                var currentSpecName = Specialties?.FirstOrDefault(s => s.Id == profileData.SpecialtyId)?.Name
+                                ?? profileData.SpecialtyName;
+                            }
+                            @(string.IsNullOrEmpty(currentSpecName) ? L["No Specialty Selected"] : currentSpecName)
+                        </p>
+                    }
+                </div>
+            </div>
+            <div class="mt-6">
+                <label class="block text-sm font-bold text-slate-700 mb-2">@L["About"]</label>
+                @if (isEditMode)
+                {
+                    <textarea @bind="profileData.DescriptionEn" rows="3" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none resize-none"></textarea>
+                }
+                else
+                {
+                    <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600 min-h-[100px]">@profileData.DescriptionEn</p>
+                }
+            </div>
+        </div>
+
+        @* --- Academic qualifications --- *@
+        <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] p-8 mb-6 shadow-sm">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-lg font-bold text-slate-800">@L["Academic qualifications"]</h3>
+                <button @onclick="OpenAddQualificationModal" class="px-4 py-2 bg-[#f4a28c]/20 text-[#f4a28c] font-bold rounded-xl flex items-center gap-2">
+                    <i class="ri-add-line"></i> @L["Add qualifications"]
+                </button>
+            </div>
+
+            <div class="space-y-8">
+                @if (profileData.Qualifications != null)
+                {
+                    @foreach (var qual in profileData.Qualifications)
+                    {
+                        <div class="relative pb-6 border-b border-gray-50 last:border-0">
+                            <div class="flex justify-between items-start">
+                                <div class="flex gap-4 items-center">
+                                    @if (!string.IsNullOrEmpty(qual.CertificateImageUrl))
+                                    {
+                                        <img src="@qual.CertificateImageUrl" class="w-16 h-16 rounded-lg object-cover" />
+                                    }
+                                    <div class="space-y-1">
+                                        <p class="text-sm font-bold text-slate-700">@qual.Degree</p>
+                                        <p class="text-xs text-gray-400">@L["Academic degree"]</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button @onclick="() => EditQualification(qual)" class="text-blue-400 p-1 hover:bg-blue-50 rounded-lg"><i class="ri-pencil-fill"></i></button>
+                                    <button @onclick="() => DeleteQualification(qual.Id)" class="text-red-400 p-1 hover:bg-red-50 rounded-lg"><i class="ri-delete-bin-fill"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        @* --- Bank Information --- *@
+        <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm">
+            <h3 class="text-lg font-bold text-slate-800 mb-1">@L["Bank Information"]</h3>
+            <p class="text-xs text-gray-400 mb-8">@L["Payment and billing details"]</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @if (profileData.BankInfo != null)
+                {
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">@L["Bank Name"]</label>
+                        @if (isEditMode)
+                        {
+                            <input type="text" @bind="profileData.BankInfo.BankName" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none" />
+                        }
+                        else
+                        {
+                            <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600">@profileData.BankInfo.BankName</p>
+                        }
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">@L["Account Number"]</label>
+                        @if (isEditMode)
+                        {
+                            <input type="text" @bind="profileData.BankInfo.AccountNumber" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none" />
+                        }
+                        else
+                        {
+                            <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600">@profileData.BankInfo.AccountNumber</p>
+                        }
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">@L["IBAN Bank"]</label>
+                        @if (isEditMode)
+                        {
+                            <input type="text" @bind="profileData.BankInfo.Iban" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none" />
+                        }
+                        else
+                        {
+                            <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600">@profileData.BankInfo.Iban</p>
+                        }
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">@L["Routing Number"]</label>
+                        @if (isEditMode)
+                        {
+                            <input type="text" @bind="profileData.BankInfo.RoutingNumber" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none" />
+                        }
+                        else
+                        {
+                            <p class="px-4 py-3 bg-gray-50/50 rounded-xl text-slate-600">@profileData.BankInfo.RoutingNumber</p>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (isOtpModalOpen)
+    {
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div class="bg-white w-full max-w-md p-8 md:p-10 rounded-3xl shadow-2xl animate-zoom-in text-center">
+                <div class="mb-6">
+                    <img src="/assets/images/authentication/logo-icon.png" class="h-12 mx-auto object-contain" alt="Logo" />
+                </div>
+
+                <h3 class="text-xl font-black mb-2">@L["Verify Your Changes"]</h3>
+
+                <div class="text-gray-500 text-sm font-bold leading-relaxed mb-8">
+                    @{
+                        bool phoneChanged = !string.Equals(profileData.PhoneNumber, originalPhoneNumber, StringComparison.OrdinalIgnoreCase);
+                        bool emailChanged = !string.Equals(profileData.Email, originalEmail, StringComparison.OrdinalIgnoreCase);
+                    }
+
+                    @if (phoneChanged && !emailChanged)
+                    {
+                        <p>@L["Enter the verification code sent to your new phone:"]</p>
+                        <span class="block text-black mt-1 font-black" dir="ltr">
+                            @("+" + selectedPhoneCode + " " + profileData.PhoneNumber)
+                        </span>
+                    }
+                    else if (emailChanged && !phoneChanged)
+                    {
+                        <p>@L["Enter the verification code sent to your new email:"]</p>
+                        <span class="block text-black mt-1 font-black" dir="ltr">@profileData.Email</span>
+                    }
+                    else if (emailChanged && phoneChanged)
+                    {
+                        <p>@L["Verification code sent to your new email and phone:"]</p>
+                        <span class="block text-black mt-1 font-black" dir="ltr">
+                            @profileData.Email <br /> @("+" + selectedPhoneCode + " " + profileData.PhoneNumber)
+                        </span>
+                    }
+                    else
+                    {
+                        <p>@L["Enter the verification code sent to"]</p>
+                        <span class="block text-black mt-1 font-black" dir="ltr">
+                            @MaskEmail(profileData.Email) @L["(Email)"]
+                        </span>
+                    }
+                </div>
+
+                <div class="flex justify-center gap-3 mb-8" dir="ltr">
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        var index = i;
+                        <input type="text"
+                               id="modal-otp-@index"
+                               maxlength="1"
+                               @bind="modalOtpValues[index]"
+                               @bind:event="oninput"
+                               @onkeyup="@(e => HandleModalKeyUp(e, index))"
+                               class="modal-otp-input w-12 h-14 md:w-14 md:h-16 text-center text-2xl font-bold bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none transition-all" />
+                    }
+                </div>
+
+                @if (!string.IsNullOrEmpty(otpErrorMessage))
+                {
+                    <p class="text-red-500 text-xs mb-4 font-bold">@otpErrorMessage</p>
+                }
+
+                <div class="flex flex-col gap-3">
+                    <button class="w-full py-4 bg-black text-white font-black rounded-2xl transition-all hover:bg-gray-900 active:scale-[0.98] shadow-lg"
+                            @onclick="HandleVerifyOtp" disabled="@isOtpLoading">
+                        @(isOtpLoading? L["Verifying..."] : L["Confirm"])
+                    </button>
+                    <button class="w-full py-3 bg-transparent text-gray-400 font-bold hover:text-gray-600"
+                            @onclick="CloseOtpModal">
+                        @L["Cancel"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (isQualificationModalOpen)
+    {
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+            <div class="fixed inset-0 bg-black opacity-50" @onclick="CloseModal"></div>
+            <div class="relative w-full max-w-md mx-auto my-6 z-[10000] animate-zoom-in">
+                <div class="relative flex flex-col w-full bg-white dark:bg-[#1f2937] border-0 rounded-2xl shadow-2xl outline-none focus:outline-none">
+                    <div class="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-gray-200">
+                            @(string.IsNullOrEmpty(currentQualification.Id) ? L["Add Qualification"] : L["Edit Qualification"])
+                        </h3>
+                        <button class="text-gray-400 hover:text-gray-600 outline-none" @onclick="CloseModal">
+                            <i class="ri-close-line text-2xl"></i>
+                        </button>
+                    </div>
+
+                    <div class="relative p-6 flex-auto">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">@L["Academic Degree"]</label>
+                                <input type="text" @bind="currentQualification.Degree"
+                                       placeholder="@L["e.g. Bachelor of Medicine"]"
+                                       class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-100" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">@L["Certificate Image"]</label>
+                                <div class="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors">
+                                    @if (!string.IsNullOrEmpty(certificatePreviewUrl))
+                                    {
+                                        <img src="@certificatePreviewUrl" class="w-32 h-32 object-cover rounded-lg mb-2 shadow-sm" />
+                                    }
+                                    else if (!string.IsNullOrEmpty(currentQualification.CertificateImageUrl))
+                                    {
+                                        <img src="@currentQualification.CertificateImageUrl" class="w-32 h-32 object-cover rounded-lg mb-2 shadow-sm" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-2">
+                                            <i class="ri-image-add-line text-3xl text-gray-300"></i>
+                                        </div>
+                                    }
+                                    <label class="cursor-pointer text-[#F1A68E] font-bold text-sm hover:underline">
+                                        <i class="ri-upload-cloud-2-line mr-1"></i> @L["Choose Image"]
+                                        <InputFile OnChange="HandleCertificateFileSelected" class="hidden" />
+                                    </label>
+                                    @if (selectedFile != null)
+                                    {
+                                        <span class="text-xs text-gray-500 mt-1">@selectedFile.Name</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end p-6 border-t border-gray-100 dark:border-gray-700 gap-3">
+                        <button type="button" @onclick="CloseModal"
+                                class="px-6 py-2 rounded-lg bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-all">
+                            @L["Cancel"]
+                        </button>
+                        <button type="button" @onclick="HandleSaveQualification"
+                                class="px-8 py-2 rounded-lg text-white font-bold transition-all hover:opacity-90 shadow-sm"
+                                style="background-color: #F1A68E !important; border: none;">
+                            @L["Save"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    window.focusElement = (elementId) => {
+        const el = document.getElementById(elementId);
+        if (el) el.focus();
+    };
+</script>

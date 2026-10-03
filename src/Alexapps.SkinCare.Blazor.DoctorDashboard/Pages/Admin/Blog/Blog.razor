@@ -1,0 +1,287 @@
+﻿@page "/admin/blog"
+@namespace Alexapps.SkinCare.Blazor.Pages.Admin
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService Loc
+@attribute [Authorize(Roles = "DOCTOR")]
+
+<div class="p-6">
+    @if (!isAddingPost && !isEditing)
+    {
+        @* --- Header (Blog List View) --- *@
+        <div class="mb-6 flex justify-between items-center">
+            <div>
+                <h3 class="text-defaulttextcolor dark:text-white text-[1.5rem] font-bold">@Loc["Blog"]</h3>
+                <p class="text-[#8c9097] dark:text-white/50 text-[0.75rem]">@Loc["Manage and publish your skincare articles"]</p>
+            </div>
+            <button @onclick="ShowAddForm" class="text-white px-5 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-[#F1A68E]/20"
+                    style="background-color: #F1A68E !important; border:none;">
+                <i class="ri-add-line text-lg"></i> @Loc["Add Post"]
+            </button>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="flex justify-center items-center min-h-[300px]">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F1A68E]"></div>
+            </div>
+        }
+        else if (BlogPosts == null || !BlogPosts.Any())
+        {
+            <div class="text-center py-20 bg-white rounded-xl border border-dashed">
+                <i class="ri-article-line text-4xl text-gray-300 mb-2 block"></i>
+                <p class="text-gray-500">@Loc["No blog posts found. Start by adding one!"]</p>
+            </div>
+        }
+        else
+        {
+            @* --- Blog Grid --- *@
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @foreach (var post in BlogPosts)
+                {
+                    <div @onclick="() => NavigateToDetails(post.Id)"
+                         class="box custom-box bg-white dark:bg-[#1f2937] rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all relative group cursor-pointer h-[200px]">
+
+                        <div class="flex flex-row h-full">
+                            @* --- Left Part: Content --- *@
+                            <div class="p-4 flex-1 flex flex-col justify-between min-w-0">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase" style="@GetStatusStyle(post.Status)">
+                                            @GetStatusLabel(post.Status)
+                                        </span>
+                                        <span class="text-gray-400 text-[9px]">
+                                            @post.PublishDate.ToString("dd MMM yyyy")
+                                        </span>
+                                    </div>
+
+                                    <h5 class="font-bold text-sm mb-1 line-clamp-2 text-defaulttextcolor dark:text-white leading-tight">
+                                        @post.Title
+                                    </h5>
+
+                                    <p class="text-gray-500 text-[11px] line-clamp-2 leading-snug">
+                                        @(post.Subtitle ?? "No description available.")
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-50 dark:border-white/10">
+                                    <div class="flex items-center gap-2">
+                                        <img src="@post.FullAuthorAvatar"
+                                             class="w-6 h-6 rounded-full object-cover"
+                                             alt="@post.AuthorName" />
+                                        <span class="text-[10px] font-semibold text-gray-700 dark:text-gray-300 truncate max-w-[80px]">
+                                            @post.AuthorName
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-gray-400 text-[10px]"><i class="ri-eye-line"></i> @post.ViewsCount</span>
+
+                                        <div class="relative">
+                                            <button type="button" @onclick="() => ToggleDropdown(post.Id)" @onclick:stopPropagation="true"
+                                                    class="p-1 hover:bg-gray-100 dark:hover:bg-white/5 rounded">
+                                                <i class="ri-more-2-fill"></i>
+                                            </button>
+
+                                            @if (openDropdowns.ContainsKey(post.Id) && openDropdowns[post.Id])
+                                            {
+                                                <div class="absolute bottom-full right-0 mb-2 w-28 bg-white dark:bg-[#1f2937] border border-gray-100 rounded-lg shadow-xl z-20">
+                                                    <button @onclick="() => { ShowEditForm(post); ToggleDropdown(post.Id); }" @onclick:stopPropagation="true"
+                                                            class="w-full text-left px-3 py-2 text-[11px] text-blue-500 hover:bg-blue-50 flex items-center gap-2">
+                                                        <i class="ri-edit-line"></i> Edit
+                                                    </button>
+                                                    <button @onclick="() => { ConfirmDelete(post.Id); ToggleDropdown(post.Id); }" @onclick:stopPropagation="true"
+                                                            class="w-full text-left px-3 py-2 text-[11px] text-red-500 hover:bg-red-50 flex items-center gap-2 border-t border-gray-50">
+                                                        <i class="ri-delete-bin-line"></i> Delete
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* --- Right Part: Image --- *@
+                            @* استخدمنا w-[140px] ثابتة بدلاً من 1/3 لضمان عدم ضغط النص *@
+                            <div class="w-[140px] h-full relative overflow-hidden">
+                                <div class="absolute inset-0 bg-black/5 z-10 transition-opacity duration-300 group-hover:opacity-0"></div>
+                                <img src="@post.FullCoverImage"
+                                     class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                                     alt="cover">
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        @* --- Add/Edit Form --- *@
+        <div class="mb-6">
+            <button @onclick="HideAddForm" class="text-[#8c9097] hover:text-defaulttextcolor mb-2 flex items-center gap-1 transition-colors">
+                <i class="ri-arrow-left-line"></i> @Loc["Back to Blog"]
+            </button>
+            <h3 class="text-defaulttextcolor dark:text-white text-[1.5rem] font-bold">
+                @(isEditing ? Loc["Edit Article"] : Loc["Add New Article"])
+            </h3>
+        </div>
+
+        <EditForm Model="@newPost" OnValidSubmit="HandleSubmit">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                @* Left Column: Content *@
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="box custom-box bg-white dark:bg-[#1f2937] rounded-xl p-5 border border-gray-100">
+                        <h4 class="font-bold mb-4 border-b pb-2 text-defaulttextcolor dark:text-white">@Loc["Article Content"]</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold mb-1 block">@Loc["Title"]</label>
+                                <InputText @bind-Value="newPost.Title" class="form-control !rounded-lg" placeholder="..." />
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold mb-1 block">@Loc["Short Description (Subtitle)"]</label>
+                                <InputTextArea @bind-Value="newPost.Subtitle" class="form-control !rounded-lg" rows="2" placeholder="..." />
+                            </div>
+                            <div class="col-span-12">
+                                <label class="text-xs font-bold mb-2 block text-defaulttextcolor">@Loc["Main Content"]</label>
+                                <div class="box-body !p-0 border rounded-lg overflow-hidden">
+                                
+                                    <div id="editor-container" class="min-h-[300px]">
+                                        @((MarkupString)(newPost.Content ?? ""))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Right Column: Image & Actions *@
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="box custom-box bg-white dark:bg-[#1f2937] rounded-xl p-5 border border-gray-100">
+                        <h4 class="font-bold mb-4 border-b pb-2 text-defaulttextcolor dark:text-white">@Loc["Cover Image"]</h4>
+                        <div class="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center relative">
+                            <InputFile OnChange="OnInputFileChange" class="hidden" id="postImage" />
+                            <label for="postImage" class="cursor-pointer">
+                                @if (string.IsNullOrEmpty(newPost.CoverImage))
+                                {
+                                    <div class="py-10">
+                                        <i class="ri-image-add-line text-4xl text-gray-300"></i>
+                                        <p class="text-xs text-gray-400 mt-2">@Loc["Click to upload image"]</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="@newPost.CoverImage" class="w-full h-40 object-cover rounded-lg mb-2" />
+                                    <p class="text-[10px] text-blue-500 font-bold underline">@Loc["Change Image"]</p>
+                                }
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <button type="submit" class="w-full text-white py-3 rounded-xl font-bold transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-[#F1A68E]/20"
+                                style="background-color: #F1A68E !important;">
+                            <i class="ri-save-line mr-1"></i> @(isEditing ? Loc["Save Changes"] : Loc["Publish Article"])
+                        </button>
+                        <button type="button" @onclick="HideAddForm" class="w-full py-3 rounded-xl border border-gray-200 font-bold text-gray-500 hover:bg-gray-50">
+                            @Loc["Cancel"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    }
+</div>
+<style>
+    .dropdown-container:hover .dropdown-menu {
+        display: block;
+        /* نستخدم @@ لتنبيه Blazor أن هذا CSS وليس C# */
+        animation: slideIn 0.2s ease-out;
+    }
+
+    /* لاحظ استخدام الـ @@ هنا */
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+<script>
+       window.initializeQuill = function (selector, content) {
+        var container = document.querySelector(selector);
+        if (container && !container.classList.contains('ql-container')) {
+            var quill = new Quill(selector, {
+                theme: 'snow',
+                placeholder: 'Write something awesome...',
+                modules: {
+                    toolbar: [
+                        // إعدادات الخط والحجم والتنسيق (كما في الصور)
+                        [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+
+                        // الألوان والخلفية
+                        [{ 'color': [] }, { 'background': [] }],
+
+                        // القوائم والمحاذاة
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'indent': '-1' }, { 'indent': '+1' }],
+                        [{ 'align': [] }],
+
+                        // الرموز العلوية والسفلية، الروابط، والمعادلات
+                        [{ 'script': 'sub' }, { 'script': 'super' }],
+                        ['link', 'blockquote', 'code-block', 'formula'],
+
+                        // زر المسح (تنظيف التنسيق)
+                        ['clean']
+                    ]
+                }
+            });
+
+            if (content) {
+                quill.clipboard.dangerouslyPasteHTML(content);
+            }
+
+          
+            quill.clipboard.addMatcher(Node.ELEMENT_NODE, function (node, delta) {
+                var ops = [];
+                delta.ops.forEach(function (op) {
+                    if (op.insert && op.insert.image) {
+                        return; 
+                    }
+                    ops.push(op);
+                });
+                delta.ops = ops;
+                return delta;
+            });
+        }
+    };
+
+    window.getQuillContent = function (selector) {
+        var editor = document.querySelector(selector + ' .ql-editor');
+        return editor ? editor.innerHTML : "";
+    };
+
+    window.createPreviewUrl = async (fileStreamReference) => {
+        const arrayBuffer = await fileStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        return URL.createObjectURL(blob);
+    };
+</script>

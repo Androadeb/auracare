@@ -1,0 +1,171 @@
+﻿@page "/admin/sessions"
+@using AlexApps.Classat.Blazor.Superadmin.Services
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService Loc
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "DOCTOR")]
+
+
+<div class="p-6">
+    @* --- Header --- *@
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h3 class="text-defaulttextcolor dark:text-white text-[1.125rem] font-bold">@Loc["Sessions"]</h3>
+            <p class="text-[#8c9097] dark:text-white/50 text-[0.75rem]">@Loc["SessionsDescription"]</p>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-8 mb-6 border-b border-gray-100 dark:border-white/10 overflow-x-auto">
+        @* --- All Tab --- *@
+        <button @onclick='() => activeTab = "All"'
+                class='pb-3 px-1 transition-all relative flex items-center gap-2 @(activeTab == "All" ? "font-bold" : "")'
+                style="color: @(activeTab == "All" ? "#0f172a" : "#94a3b8"); border: none; background: none;">
+            <span class="text-[0.95rem]">@Loc["All"]</span>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold"
+                  style="background-color: #1e293b !important; color: white !important;">@CountAll</span>
+            @if (activeTab == "All")
+            {
+                <div class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#0f172a] dark:bg-white rounded-t-full"></div>
+            }
+        </button>
+
+        @* --- InProgress Tab --- *@
+        <button @onclick='() => activeTab = "InProgress"'
+                class='pb-3 px-1 transition-all relative flex items-center gap-2 @(activeTab == "InProgress" ? "font-bold" : "")'
+                style="color: @(activeTab == "InProgress" ? "#0f172a" : "#94a3b8"); border: none; background: none;">
+            <span class="text-[0.95rem]">@Loc["InProgress"]</span>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold"
+                  style="background-color: #e0faff !important; color: #0ea5e9 !important;">@CountInProgress</span>
+            @if (activeTab == "InProgress")
+            {
+                <div class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#0f172a] dark:bg-white rounded-t-full"></div>
+            }
+        </button>
+
+        @* --- Pending Tab --- *@
+        <button @onclick='() => activeTab = "Pending"'
+                class='pb-3 px-1 transition-all relative flex items-center gap-2 @(activeTab == "Pending" ? "font-bold" : "")'
+                style="color: @(activeTab == "Pending" ? "#0f172a" : "#94a3b8"); border: none; background: none;">
+            <span class="text-[0.95rem]">@Loc["Pending"]</span>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold"
+                  style="background-color: #fef3c7 !important; color: #d97706 !important;">@CountPending</span>
+            @if (activeTab == "Pending")
+            {
+                <div class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#0f172a] dark:bg-white rounded-t-full"></div>
+            }
+        </button>
+
+        @* --- Complete Tab --- *@
+        <button @onclick='() => activeTab = "Complete"'
+                class='pb-3 px-1 transition-all relative flex items-center gap-2 @(activeTab == "Complete" ? "font-bold" : "")'
+                style="color: @(activeTab == "Complete" ? "#0f172a" : "#94a3b8"); border: none; background: none;">
+            <span class="text-[0.95rem]">@Loc["Complete"]</span>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold"
+                  style="background-color: #dcfce7 !important; color: #15803d !important;">@CountComplete</span>
+            @if (activeTab == "Complete")
+            {
+                <div class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#0f172a] dark:bg-white rounded-t-full"></div>
+            }
+        </button>
+    </div>
+
+    @* --- Search Bar --- *@
+    <div class="flex items-center gap-4 mb-4 border-b border-gray-100 dark:border-white/10 overflow-x-auto">
+        <div class="relative w-full max-w-md">
+            <input type="text" @bind-value="searchTerm" @bind-value:event="oninput"
+                   placeholder="@Loc["SearchPlaceholder"]"
+                   class="form-control w-full !rounded-xl border-gray-200 dark:border-white/10 bg-white dark:bg-[#1f2937] text-defaulttextcolor dark:text-white focus:ring-primary/20" />
+            <i class="ri-search-line absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+        </div>
+    </div>
+
+    @* --- Data Table --- *@
+    <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden shadow-sm">
+        <div class="box-body !p-0">
+            <div class="table-responsive">
+                <table class="table whitespace-nowrap min-w-full">
+                    <thead>
+                        <tr class="border-b border-gray-100 dark:border-gray-700">
+                            <th class="p-4 w-10 text-center"><input type="checkbox" class="form-check-input" /></th>
+                            <th class="p-4 text-[0.75rem] font-bold text-[#8c9097] uppercase">@Loc["Name"]</th>
+                            <th class="p-4 text-[0.75rem] font-bold text-[#8c9097] uppercase">@Loc["Condition"]</th>
+                            <th class="p-4 text-[0.75rem] font-bold text-[#8c9097] uppercase">@Loc["LastUpdate"]</th>
+                            <th class="p-4 text-[0.75rem] font-bold text-[#8c9097] uppercase">@Loc["Status"]</th>
+                            <th class="p-4 w-10"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        @foreach (var session in FilteredSessions)
+                        {
+                            <tr class="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                                @onclick="@(() => NavigationManager.NavigateTo($"/admin/patient-details/{session.Id}"))">
+                                <td class="p-4 text-center" @onclick:stopPropagation><input type="checkbox" class="form-check-input" /></td>
+                                <td class="p-4">
+                                    <div class="flex items-center gap-3">
+                                        <img src="@(string.IsNullOrEmpty(session.clientImage)
+                                                                                                             ? $"https://ui-avatars.com/api/?name={session.clientName}&background=F1A68E&color=000"
+                                                                                                       : $"https://auraskin.runasp.net{session.clientImage}")"
+                                         class="w-10 h-10 rounded-full object-cover shadow-sm" />
+                                    <div>
+                                        <div class="text-[0.85rem] font-bold text-defaulttextcolor dark:text-white">@session.clientName</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 text-[0.8rem] text-defaulttextcolor dark:text-gray-300">
+                                <div class="max-w-[200px] truncate">@session.medicalHistory</div>
+                            </td>
+                            <td class="p-4 text-[0.8rem]">
+                                @session.creationTime.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture)
+                            </td>
+                            <td class="p-4">
+                                <span class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase shadow-sm inline-block"
+                                      style="@GetStatusStyle(session.status)">
+                                    @Loc[session.status]
+                                </span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <i class="ri-more-2-fill text-[#8c9097] cursor-pointer"></i>
+                            </td>
+                        </tr>
+                                                }
+                    </tbody>
+                </table>
+            </div>
+
+            @* --- Pagination Section --- *@
+            <div class="flex items-center justify-between p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-white/5">
+                <div class="text-[0.75rem] text-[#8c9097] dark:text-white/50">
+                    @Loc["ShowingPage"] <span class="font-bold text-defaulttextcolor dark:text-white">@currentPage</span> @Loc["Of"] <span class="font-bold text-defaulttextcolor dark:text-white">@totalPages</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button @onclick="() => ChangePage(currentPage - 1)"
+                            disabled="@(!hasPreviousPage)"
+                            class="p-2 rounded-lg border border-gray-200 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        <i class="ri-arrow-left-s-line"></i>
+                    </button>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        var pageNumber = i;
+                        if (i == 1 || i == totalPages || (i >= currentPage - 1 && i <= currentPage + 1))
+                        {
+                            <button @onclick="() => ChangePage(pageNumber)"
+                                    class="w-8 h-8 rounded-lg text-[0.75rem] font-bold transition-colors @(currentPage == pageNumber ? "bg-[#0f172a] text-white dark:bg-white dark:text-[#0f172a]" : "text-[#8c9097] hover:bg-white dark:hover:bg-white/10 border border-transparent hover:border-gray-200 dark:hover:border-white/10")">
+                                @pageNumber
+                            </button>
+                        }
+                        else if (i == currentPage - 2 || i == currentPage + 2)
+                        {
+                            <span class="text-[#8c9097]">...</span>
+                        }
+                    }
+
+                    <button @onclick="() => ChangePage(currentPage + 1)"
+                            disabled="@(!hasNextPage)"
+                            class="p-2 rounded-lg border border-gray-200 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

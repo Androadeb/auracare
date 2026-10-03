@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.colored-toast.swal2-icon-success {
+	background-color: #a5dc86 !important;
+	grid-template-columns: 1fr auto;
+	max-height: 100px;
+	place-items: center;
+}
+
+.colored-toast.swal2-icon-error {
+	background-color: #f27474 !important;
+}
+
+.colored-toast.swal2-icon-warning {
+	background-color: #f8bb86 !important;
+}
+
+.colored-toast.swal2-icon-info {
+	background-color: #3fc3ee !important;
+}
+
+.colored-toast.swal2-icon-question {
+	background-color: #87adbd !important;
+}
+
+.colored-toast .swal2-title {
+	color: white;
+	white-space: nowrap !important;
+	word-wrap: normal !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.colored-toast .swal2-icon.swal2-success {
+	border: none !important;
+	margin: 0 !important;
+	grid-row: auto;
+}
+
+.colored-toast .swal2-close {
+	color: white;
+}
+
+.colored-toast .swal2-html-container {
+	color: white;
+}
+
+.colored-toast {
+	max-width: inherit !important;
+	width: auto !important;
+}
+
+.filter-red {
+	filter: invert(30%) sepia(100%) saturate(2500%) hue-rotate(340deg)
+		brightness(90%) contrast(100%);
+}
+
+.logout .swal2-confirm.swal2-styled {
+	background-color: #ef4444 !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+.confirm-delete .swal2-confirm.swal2-styled {
+	background-color: #ef4444 !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+.white-filter {
+	filter: invert(100%) sepia(100%) grayscale(100%) brightness(200%);
+}
+/* Custom Green Toggle Switch */
+.form-switch .form-check-input {
+	background-color: #e5e7eb;
+	border: none;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.form-switch .form-check-input:checked {
+	background-color: #22c55e !important;
+	background-position: right center;
+}
+
+/* Matching the soft input look from your mockup */
+.form-control,
+.form-select {
+	border-color: #e2e8f0 !important;
+	transition:
+		border-color 0.2s,
+		box-shadow 0.2s;
+}
+
+.form-control:focus {
+	border-color: #f1a68e !important;
+	box-shadow: 0 0 0 3px rgba(241, 166, 142, 0.2) !important;
+	outline: none;
+}
+
+/* Styling the placeholder text to be light like the image */
+::placeholder {
+	color: #cbd5e1 !important;
+	opacity: 1;
+}

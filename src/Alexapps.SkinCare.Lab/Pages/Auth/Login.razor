@@ -1,0 +1,149 @@
+@page "/sign-in"
+@layout AuthLayout
+@inject AuthService AuthService
+
+@attribute [AllowAnonymous]
+
+@if (!_isOtpStep)
+{
+  <div class="text-center mb-8">
+    <img src="assets/images/auth/auth-logo.png" class="mx-auto mb-4 w-20" alt="Logo"/>
+    <h2 class="text-2xl font-bold text-[#1A2D42]">Lab Dashboard</h2>
+    <h3 class="text-3xl font-bold mt-4">تسجيل الدخول</h3>
+  </div>
+
+
+  <div class="flex bg-gray-200 rounded-lg p-1 mb-6">
+    <button @onclick="HandleEmailBtnSelection"
+            class="flex-1 py-2 rounded-md shadow-sm font-bold transition-colors @(_isEmailLoginStep ? "bg-white text-black" : "text-gray-500")">
+      البريد
+      الالكتروني
+    </button>
+    <button @onclick="HandlePhoneBtnSelection"
+            class="flex-1 py-2 rounded-md transition-colors @(!_isEmailLoginStep ? "bg-white text-black shadow-sm font-bold" : "text-gray-500")">
+      رقم
+      الهاتف
+    </button>
+  </div>
+  <div class="space-y-4">
+    @if (_isEmailLoginStep)
+    {
+      <EditForm Model="@_loginModel" OnValidSubmit="HandleEmailLogin">
+        <DataAnnotationsValidator/>
+        <div>
+          <label class="block text-right text-sm mb-1">البريد الالكتروني</label>
+          <input type="email" @bind="_loginModel.Email" class="w-full p-3 rounded-lg border border-gray-100 bg-white"
+                 placeholder="البريد الالكتروني"/>
+          <ValidationMessage For="@(() => _loginModel.Email)" class="text-danger text-xs mt-1" dir="ltr"/>
+        </div>
+
+        <div class="relative">
+          <label class="block text-right text-sm mb-1">كلمة المرور</label>
+          <input type="password" @bind="_loginModel.Password" class="w-full p-3 rounded-lg border border-gray-100 bg-white"
+                 placeholder="كلمة المرور"/>
+          <ValidationMessage For="@(() => _loginModel.Password)" class="text-danger text-xs mt-1" dir="ltr"/>
+        </div>
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+          <div class="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg border border-red-200 flex items-center gap-2"
+               dir="ltr">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"/>
+            </svg>
+            @_errorMessage
+          </div>
+        }
+
+        <button type="submit"
+                class="w-full py-3 bg-[#E0E0E0] text-[#4A4A4A] font-bold rounded-lg mt-6 hover:bg-gray-300 transition">
+          تسجيل الدخول
+        </button>
+      </EditForm>
+    }
+    else
+    {
+      <EditForm Model="@_loginPhoneRequest" OnValidSubmit="HandlePhoneLogin">
+        <DataAnnotationsValidator/>
+        <div class="relative" dir="ltr">
+          <label class="block text-right text-sm mb-1" dir="rtl">رقم الهاتف</label>
+          <input type="tel" @bind="_loginPhoneRequest.Username" pattern="^\+?(\d{1,3})?[-. ]?\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}$"
+                 class="w-full p-3 rounded-lg border border-gray-100 bg-white" placeholder="01012345678" dir="ltr" required/>
+          <ValidationMessage For="@(() => _loginPhoneRequest.Username)" class="text-danger text-xs mt-1" dir="ltr"/>
+        </div>
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+          <div class="p-3 my-2 text-sm text-red-700 bg-red-100 rounded-lg border border-red-200 flex items-center gap-2"
+               dir="ltr">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"/>
+            </svg>
+            @_errorMessage
+          </div>
+        }
+
+        <button type="submit"
+                class="w-full py-3 bg-[#E0E0E0] text-[#4A4A4A] font-bold rounded-lg mt-6 hover:bg-gray-300 transition">
+          تسجيل الدخول
+        </button>
+      </EditForm>
+    }
+
+  </div>
+}
+else
+{
+  <VerifyOtp UserName="@_loginModel.Email" PhoneNumber="@_loginPhoneRequest.Username"/>
+}
+
+@code
+{
+  private bool _isOtpStep;
+  private bool _isEmailLoginStep = true;
+  private readonly LoginRequest _loginModel = new();
+  private readonly LoginWithPhoneRequest _loginPhoneRequest = new();
+  private string _errorMessage = string.Empty;
+
+  private async Task HandleEmailLogin()
+  {
+    var success = await AuthService.SignInWithEmailAsync(_loginModel);
+    if (success)
+    {
+      _errorMessage = string.Empty;
+      _isOtpStep = true;
+    }
+    else
+    {
+      _errorMessage = "Invalid Email or Password";
+    }
+  }
+
+  private void HandleEmailBtnSelection(MouseEventArgs args)
+  {
+    _errorMessage = string.Empty;
+    _isEmailLoginStep = true;
+  }
+
+  private void HandlePhoneBtnSelection(MouseEventArgs args)
+  {
+    _errorMessage = string.Empty;
+    _isEmailLoginStep = false;
+  }
+
+  private async Task HandlePhoneLogin(EditContext args)
+  {
+    var success = await AuthService.SignInWithPhoneAsync(_loginPhoneRequest);
+    if (success)
+    {
+      _errorMessage = string.Empty;
+      _isOtpStep = true;
+    }
+    else
+    {
+      _errorMessage = "Invalid Phone Number";
+    }
+  }
+}

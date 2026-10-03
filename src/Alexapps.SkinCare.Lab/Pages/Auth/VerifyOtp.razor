@@ -1,0 +1,228 @@
+@page "/verify-otp"
+@layout AuthLayout
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+@inject NotificationService Notification
+@inject IJSRuntime JsRuntime
+@implements IDisposable
+
+@attribute [AllowAnonymous]
+
+<div class="text-center">
+  <img src="assets/images/auth/auth-logo.png" alt="Lab Dashboard Logo" class="mx-auto mb-4 w-20"/>
+  <h2 class="text-xl font-bold">Lab Dashboard</h2>
+  <p class="text-sm text-gray-500 mt-4">
+    @if (!string.IsNullOrEmpty(UserName))
+    {
+      <p class="text-sm text-gray-500 mt-4">
+        ادخل الرمز التأكيدي الذي تم إرساله إلى الرقم @UserName
+      </p>
+    }
+    else
+    {
+      <p class="text-sm text-gray-500 mt-4">
+        ادخل الرمز التأكيدي الذي تم إرساله إلى الرقم @PhoneNumber
+      </p>
+    }
+  </p>
+
+  <div class="flex justify-center gap-2 my-8" dir="ltr">
+    @for (var i = 0; i < 4; i++)
+    {
+      var index = i;
+      <input @ref="_inputRefs[index]"
+             type="text"
+             maxlength="1"
+             disabled="@_isProcessing"
+             @bind="_otpValues[index]"
+             @oninput="(e) => HandleInput(e, index)"
+             @onkeydown="(e) => HandleKeyDown(e, index)"
+             @onpaste="HandlePaste"
+             class="w-12 h-14 text-center border-2 border-gray-100 rounded-lg text-xl font-bold focus:border-blue-500 outline-none"/>
+    }
+  </div>
+
+  <button @onclick="HandleVerifyOtp"
+          disabled="@(IsOtpComplete || _isProcessing)"
+          class="w-full py-3 @(IsOtpComplete ? "bg-blue-600 text-white" : "bg-[#E0E0E0]") font-bold rounded-lg">
+    @if (_isProcessing)
+    {
+      <!-- Simple Tailwind Spinner -->
+      <div class="flex items-center justify-center">
+        <span>جاري التحقق...</span>
+        <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+      </div>
+    }
+    else
+    {
+      <span>دخول</span>
+    }
+  </button>
+
+  <p class="text-xs mt-4 text-gray-400">
+    لم يصلك الرمز؟
+    <button @onclick="HandleResendOtp"
+            disabled="@(_timeLeft.TotalSeconds > 0)"
+            class="@(_timeLeft.TotalSeconds > 0 ? "text-gray-400 cursor-not-allowed" : "text-blue-500 cursor-pointer")">
+      إعادة الإرسال
+    </button>
+
+    @if (_timeLeft.TotalSeconds > 0)
+    {
+      <span class="ms-2">@_timeLeft.ToString(@"mm\:ss")</span>
+    }
+  </p>
+</div>
+
+@code
+{
+  [Parameter] public string UserName { get; set; } = string.Empty;
+  [Parameter] public string PhoneNumber { get; set; } = string.Empty;
+  private bool _isProcessing;
+  private string[] _otpValues = ["", "", "", ""];
+  private readonly ElementReference[] _inputRefs = new ElementReference[4];
+
+  // Check if all 4 boxes have a value
+  private bool IsOtpComplete => _otpValues.All(v => !string.IsNullOrWhiteSpace(v));
+
+  private TimeSpan _timeLeft = TimeSpan.FromMinutes(2);
+  private System.Timers.Timer? _countdownTimer;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      await _inputRefs[0].FocusAsync();
+    }
+  }
+
+  protected override void OnInitialized()
+  {
+    StartTimer();
+  }
+
+  private void StartTimer()
+  {
+    // Clean up existing timer if it exists
+    _countdownTimer?.Stop();
+    _countdownTimer?.Dispose();
+
+    _countdownTimer = new System.Timers.Timer(1000);
+    _countdownTimer.Elapsed += async (sender, e) =>
+    {
+      if (_timeLeft.TotalSeconds > 0)
+      {
+        _timeLeft = _timeLeft.Subtract(TimeSpan.FromSeconds(1));
+        await InvokeAsync(StateHasChanged);
+      }
+      else
+      {
+        _countdownTimer.Stop();
+        await InvokeAsync(StateHasChanged); // Update UI to enable button
+      }
+    };
+    _countdownTimer.AutoReset = true;
+    _countdownTimer.Enabled = true;
+  }
+
+  private async Task HandleKeyDown(KeyboardEventArgs e, int index)
+  {
+    if (e.Key == "Backspace" && string.IsNullOrEmpty(_otpValues[index]) && index > 0)
+    {
+      await _inputRefs[index - 1].FocusAsync();
+    }
+  }
+
+  private async Task HandleInput(ChangeEventArgs e, int index)
+  {
+    var val = e.Value?.ToString();
+    if (!string.IsNullOrEmpty(val) && val.Length > 0)
+    {
+      _otpValues[index] = val[^1..];
+      switch (index)
+      {
+        case < 3:
+          await _inputRefs[index + 1].FocusAsync();
+          break;
+        case 3 when IsOtpComplete:
+          await HandleVerifyOtp();
+          break;
+      }
+    }
+  }
+
+  private async Task HandlePaste(ClipboardEventArgs e)
+  {
+    try
+    {
+      var text = await JsRuntime.InvokeAsync<string>("interop.getClipboardText");
+      var digits = text.Trim().Where(char.IsDigit).Take(4).ToArray();
+      if (digits.Length == 4)
+      {
+        for (var i = 0; i < 4; i++) _otpValues[i] = digits[i].ToString();
+        StateHasChanged();
+        await HandleVerifyOtp();
+      }
+    }
+    catch
+    {
+      /* Clipboard access denied or empty */
+    }
+  }
+
+  private async Task HandleVerifyOtp()
+  {
+    if (!IsOtpComplete || _isProcessing) return;
+
+    _isProcessing = true;
+    StateHasChanged();
+
+    var fullOtp = string.Join("", _otpValues);
+    var request = new OtpRequest
+    {
+      Username = string.IsNullOrEmpty(UserName) ? PhoneNumber : UserName,
+      Otp = fullOtp,
+    };
+
+    var success = await AuthService.VerifyOtpAsync(request);
+
+    if (success)
+    {
+      NavigationManager.NavigateTo("/dashboard");
+    }
+    else
+    {
+      _isProcessing = false;
+      // Clear inputs on failure so user can try again
+      _otpValues = ["", "", "", ""];
+      await Notification.ShowError("Invalid OTP. Please try again.");
+      await _inputRefs[0].FocusAsync();
+    }
+  }
+
+  private async Task HandleResendOtp()
+  {
+    if (_timeLeft.TotalSeconds > 0) return; // Guard clause
+    var request = new ResendOtpRequest
+    {
+      Username = string.IsNullOrEmpty(UserName) ? PhoneNumber : UserName
+    };
+    var success = await AuthService.ResendOtpAsync(request);
+    if (success)
+    {
+      _timeLeft = TimeSpan.FromMinutes(2);
+      StartTimer(); // Call the start method to reset the logic
+      await Notification.ShowToast("OTP has been resent.", 2000);
+    }
+    else
+    {
+      await Notification.ShowError("Failed to resend OTP. Please try again later.");
+    }
+  }
+
+  public void Dispose()
+  {
+    _countdownTimer?.Stop();
+    _countdownTimer?.Dispose();
+  }
+}

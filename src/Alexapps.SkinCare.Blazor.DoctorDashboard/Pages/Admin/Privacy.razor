@@ -1,0 +1,76 @@
+﻿@page "/admin/legal/privacy"
+@using Microsoft.Extensions.Localization
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService L
+
+@* --- Main Container --- *@
+<div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+    @* Header Section *@
+    <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-50 dark:border-gray-800">
+        <div class="w-14 h-14 rounded-2xl bg-[#F1A68E]/10 flex items-center justify-center border border-[#F1A68E]/20">
+            <i class="ri-shield-keyhole-line text-[#F1A68E] text-2xl"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-slate-800 dark:text-gray-200">@L["PrivacyPolicy"]</h2>
+            <p class="text-gray-400 text-sm">@L["LastRevised"]: December 16, 2013</p>
+        </div>
+    </div>
+
+    @* Privacy Policy Content *@
+    <div class="space-y-8 text-slate-600 dark:text-gray-300 leading-relaxed text-sm">
+
+        @* Introduction Section *@
+        <div class="bg-gray-50/50 dark:bg-gray-800/40 p-5 rounded-2xl border border-gray-100 dark:border-gray-700">
+            <p>@L["PrivacyIntroText"]</p>
+        </div>
+
+        @* Section 1: Your Agreement *@
+        <section>
+            <h3 class="text-base font-bold text-slate-800 dark:text-gray-100 mb-3 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#F1A68E]"></span>
+                1. @L["YourAgreement"]
+            </h3>
+            <p class="px-4">@L["AgreementDetailsText"]</p>
+
+            <div class="mt-4 mx-4 p-4 bg-orange-50/30 dark:bg-orange-900/10 rounded-xl border-l-4 border-[#F1A68E] italic">
+                <strong class="text-slate-800 dark:text-gray-200">@L["PleaseNoteTitle"]:</strong> @L["PleaseNoteText"]
+            </div>
+        </section>
+
+        @* Section 2: Privacy *@
+        <section>
+            <h3 class="text-base font-bold text-slate-800 dark:text-gray-100 mb-3 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#F1A68E]"></span>
+                2. @L["Privacy"]
+            </h3>
+            <p class="px-4">@L["PrivacyLinkText"]</p>
+        </section>
+
+        @* Section 3: Linked Sites *@
+        <section>
+            <h3 class="text-base font-bold text-slate-800 dark:text-gray-100 mb-3 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#F1A68E]"></span>
+                3. @L["LinkedSites"]
+            </h3>
+            <p class="px-4">@L["LinkedSitesText"]</p>
+        </section>
+
+        @* Section 5: Disclaimer *@
+        <section class="mt-10 pt-6 border-t border-gray-50 dark:border-gray-800">
+            <h3 class="text-sm font-black text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+                5. @L["DisclaimerTitle"]
+            </h3>
+            <div class="px-4 text-xs font-medium leading-loose uppercase opacity-80">
+                @L["DisclaimerText"]
+            </div>
+        </section>
+    </div>
+</div>
+
+@code {
+    // Note: If you defined a class named 'privacy', change it to 'PrivacyPolicyModel'
+    // This removes the "lower-cased ascii characters" warning.
+
+    // English comments as requested
+    // Logic to handle privacy policy content could go here
+}

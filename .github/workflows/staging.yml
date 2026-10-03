@@ -1,0 +1,41 @@
+name: Deploy to Server Staging
+
+on:
+    push:
+        branches:
+            - staging
+
+jobs:
+    deploy:
+        runs-on: ubuntu-22.04
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Install SSH Client
+              run: sudo apt-get install openssh-client
+
+            - name: Deploy to Server
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.SSH_HOST_STAGING }}
+                  username: ${{ secrets.SSH_USER_STAGING }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+                  script: |
+                      cd /home/alex/staging/api/
+                      eval "$(ssh-agent -s)"
+                      ssh-add ~/.ssh/id_ed25519
+                      git fetch
+                      git reset --hard HEAD
+                      git checkout staging
+                      git pull
+                      cp ../docker-compose.yml docker-compose.yml
+                      echo "Building db-migrator image..."
+                      docker compose up --build db-migrator
+                      docker compose up --build abpapp -d 
+                      docker compose up --build doctor-dashboard -d
+                      docker compose up --build lab-blazor -d
+
+                      echo "Cleaning unused Docker images..."
+                      docker image prune -af || true

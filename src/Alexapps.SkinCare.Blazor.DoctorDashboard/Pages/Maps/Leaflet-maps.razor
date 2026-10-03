@@ -1,0 +1,126 @@
+@page "/leaflet-maps"
+
+    <!-- Page Header -->
+    <div class="block justify-between page-header md:flex">
+        <div>
+            <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.125rem] font-semibold">Leaflet Maps</h3>
+        </div>
+        <ol class="flex items-center whitespace-nowrap min-w-0">
+            <li class="text-[0.813rem] ps-[0.5rem]">
+                <a class="flex items-center text-primary hover:text-primary dark:text-primary truncate" href="javascript:void(0);">
+                Maps
+                <i class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
+                </a>
+            </li>
+            <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-primary dark:text-[#8c9097] dark:text-white/50 " aria-current="page">
+                Leaflet Maps
+            </li>
+        </ol>
+    </div>
+    <!-- Page Header Close -->
+
+    <!-- Start::row-1 -->
+    <div class="grid grid-cols-12 gap-x-6">
+        <div class="xl:col-span-6 col-span-12">
+            <div class="box custom-box">
+                <div class="box-header">
+                    <div class="box-title">Leaflet Map</div>
+                </div>
+                <div class="box-body">
+                    <RealTimeMap height="300px" Parameters="@parameters"></RealTimeMap>
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-6 col-span-12">
+            <div class="box custom-box">
+                <div class="box-header">
+                    <div class="box-title">Map With Custom Icon</div>
+                </div>
+                <div class="box-body">
+                    <LeafletForBlazor.Map @ref="Iconmap" Height="300px" Parameters="@parameterimages" MapOverlays="@overlays"></LeafletForBlazor.Map>
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-6 col-span-12">
+            <div class="box custom-box">
+                <div class="box-header">
+                    <div class="box-title">Interactive Choropleth Map</div>
+                </div>
+                <div class="box-body">
+                    <RealTimeMap @ref="realTimeMap" height="300px" Parameters="@parameters1" OnClickMap="onClickMap"></RealTimeMap>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End::row-1 -->
+
+@code {   
+    
+    // Map With Image        
+    LeafletForBlazor.Map? Iconmap;  
+    LeafletForBlazor.Map.Overlays overlays = new LeafletForBlazor.Map.Overlays()
+    {
+        images = new LeafletForBlazor.Map.ImageOverlay()
+        {
+            images_and_bounds = new List<LeafletForBlazor.Map.ImagesAndBoundsCoordinates>()
+            {
+                new LeafletForBlazor.Map.ImagesAndBoundsCoordinates()
+                {
+                    url = "../assets/images/brand-logos/desktop-logo.png", 
+                    map_bounds = new LeafletForBlazor.Map.MapBounds()
+                    {
+                        _southWest = new LeafletForBlazor.Map.Location()
+                        {
+                            longitude = 26.0970904,
+                            latitude = 44.4409802
+                        },
+                        _northEast = new LeafletForBlazor.Map.Location()
+                        {   
+                            longitude = 26.0986576,
+                            latitude = 44.4444138
+                        }
+                    }
+                },
+            }
+        }
+    };
+    LeafletForBlazor.Map.LoadParameters parameterimages = new LeafletForBlazor.Map.LoadParameters()
+    {
+        location = new LeafletForBlazor.Map.Location()
+        {
+            longitude = 26.0986576,
+            latitude = 44.4444138
+        },
+        zoom_level = 16
+    }; 
+ 
+    // Map With Image
+
+    RealTimeMap? realTimeMap;    
+    public void onClickMap(RealTimeMap.ClicksMapArgs value)
+    {
+    }
+
+    RealTimeMap.LoadParameters parameters1 = new RealTimeMap.LoadParameters()
+        {
+            location = new RealTimeMap.Location()
+            {
+                longitude = 261.29882812500006,
+                latitude = 35.96689214303232
+            },
+            zoom_level = 3
+        };
+
+          //map initialization parameters
+    RealTimeMap.LoadParameters parameters = new RealTimeMap.LoadParameters()
+    {
+        location = new RealTimeMap.Location()
+        {
+            longitude = 26.097133,
+            latitude = 44.446165
+        },
+        zoom_level = 10
+    };
+    
+    
+}

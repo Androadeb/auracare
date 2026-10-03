@@ -1,0 +1,146 @@
+﻿@page "/admin/blog/details/{Id:guid}"
+@namespace Alexapps.SkinCare.Blazor.Pages.Admin
+@using ynex.Models.Blog
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService Loc
+@inject Alexapps.SkinCare.Blazor.Services.IBlogService BlogService
+@inject ynex.Models.Auth.AuthState Auth
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "DOCTOR")]
+
+<div class="p-6">
+    @* --- Back Button & Actions --- *@
+    <div class="mb-6 flex justify-between items-center">
+        <button @onclick="GoBack" class="text-[#8c9097] hover:text-defaulttextcolor flex items-center gap-1 transition-colors">
+            <i class="ri-arrow-left-line"></i> @Loc["Back to Blog"]
+        </button>
+
+        <div class="flex gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold uppercase" style="@GetStatusStyle(post?.Status)">
+                @GetStatusLabel(post?.Status)
+            </span>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex justify-center items-center min-h-[400px]">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F1A68E]"></div>
+        </div>
+    }
+    else if (post == null)
+    {
+        <div class="alert alert-danger">@Loc["Article not found!"]</div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            @* --- Main Content Area --- *@
+            <div class="lg:col-span-8">
+                <div class="box custom-box bg-white dark:bg-[#1f2937] rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                    @* Image Cover *@
+                    <img src="@post.FullCoverImage" class="w-full h-[400px] object-cover" alt="cover">
+
+                    <div class="p-6">
+                        @* Article Meta *@
+                        <div class="flex items-center gap-4 mb-4 text-[#8c9097] text-sm">
+                            <span class="flex items-center gap-1"><i class="ri-calendar-line"></i> @post.PublishDate.ToString("dd MMM, yyyy")</span>
+                            <span class="flex items-center gap-1"><i class="ri-eye-line"></i> @post.ViewsCount @Loc["Views"]</span>
+                        </div>
+
+                        <h1 class="text-3xl font-bold text-defaulttextcolor dark:text-white mb-4">@post.Title</h1>
+
+
+                        <div class="article-body text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                            <div class="ql-snow">
+                                <div class="ql-editor !p-0 !min-h-0">
+                                    @((MarkupString)(post.Content ?? ""))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* --- Sidebar (Author & Info) --- *@
+            <div class="lg:col-span-4 space-y-6">
+                @* Author Card *@
+                <div class="box custom-box bg-white dark:bg-[#1f2937] rounded-xl p-5 shadow-sm border border-gray-100">
+                    <h4 class="font-bold mb-4 border-b pb-2 text-defaulttextcolor dark:text-white">@Loc["Author"]</h4>
+                    <div class="flex items-center gap-3">
+                        <img src="@post.FullAuthorAvatar" class="w-16 h-16 rounded-full border-2 border-[#F1A68E]/20" />
+                        <div>
+                            <h5 class="font-bold text-defaulttextcolor dark:text-white">@post.AuthorName</h5>
+                        
+                            <span class="text-xs font-medium text-[#F1A68E] flex items-center gap-1">
+                                <i class="ri-medal-line"></i> @(string.IsNullOrEmpty(post.SpecialtyName) ? Loc["Medical Specialist"] : post.SpecialtyName)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    private BlogModel? post;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPost();
+    }
+
+    private async Task LoadPost()
+    {
+        isLoading = true;
+        try
+        {
+       
+            post = await BlogService.GetByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading blog post {Id}: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/admin/blog");
+
+    private string GetStatusStyle(object? status)
+    {
+        string s = status?.ToString() ?? "";
+        return s switch
+        {
+            "0" => "background-color: #fef3c7; color: #d97706;",
+            "1" => "background-color: #dcfce7; color: #15803d;",
+            "2" => "background-color: #fee2e2; color: #ef4444;",
+            _ => "background-color: #f3f4f6; color: #6b7280;"
+        };
+    }
+
+    private string GetStatusLabel(object? status)
+    {
+        string s = status?.ToString() ?? "";
+        return s switch
+        {
+            "0" => Loc["Pending Review"],
+            "1" => Loc["Published"],
+            "2" => Loc["Rejected"],
+            _ => Loc["Draft"]
+        };
+    }
+}
+
+<style>
+    .article-body {
+        font-size: 1.1rem;
+        white-space: pre-line; /* يحافظ على المسافات والأسطر إذا كان النص عادياً */
+    }
+</style>

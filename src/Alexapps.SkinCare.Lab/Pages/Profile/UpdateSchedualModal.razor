@@ -1,0 +1,88 @@
+<!-- update hours modal start-->
+
+<div id="appointment-modal" class="hs-overlay w-full h-full hidden fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto">
+    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-white rounded-3xl pointer-events-auto p-8 shadow-2xl">
+
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-[#002B49]">Update Schedule</h2>
+                    <p class="text-sm text-gray-400">Editing availability for <span class="text-[#f1a68e] font-bold">@DayData?.DayName</span></p>
+                </div>
+                <button type="button" @onclick="CloseAppointmentModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            @if (DayData != null)
+            {
+                <EditForm Model="_updateScheduleCommand" OnValidSubmit="HandleUpdateAvailability">
+                    <DataAnnotationsValidator/>
+
+                    <div class="space-y-5">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                            <span class="font-bold text-[#002B49]">Lab Status</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <InputCheckbox @bind-Value="_updateScheduleCommand.IsOpen" class="sr-only peer"/>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#f1a68e]"></div>
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Opening Time</label>
+                                <div class="relative">
+                                    <i class="bi bi-clock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                                    <select @bind="OpeningTimeProxy"
+                                            class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#f1a68e] outline-none appearance-none">
+                                        @foreach (var time in _timeOptions)
+                                        {
+                                            <option value="@time">@time</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Closing Time</label>
+                                <div class="relative">
+                                    <i class="bi bi-clock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                                    <select @bind="ClosingTimeProxy"
+                                            class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#f1a68e] outline-none appearance-none">
+                                        @foreach (var time in _timeOptions)
+                                        {
+                                            <option value="@time">@time</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-gray-500 uppercase">Patients Per Hour (Capacity)</label>
+                            <div class="relative">
+                                <i class="bi bi-people absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <InputNumber @bind-Value="_updateScheduleCommand.CapacityPerHour" min="1"
+                                             class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#f1a68e] outline-none"/>
+                                <ValidationMessage For="@(() => _updateScheduleCommand.CapacityPerHour)" class="text-[10px] text-red-400"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-10">
+                        <button type="button" @onclick="CloseAppointmentModal"
+                                class="px-8 py-3 border-2 border-gray-100 text-gray-400 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="px-8 py-3 bg-[#f1a68e] text-white rounded-xl font-bold text-sm shadow-lg shadow-orange-100 hover:bg-[#e0957d] transition-colors">
+                            Save Changes
+                        </button>
+                    </div>
+                </EditForm>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- update hours modal end-->

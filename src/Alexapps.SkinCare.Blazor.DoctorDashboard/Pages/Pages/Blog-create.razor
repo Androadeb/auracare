@@ -1,0 +1,426 @@
+@page "/blog-create"
+@using Soenneker.Blazor.TomSelect
+@using Soenneker.Blazor.TomSelect.Base 
+@using Soenneker.Blazor.TomSelect.Dtos
+@using FlatpickrBlazor
+@using FlatpickrBlazor.Components
+@using Blazored.TextEditor
+@using Soenneker.Blazor.Utils.InteropEventListener
+@using Soenneker.Blazor.FilePond
+@using Soenneker.Blazor.FilePond.Dtos
+@using Soenneker.Blazor.FilePond.Options
+@using Soenneker.Blazor.FilePond.Enums
+
+<!-- TomSelect Css -->
+<link rel="stylesheet" href="../assets/libs/tom-select/css/tom-select.bootstrap5.min.css">
+
+<!-- QuilEditor Css -->
+<link rel="stylesheet" href="../assets/libs/quill/quill.snow.css">
+
+<!-- Flatpickr Css -->
+<link href="_content/FlatpickrBlazor/flatpickr.min.css" rel="stylesheet" />
+
+<!-- Filepond Css -->
+<link rel="stylesheet" href="../assets/libs/filepond/filepond.min.css">
+<link rel="stylesheet" href="../assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css">
+<link rel="stylesheet" href="../assets/libs/filepond-plugin-image-edit/filepond-plugin-image-edit.min.css">
+
+    <!-- Page Header -->
+    <div class="block justify-between page-header md:flex">
+        <div>
+            <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.125rem] font-semibold"> Create Blog</h3>
+        </div>
+        <ol class="flex items-center whitespace-nowrap min-w-0">
+            <li class="text-[0.813rem] ps-[0.5rem]">
+                <a class="flex items-center text-primary hover:text-primary dark:text-primary truncate" href="javascript:void(0);">
+                Blog
+                <i class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
+                </a>
+            </li>
+            <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-primary dark:text-[#8c9097] dark:text-white/50 " aria-current="page">
+                Create Blog
+            </li>
+        </ol>
+    </div>
+    <!-- Page Header Close -->
+
+    <!-- Start::row-1 -->
+    <div class="grid grid-cols-12 gap-x-6">
+        <div class="xxl:col-span-9 xl:col-span-12 lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">New Blog</div>
+                </div>
+                <div class="box-body">
+                    <div class="grid grid-cols-12 gap-4">
+                        <div class="xl:col-span-12 col-span-12">
+                            <label for="blog-title" class="form-label">Blog Title</label>
+                            <input type="text" class="form-control block w-full text-[0.875rem] !rounded-md" id="blog-title" placeholder="Blog Title">
+                        </div>
+                        <div class="xl:col-span-12 col-span-12">
+                            <label for="blog-category" class="form-label">Blog Category</label>
+                            <TomSelect TItem="SelectItem" Items=_selectedItems  TType="string" Multiple="false" @bind-Value="_selectedValue" Data="_options" TextField="@(item => item.Name)" ValueField="@(item => item.Id)" Placeholder="Select Category" />
+                        </div>
+                        <div class="xl:col-span-6 col-span-12">
+                            <label for="blog-author" class="form-label">Blog Author</label>
+                            <input type="text" class="form-control block w-full text-[0.875rem] !rounded-md" id="blog-author" placeholder="Enter Name">
+                        </div>
+                        <div class="xl:col-span-6 col-span-12">
+                            <label for="blog-author-email" class="form-label">Email</label>
+                            <input type="text" class="form-control block w-full text-[0.875rem] !rounded-md" id="blog-author-email" placeholder="Enter Email">
+                        </div>
+                        <div class="xl:col-span-6 col-span-12">
+                            <label for="publish-date" class="form-label">Publish Date</label>
+                            <Flatpickr class="form-control block w-full text-[0.875rem] !rounded-md" @ref="_flatpickr" placeholder="Choose date"/>
+                        </div>
+                        <div class="xl:col-span-6 col-span-12">
+                            <label for="publish-time" class="form-label">Publish Time</label>
+                            <Flatpickr class="form-control block w-full text-[0.875rem] !rounded-md" @ref="_timepikcr" Options="@_timepikcrOptions" placeholder="Choose time"/>
+                        </div>
+                        <div class="xl:col-span-6 col-span-12">
+                            <label for="product-status-add" class="form-label">Published Status</label>
+                            <TomSelect TItem="productSelectItem" Items=_productselectedItems  TType="string" Multiple="false" @bind-Value="_productselectedValue" Data="_productoptions" TextField="@(item => item.productName)" ValueField="@(item => item.productId)" Placeholder="Select" />
+                        </div>
+                        <div class="xl:col-span-6 col-span-12">
+                            <label for="blog-tags" class="form-label">Blog Tags</label>
+                            <select class="form-control" name="blog-tags" id="blog-tags" multiple>
+                                <option value="Top Blog" selected>Top Blog</option>
+                                <option value="Blogger">Blogger</option>
+                                <option value="Adventure">Adventure</option>
+                                <option value="Landscape" selected>Landscape</option>
+                            </select>
+                        </div>
+                        <div class="xl:col-span-12 col-span-12">
+                            <label class="form-label">Blog Content</label>
+                            <div id="blog-content">
+                                <BlazoredTextEditor  @ref="@QuillHtml">
+                                    <ToolbarContent>
+                                        <span class="ql-formats">
+                                            <select class="ql-header">
+                                                <option value="1"></option>
+                                                <option value="2"></option>
+                                                <option value="3"></option>
+                                                <option value="4"></option>
+                                                <option value="5"></option>
+                                                <option value="6"></option>
+                                                <option selected=""></option>
+                                            </select> 
+                                        </span>
+                                        <span class="ql-formats">
+                                            <select class="ql-font">
+                                                <option selected=""></option>
+                                                <option value="serif"></option>
+                                                <option value="monospace"></option>
+                                            </select>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <button class="ql-bold"></button>
+                                            <button class="ql-italic"></button>
+                                            <button class="ql-underline"></button>
+                                            <button class="ql-strike"></button>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <button class="ql-blockquote" value="blockquote"></button>
+                                            <button class="ql-code-block" value="code-block"></button>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <button class="ql-header" value="1"></button>
+                                            <button class="ql-header" value="2"></button>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <button class="ql-list" value="ordered"></button>
+                                            <button class="ql-list" value="bullet"></button>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <select class="ql-color"></select>
+                                            <select class="ql-background"></select>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <select class="ql-align">
+                                                <option selected=""></option>
+                                                <option value="center"></option>
+                                                <option value="right"></option>
+                                                <option value="justify"></option>
+                                            </select>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <button class="ql-image"></button>
+                                            <button class="ql-video"></button>
+                                        </span>
+                                        <span class="ql-formats">
+                                            <button class="ql-clean"></button>
+                                        </span>
+                                    </ToolbarContent>
+                                    <EditorContent>
+                                    </EditorContent>
+                                </BlazoredTextEditor >
+                            </div>
+                        </div>
+                        <div class="xl:col-span-12 col-span-12 blog-images-container">
+                            <label for="blog-author-email" class="form-label">Blog Images</label>
+                            <FilePond @ref="FilePond" class="blog-images" Options="_filepondoptions"></FilePond>
+                        </div>
+                        <div class="xl:col-span-12 col-span-12">
+                            <label class="form-label">Blog Type</label>
+                            <div class="flex items-center">
+                                <div class="form-check !ps-0 me-4">
+                                    <input class="form-check-input" type="radio" name="blog-type" id="blog-free1" checked>
+                                    <label class="form-check-label" for="blog-free1">
+                                        Free
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="blog-type" id="blog-paid1">
+                                    <label class="form-check-label" for="blog-paid1">
+                                        Paid
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div class="text-end">
+                        <button type="button" class="ti-btn !py-1 !px-2 btn-wave ti-btn-light !text-[0.75rem] !font-medium me-2">Save As Draft</button>
+                        <button type="button" class="ti-btn bg-primary btn-wave text-white !py-1 !px-2 !text-[0.75rem] !font-medium">Post Blog</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="xxl:col-span-3 xl:col-span-12 lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header">
+                    <div class="box-title">
+                        Recent Blogs
+                    </div>
+                </div>
+                <div class="box-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="flex gap-2 flex-wrap items-center">
+                                <span class="avatar avatar-xl me-1">
+                                    <img src="../assets/images/media/media-39.jpg" class="img-fluid !rounded-md" alt="...">
+                                </span>
+                                <div class="flex-grow">
+                                    <a href="javascript:void(0);" class="text-[0.875rem] font-semibold mb-0">Animals</a>
+                                    <p class="mb-1 popular-blog-content text-truncate">
+                                        There are many variations of passages of Lorem Ipsum available
+                                    </p>
+                                    <span class="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">24,Nov 2022 - 18:27</span>
+                                </div>
+                                <div>
+                                    <button aria-label="button" type="button" class="ti-btn ti-btn-light ti-btn-sm rtl:rotate-180"><i class="ri-arrow-right-s-line"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="flex gap-2 flex-wrap  items-center">
+                                <span class="avatar avatar-xl me-1">
+                                    <img src="../assets/images/media/media-56.jpg" class="img-fluid !rounded-md" alt="...">
+                                </span>
+                                <div class="flex-grow">
+                                    <a href="javascript:void(0);" class="text-[0.875rem] font-semibold mb-0">Travel</a>
+                                    <p class="mb-1 popular-blog-content text-truncate">
+                                        Latin words, combined with a handful of model sentence
+                                    </p>
+                                    <span class="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">28,Nov 2022 - 10:45</span>
+                                </div>
+                                <div>
+                                    <button aria-label="button" type="button" class="ti-btn ti-btn-light ti-btn-sm rtl:rotate-180"><i class="ri-arrow-right-s-line"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="flex gap-2 flex-wrap items-center">
+                                <span class="avatar avatar-xl me-1">
+                                    <img src="../assets/images/media/media-54.jpg" class="img-fluid !rounded-md" alt="...">
+                                </span>
+                                <div class="flex-grow">
+                                    <a href="javascript:void(0);" class="text-[0.875rem] font-semibold mb-0">Interior</a>
+                                    <p class="mb-1 popular-blog-content text-truncate">
+                                        Contrary to popular belief, Lorem Ipsum is not simply random
+                                    </p>
+                                    <span class="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">30,Nov 2022 - 08:32</span>
+                                </div>
+                                <div>
+                                    <button aria-label="button" type="button" class="ti-btn ti-btn-light ti-btn-sm rtl:rotate-180"><i class="ri-arrow-right-s-line"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="flex gap-2 flex-wrap items-center">
+                                <span class="avatar avatar-xl me-1">
+                                    <img src="../assets/images/media/media-52.jpg" class="img-fluid !rounded-md" alt="...">
+                                </span>
+                                <div class="flex-grow">
+                                    <a href="javascript:void(0);" class="text-[0.875rem] font-semibold mb-0">Nature</a>
+                                    <p class="mb-1 popular-blog-content text-truncate">
+                                        It was popularised in the 1960s with the release of Letraset sheets containing
+                                    </p>
+                                    <span class="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">3,Dec 2022 - 12:56</span>
+                                </div>
+                                <div>
+                                    <button aria-label="button" type="button" class="ti-btn ti-btn-light ti-btn-sm rtl:rotate-180"><i class="ri-arrow-right-s-line"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="flex gap-2 flex-wrap items-center">
+                                <span class="avatar avatar-xl me-1">
+                                    <img src="../assets/images/media/media-74.jpg" class="img-fluid !rounded-md" alt="...">
+                                </span>
+                                <div class="flex-grow">
+                                    <a href="javascript:void(0);" class="text-[0.875rem] font-semibold mb-0">Health</a>
+                                    <p class="mb-1 popular-blog-content text-truncate">
+                                        It was popularised in the 1960s with the release of Letraset sheets containing
+                                    </p>
+                                    <span class="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">16,Dec 2022 - 04:56</span>
+                                </div>
+                                <div>
+                                    <button aria-label="button" type="button" class="ti-btn ti-btn-light ti-btn-sm rtl:rotate-180"><i class="ri-arrow-right-s-line"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="flex gap-2 flex-wrap        items-center">
+                                <span class="avatar avatar-xl me-1">
+                                    <img src="../assets/images/media/media-49.jpg" class="img-fluid !rounded-md" alt="...">
+                                </span>
+                                <div class="flex-grow">
+                                    <a href="javascript:void(0);" class="text-[0.875rem] font-semibold mb-0">Food</a>
+                                    <p class="mb-1 popular-blog-content text-truncate">
+                                        It was popularised in the 1960s with the release of Letraset sheets containing
+                                    </p>
+                                    <span class="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">31,Dec 2022 - 18:06</span>
+                                </div>
+                                <div>
+                                    <button aria-label="button" type="button" class="ti-btn ti-btn-light ti-btn-sm rtl:rotate-180"><i class="ri-arrow-right-s-line"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                                <div class="flex gap-2 flex-wrap items-center">
+                                <span class="avatar avatar-xl me-1">
+                                    <img src="../assets/images/media/media-76.jpg" class="img-fluid !rounded-md" alt="...">
+                                </span>
+                                <div class="flex-grow">
+                                    <a href="javascript:void(0);" class="text-[0.875rem] font-semibold mb-0">Travel</a>
+                                    <p class="mb-1 popular-blog-content text-truncate">
+                                        It was popularised in the 1960s with the release of Letraset sheets containing
+                                    </p>
+                                    <span class="text-[#8c9097] dark:text-white/50 text-[0.6875rem]">15,Dec 2022 - 14:31</span>
+                                </div>
+                                <div>
+                                    <button aria-label="button" type="button" class="ti-btn ti-btn-light ti-btn-sm rtl:rotate-180"><i class="ri-arrow-right-s-line"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item text-center">
+                            <button type="button" class="ti-btn ti-btn-primary btn-wave !font-medium">Load more</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End::row-1 -->
+
+    @code {
+    
+        <!-- Tomselect JS Start -->
+        private string? _selectedValue;
+        private List<SelectItem>? _options;
+        private List<SelectItem> _selectedItems = [];
+
+        public class SelectItem
+        {
+            public string? Id { get; set; }
+            public string? Name { get; set; }
+            public bool Selected { get; set; }
+        }
+        private string? _productselectedValue;
+        private List<productSelectItem>? _productoptions;
+        private List<productSelectItem> _productselectedItems = [];
+
+        public class productSelectItem
+        {
+            public string? productId { get; set; }
+            public string? productName { get; set; }
+        }
+        protected override void OnInitialized()
+        {
+            _options = new List<SelectItem>
+            {
+                new SelectItem { Id = "1", Name = "Nature"},
+                new SelectItem { Id = "2", Name = "Sports"},
+                new SelectItem { Id = "3", Name = "Food"},
+                new SelectItem { Id = "4", Name = "Travel"},
+                new SelectItem { Id = "5", Name = "Fashion"},
+                new SelectItem { Id = "6", Name = "Beauty"}
+            };
+            _productoptions = new List<productSelectItem>
+            {
+                new productSelectItem { productId = "1", productName = "Published"},
+                new productSelectItem { productId = "2", productName = "Hold"},
+            };
+        }
+        
+        <!-- Tomselect JS End -->
+
+        <!-- Flatpickr JS Start -->
+    public Flatpickr? _flatpickr;
+        public Flatpickr? _timepikcr;
+        private FlatpickrBlazor.FlatpickrOptions _timepikcrOptions = new FlatpickrBlazor.FlatpickrOptions
+        {
+            EnableTime = true, 
+            DateFormat = "H:i",
+            NoCalendar = true,
+        };    
+        
+        <!-- Flatpickr JS Start -->
+
+        <!-- QuilEditor JS Start -->
+        BlazoredTextEditor? QuillHtml;
+
+        <!-- QuilEditor JS Start -->
+
+        <!-- Filepond JS Start -->
+        private FilePond? FilePond { get; set; }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await FilePond!.EnablePlugins(
+                    FilePondPluginType.FileValidateType, 
+                    FilePondPluginType.ImagePreview
+                    );
+            }
+        }
+
+        private readonly FilePondOptions _filepondoptions = new()
+        {
+            MaxFiles = 20,
+            AllowMultiple = true
+        };
+        
+        <!-- Filepond JS End -->
+    }
+
+    <!-- TomSelect JS -->
+    <script src="../assets/libs/tom-select/js/tom-select.complete.min.js"></script>
+
+    <script>
+        new TomSelect('#blog-tags',{
+            plugins: ['remove_button'],
+        });
+    </script>
+
+    <!-- Flatpickr JS -->
+    <script src="_content/FlatpickrBlazor/flatpickr.min.js"></script>
+    <script src="_content/FlatpickrBlazor/flatpickr.blazor.js"></script>
+
+    <!-- Quill Editor JS -->
+    <script src="../assets/libs/quill/quill.min.js"></script>
+    <script src="_content/Blazored.TextEditor/quill-blot-formatter.min.js"></script>
+    <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>

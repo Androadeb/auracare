@@ -1,0 +1,421 @@
+@page "/add-products"
+@using Soenneker.Blazor.TomSelect
+@using Soenneker.Blazor.TomSelect.Base 
+@using Soenneker.Blazor.TomSelect.Dtos
+@using FlatpickrBlazor
+@using FlatpickrBlazor.Components
+@using Blazored.TextEditor
+@using Soenneker.Blazor.Utils.InteropEventListener
+@using Soenneker.Blazor.FilePond
+@using Soenneker.Blazor.FilePond.Dtos
+@using Soenneker.Blazor.FilePond.Options
+@using Soenneker.Blazor.FilePond.Enums
+
+
+<!-- TomSelect Css -->
+<link rel="stylesheet" href="../assets/libs/tom-select/css/tom-select.bootstrap5.min.css">
+
+<!-- QuilEditor Css -->
+<link rel="stylesheet" href="../assets/libs/quill/quill.snow.css">
+
+<!-- Flatpickr Css -->
+<link href="_content/FlatpickrBlazor/flatpickr.min.css" rel="stylesheet" />
+
+<!-- Filepond Css -->
+<link rel="stylesheet" href="../assets/libs/filepond/filepond.min.css">
+<link rel="stylesheet" href="../assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css">
+<link rel="stylesheet" href="../assets/libs/filepond-plugin-image-edit/filepond-plugin-image-edit.min.css">
+
+
+    <!-- Page Header -->
+    <div class="block justify-between page-header md:flex">
+        <div>
+            <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.125rem] font-semibold"> Add-products</h3>
+        </div>
+        <ol class="flex items-center whitespace-nowrap min-w-0">
+            <li class="text-[0.813rem] ps-[0.5rem]">
+                <a class="flex items-center text-primary hover:text-primary dark:text-primary truncate" href="javascript:void(0);">
+                Ecommerce
+                <i class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
+                </a>
+            </li>
+            <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-primary dark:text-[#8c9097] dark:text-white/50 " aria-current="page">
+                Add-products
+            </li>
+        </ol>
+    </div>
+    <!-- Page Header Close -->
+
+    <!-- Start::row-1 -->
+    <div class="grid grid-cols-12 gap-6">
+        <div class="xl:col-span-12  col-span-12">
+            <div class="box">
+                <div class="box-body add-products !p-0">
+                    <div class="p-6">
+                        <div class="grid grid-cols-12 md:gap-x-[3rem] gap-0">
+                            <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                                <div class="grid grid-cols-12 gap-4">
+                                    <div class="xl:col-span-12 col-span-12">
+                                        <label for="product-name-add" class="form-label">Product Name</label>
+                                        <input type="text" class="form-control w-full !rounded-md" id="product-name-add" placeholder="Name">
+                                        <label for="product-name-add" class="form-label mt-1 text-[0.75rem] opacity-[0.5] !text-[#8c9097] dark:text-white/50 !mb-0">*Product Name should not exceed 30 characters</label>
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-category-add" class="form-label">Category</label>
+                                        <TomSelect TItem="SelectItem" Items=_selectedItems  TType="string" Multiple="false" @bind-Value="_selectedValue" Data="_options" TextField="@(item => item.Name)" ValueField="@(item => item.Id)" Placeholder="Category" />
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-gender-add" class="form-label">Gender</label>
+                                        <TomSelect TItem="GenderItem" Items=_GenderItems  TType="string" Multiple="false" @bind-Value="_GenderValue" Data="_Genderoptions" TextField="@(item => item.GenderName)" ValueField="@(item => item.GenderId)" Placeholder="Select" />
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-size-add" class="form-label">Size</label>
+                                        <TomSelect TItem="SizeItem" Items=_SizeItems  TType="string" Multiple="false" @bind-Value="_SizeValue" Data="_Sizeoptions" TextField="@(item => item.SizeName)" ValueField="@(item => item.SizeId)" Placeholder="Select" />
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-brand-add" class="form-label">Brand</label>
+                                        <TomSelect TItem="BrandItem" Items=_BrandItems  TType="string" Multiple="false" @bind-Value="_BrandValue" Data="_Brandoptions" TextField="@(item => item.BrandName)" ValueField="@(item => item.BrandId)" Placeholder="Select" />
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12 color-selection">
+                                        <label for="product-color-add" class="form-label">Colors</label>
+                                        <select class="form-control" name="product-color-add" id="product-color-add"
+                                                multiple>
+                                            <option value="White">White</option>
+                                            <option value="Black">Black</option>
+                                            <option value="Red">Red</option>
+                                            <option value="Orange">Orange</option>
+                                            <option value="Yellow">Yellow</option>
+                                            <option value="Green">Green</option>
+                                            <option value="Blue">Blue</option>
+                                            <option value="Pink">Pink</option>
+                                            <option value="Purple">Purple</option>
+                                        </select>
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-cost-add" class="form-label">Enter Cost</label>
+                                        <input type="text" class="form-control w-full !rounded-md" id="product-cost-add" placeholder="Cost">
+                                        <label for="product-cost-add" class="form-label mt-1 text-[0.75rem] opacity-[0.5] !text-[#8c9097] dark:text-white/50 mb-0">*Mention final price of the product</label>
+                                    </div>
+                                    <div class="xl:col-span-12 col-span-12">
+                                        <label for="product-description-add" class="form-label">Product Description</label>
+                                        <textarea class="form-control w-full !rounded-md" id="product-description-add" rows="2"></textarea>
+                                        <label for="product-description-add" class="form-label mt-1 text-[0.75rem] opacity-[0.5] !text-[#8c9097] dark:text-white/50 mb-0">*Description should not exceed 500 letters</label>
+                                    </div>
+                                    <div class="xl:col-span-12 col-span-12 mb-4">
+                                        <label class="form-label">Product Features</label>
+                                        <div id="product-features">
+                                            <BlazoredTextEditor  @ref="@QuillHtml">
+                                                <ToolbarContent>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-header">
+                                                            <option value="1"></option>
+                                                            <option value="2"></option>
+                                                            <option value="3"></option>
+                                                            <option value="4"></option>
+                                                            <option value="5"></option>
+                                                            <option value="6"></option>
+                                                            <option selected=""></option>
+                                                        </select> 
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-font">
+                                                            <option selected=""></option>
+                                                            <option value="serif"></option>
+                                                            <option value="monospace"></option>
+                                                        </select>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <button class="ql-bold"></button>
+                                                        <button class="ql-italic"></button>
+                                                        <button class="ql-underline"></button>
+                                                        <button class="ql-strike"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <button class="ql-blockquote" value="blockquote"></button>
+                                                        <button class="ql-code-block" value="code-block"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <button class="ql-header" value="1"></button>
+                                                        <button class="ql-header" value="2"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <button class="ql-list" value="ordered"></button>
+                                                        <button class="ql-list" value="bullet"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-color"></select>
+                                                        <select class="ql-background"></select>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-align">
+                                                            <option selected=""></option>
+                                                            <option value="center"></option>
+                                                            <option value="right"></option>
+                                                            <option value="justify"></option>
+                                                        </select>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <button class="ql-image"></button>
+                                                        <button class="ql-video"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <button class="ql-clean"></button>
+                                                    </span>
+                                                </ToolbarContent>
+                                                <EditorContent>
+                                                </EditorContent>
+                                            </BlazoredTextEditor >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-6 col-span-12">
+                                <div class="grid grid-cols-12 gap-4">
+                                    <div class="xl:col-span-4 col-span-12">
+                                        <label for="product-actual-price" class="form-label">Actual Price</label>
+                                        <input type="text" class="form-control w-full !rounded-md" id="product-actual-price" placeholder="Actual Price">
+                                    </div>
+                                    <div class="xl:col-span-4 col-span-12">
+                                        <label for="product-dealer-price" class="form-label">Dealer Price</label>
+                                        <input type="text" class="form-control w-full !rounded-md" id="product-dealer-price" placeholder="Dealer Price">
+                                    </div>
+                                    <div class="xl:col-span-4 col-span-12">
+                                        <label for="product-discount" class="form-label">Discount</label>
+                                        <input type="text" class="form-control w-full !rounded-md" id="product-discount" placeholder="Discount in %">
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-type" class="form-label">Product Type</label>
+                                        <input type="text" class="form-control w-full !rounded-md" id="product-type" placeholder="Type">
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-discount" class="form-label">Item Weight</label>
+                                        <input type="text" class="form-control w-full !rounded-md" id="product-discount1" placeholder="Weight in gms">
+                                    </div>
+                                    <div class="xl:col-span-12 col-span-12 product-documents-container">
+                                        <p class="font-semibold mb-2 text-[0.875rem]">Product Images :</p>
+                                        <FilePond @ref="FilePond"  class="product-Images w-full" Options="_filepondoptions"></FilePond>
+                                    </div>
+                                    <label class="form-label opacity-[0.5] mt-4 xl:col-span-12 col-span-12">Minimum 0f 6 images are need to be uploaded,make sure the image size match the proper background size and all images should be uniformly maintained with width and height to the image container,image size should not exceed 2MB,once uploaded to change the image you need to wait minimum of 24hrs. </label>
+                                    <div class="xl:col-span-12 col-span-12 product-documents-container">
+                                        <p class="font-semibold mb-2 text-[0.875rem]">Warrenty Documents :</p>
+                                        <FilePond @ref="FilePond" class="product-documents w-full" Options="_filepondoptions"></FilePond>
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="publish-date" class="form-label">Publish Date</label>
+                                        <Flatpickr class="form-control w-full !rounded-md" @ref="_flatpickr" placeholder="Choose date"/>
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="publish-time" class="form-label">Publish Time</label>
+                                        <Flatpickr class="form-control w-full !rounded-md" @ref="_timepikcr" Options="@_timepikcrOptions" placeholder="Choose time"/>
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-status-add" class="form-label">Published Status</label>
+                                        <TomSelect TItem="StatusItem" Items=_StatusItems  TType="string" Multiple="false" @bind-Value="_StatusValue" Data="_Statusoptions" TextField="@(item => item.StatusName)" ValueField="@(item => item.StatusId)" Placeholder="Select" />
+                                    </div>
+                                    <div class="xl:col-span-6 col-span-12">
+                                        <label for="product-tags" class="form-label">Product Tags</label>
+                                        <select class="form-control" name="product-tags" id="product-tags" multiple>
+                                            <option value="Relaxed" selected>Relaxed</option>
+                                            <option value="Solid">Solid</option>
+                                            <option value="Washed">Washed</option>
+                                            <option value="Plain" selected>Plain</option>
+                                        </select>
+                                    </div>
+                                    <div class="xl:col-span-12 col-span-12">
+                                        <label for="product-status-add1" class="form-label">Availability</label>
+                                        <select class="form-control w-full !rounded-md" data-trigger name="product-status-add1" id="product-status-add1">
+                                            <option value="">Select</option>
+                                            <option value="In Stock">In Stock</option>
+                                            <option value="Out Of Stock">Out Of Stock</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 border-t border-dashed dark:border-defaultborder/10 sm:flex justify-end">
+                        <button type="button" class="ti-btn ti-btn-primary btn-wave !font-medium m-1">Add Product<i class="bi bi-plus-lg ms-2"></i></button>
+                        <button type="button" class="ti-btn ti-btn-success btn-wave !font-medium m-1">Save Product<i class="bi bi-download ms-2"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End::row-1 -->
+
+
+    
+@code {
+    <!-- QuilEditor JS Start -->
+    BlazoredTextEditor?  QuillHtml;
+    <!-- QuilEditor JS Start -->
+
+    <!-- Filepond JS Start -->
+    private FilePond? FilePond { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await FilePond!.EnablePlugins(
+                FilePondPluginType.FileValidateType, 
+                FilePondPluginType.ImagePreview
+                );
+        }
+    }
+    private readonly FilePondOptions _filepondoptions = new()
+    {
+        MaxFiles = 20,
+        AllowMultiple = true
+    };
+    <!-- Filepond JS End -->
+
+    <!-- Tomselect JS Start -->
+    private string? _selectedValue;
+    private List<SelectItem>? _options;
+    private List<SelectItem> _selectedItems = [];
+    public class SelectItem
+    {
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public bool Selected { get; set; }
+    } 
+    private string? _GenderValue;
+    private List<GenderItem>? _Genderoptions;
+    private List<GenderItem> _GenderItems = [];
+    public class GenderItem
+    {
+        public string? GenderId { get; set; }
+        public string? GenderName { get; set; }
+    } 
+    private string? _SizeValue;
+    private List<SizeItem>? _Sizeoptions;
+    private List<SizeItem> _SizeItems = [];
+    public class SizeItem
+    {
+        public string? SizeId { get; set; }
+        public string? SizeName { get; set; }
+    } 
+    private string? _BrandValue;
+    private List<BrandItem>? _Brandoptions;
+    private List<BrandItem>? _BrandItems = [];
+    public class BrandItem
+    {
+        public string? BrandId { get; set; }
+        public string? BrandName { get; set; }
+    } 
+    private string? _StatusValue;
+    private List<StatusItem>? _Statusoptions;
+    private List<StatusItem> _StatusItems = [];
+    public class StatusItem
+    {
+        public string? StatusId { get; set; }
+        public string? StatusName { get; set; }
+    }     
+    private List<AvailabilityItem>? _Availabilityoptions;
+    private List<AvailabilityItem>? _AvailabilityItems = [];
+    public class AvailabilityItem
+    {
+        public string? AvailabilityId { get; set; }
+        public string? AvailabilityName { get; set; }
+    } 
+
+    protected override void OnInitialized()
+    {
+        _options = new List<SelectItem>
+        {
+            new SelectItem { Id = "", Name = "Category"},
+            new SelectItem { Id = "Clothing", Name = "Clothing"},
+            new SelectItem { Id = "Footwear", Name = "Footwear"},
+            new SelectItem { Id = "Accesories", Name = "Accesories"},
+            new SelectItem { Id = "Grooming", Name = "Grooming"},
+            new SelectItem { Id = "Ethnic & Festive", Name = "Ethnic & Festive"},
+            new SelectItem { Id = "Jewellery", Name = "Jewellery"},
+            new SelectItem { Id = "Toys & Babycare", Name = "Toys & Babycare"},
+            new SelectItem { Id = "Festive Gifts", Name = "Festive Gifts"},
+            new SelectItem { Id = "Kitchen", Name = "Kitchen"},
+            new SelectItem { Id = "Dining", Name = "Dining"},
+            new SelectItem { Id = "Home Decors", Name = "Home Decors"},
+            new SelectItem { Id = "Stationery", Name = "Stationery"},
+        };
+
+        _Genderoptions = new List<GenderItem>
+        {
+            new GenderItem { GenderId = "", GenderName = "Select"},
+            new GenderItem { GenderId = "All", GenderName = "All"},
+            new GenderItem { GenderId = "Male", GenderName = "Male"},
+            new GenderItem { GenderId = "Female", GenderName = "Female"},
+            new GenderItem { GenderId = "Others", GenderName = "Others"},
+        };
+
+        _Sizeoptions = new List<SizeItem>
+        {
+            new SizeItem { SizeId = "", SizeName = "Select"},
+            new SizeItem { SizeId = "Extra Small", SizeName = "Extra Small"},
+            new SizeItem { SizeId = "Small", SizeName = "Small"},
+            new SizeItem { SizeId = "Medium", SizeName = "Medium"},
+            new SizeItem { SizeId = "Large", SizeName = "Large"},
+            new SizeItem { SizeId = "Extra Large", SizeName = "Extra Large"},
+        };
+        
+        _Brandoptions = new List<BrandItem>
+        {
+            new BrandItem { BrandId = "", BrandName = "Select"},
+            new BrandItem { BrandId = "Armani", BrandName = "Armani"},
+            new BrandItem { BrandId = "Lacoste", BrandName = "Lacoste"},
+            new BrandItem { BrandId = "Puma", BrandName = "Puma"},
+            new BrandItem { BrandId = "Spykar", BrandName = "Spykar"},
+            new BrandItem { BrandId = "Mufti", BrandName = "Mufti"},
+            new BrandItem { BrandId = "Home Town", BrandName = "Home Town"},
+            new BrandItem { BrandId = "Arrabi", BrandName = "Arrabi"},
+        }; 
+                                                        
+        _Statusoptions = new List<StatusItem>
+        {
+            new StatusItem { StatusId = "", StatusName = "Select"},
+            new StatusItem { StatusId = "Published", StatusName = "Published"},
+            new StatusItem { StatusId = "Scheduled", StatusName = "Scheduled"},
+        };
+        
+        _Availabilityoptions = new List<AvailabilityItem>
+        {
+            new AvailabilityItem { AvailabilityId = "", AvailabilityName = "Select"},
+            new AvailabilityItem { AvailabilityId = "InStock", AvailabilityName = "InStock"},
+            new AvailabilityItem { AvailabilityId = "Out Of Stock", AvailabilityName = "Out Of Stock"},
+        };
+
+    }
+    <!-- Tomselect JS End -->
+
+    <!-- Flatpickr JS Start -->
+   public Flatpickr? _flatpickr;
+    public Flatpickr? _timepikcr;
+     private FlatpickrBlazor.FlatpickrOptions _timepikcrOptions = new FlatpickrBlazor.FlatpickrOptions
+    {
+        EnableTime = true, 
+        DateFormat = "H:i",
+        NoCalendar = true,
+    };    
+    
+    <!-- Flatpickr JS Start -->
+
+}
+<!-- TomSelect JS -->
+<script src="../assets/libs/tom-select/js/tom-select.complete.min.js"></script>
+
+<script>
+    new TomSelect('#product-tags',{
+        plugins: ['remove_button'],
+    });
+    new TomSelect('#product-color-add',{
+        plugins: ['remove_button'],
+    });
+</script>
+
+<!-- Flatpickr JS -->
+<script src="_content/FlatpickrBlazor/flatpickr.min.js"></script>
+<script src="_content/FlatpickrBlazor/flatpickr.blazor.js"></script>
+
+<!-- Quill Editor JS -->
+<script src="../assets/libs/quill/quill.min.js"></script>
+<script src="_content/Blazored.TextEditor/quill-blot-formatter.min.js"></script>
+<script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>

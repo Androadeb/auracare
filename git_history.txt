@@ -1,0 +1,145 @@
+﻿commit 925d00d223c802eee92402b2d8ecbfe59d52fe06
+Author: Ahmed <a.maghraby96@yahoo.com>
+Date:   Tue Mar 31 19:45:20 2026 +0200
+
+    feat: consolidate lab schedule relationships and update database schema configuration
+
+diff --git a/.github/workflows/staging.yml b/.github/workflows/staging.yml
+index 16b78e31..b6f88095 100644
+--- a/.github/workflows/staging.yml
++++ b/.github/workflows/staging.yml
+@@ -23,16 +23,16 @@ jobs:
+                   username: ${{ secrets.SSH_USER_STAGING }}
+                   key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+                   script: |
+-                      cd /home/alex/staging/api/
+-                      eval "$(ssh-agent -s)"
+-                      ssh-add ~/.ssh/id_ed25519
+-                      git fetch
+-                      git reset --hard HEAD
+-                      git checkout staging
+-                      git pull
+-                      cp ../docker-compose.yml docker-compose.yml
+-                      echo "Building db-migrator image..."
+-                      docker compose up --build db-migrator
++                        cd /home/alex/staging/api/
++                        eval "$(ssh-agent -s)"
++                        ssh-add ~/.ssh/id_ed25519
++                        git fetch
++                        git reset --hard HEAD
++                        git checkout staging
++                        git pull
++                        cp ../docker-compose.yml docker-compose.yml
++                        echo "Building db-migrator image..."
++                        docker compose up --build db-migrator
+                       docker compose up --build abpapp -d 
+ 
+                       echo "Cleaning unused Docker images..."
+
+commit a61eec2c687d57f7710e5a5af9bc868f79b44ac1
+Author: Mohamed Shaaban <16676467+moshaabn@users.noreply.github.com>
+Date:   Mon Feb 9 10:53:12 2026 +0200
+
+    Update SSH deployment variables in staging.yml
+
+diff --git a/.github/workflows/staging.yml b/.github/workflows/staging.yml
+index 24ff38ee..16b78e31 100644
+--- a/.github/workflows/staging.yml
++++ b/.github/workflows/staging.yml
+@@ -19,8 +19,8 @@ jobs:
+             - name: Deploy to Server
+               uses: appleboy/ssh-action@v1.0.3
+               with:
+-                  host: ${{ secrets.SERVER_IP_STAGING }}
+-                  username: ${{ secrets.SERVER_USER_STAGING }}
++                  host: ${{ secrets.SSH_HOST_STAGING }}
++                  username: ${{ secrets.SSH_USER_STAGING }}
+                   key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+                   script: |
+                       cd /home/alex/staging/api/
+
+commit f1bb84e8cba5e903bd15004b8f105a01c40ce39a
+Author: Mohamed Shaaban <16676467+moshaabn@users.noreply.github.com>
+Date:   Mon Feb 9 10:52:14 2026 +0200
+
+    Update deployment path in staging workflow
+
+diff --git a/.github/workflows/staging.yml b/.github/workflows/staging.yml
+index 721425cd..24ff38ee 100644
+--- a/.github/workflows/staging.yml
++++ b/.github/workflows/staging.yml
+@@ -23,7 +23,7 @@ jobs:
+                   username: ${{ secrets.SERVER_USER_STAGING }}
+                   key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+                   script: |
+-                      cd /home/alex/skincare/staging/api/
++                      cd /home/alex/staging/api/
+                       eval "$(ssh-agent -s)"
+                       ssh-add ~/.ssh/id_ed25519
+                       git fetch
+
+commit 3126758e20777377c16f36762811c9c5e47c1f55
+Author: Ahmed <a.maghraby96@yahoo.com>
+Date:   Tue Feb 3 06:06:34 2026 +0200
+
+    doctors + skin conditon
+
+diff --git a/.github/workflows/staging.yml b/.github/workflows/staging.yml
+index 4f1d09d7..721425cd 100644
+--- a/.github/workflows/staging.yml
++++ b/.github/workflows/staging.yml
+@@ -19,22 +19,21 @@ jobs:
+             - name: Deploy to Server
+               uses: appleboy/ssh-action@v1.0.3
+               with:
+-                  host: ${{ secrets.SSH_HOST_STAGING }}
+-                  username: ${{ secrets.SSH_USER_STAGING }}
++                  host: ${{ secrets.SERVER_IP_STAGING }}
++                  username: ${{ secrets.SERVER_USER_STAGING }}
+                   key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+                   script: |
+                       cd /home/alex/skincare/staging/api/
+                       eval "$(ssh-agent -s)"
+                       ssh-add ~/.ssh/id_ed25519
+-                      git fetch origin
++                      git fetch
++                      git reset --hard HEAD
+                       git checkout staging
+-                      git reset --hard origin/staging
++                      git pull
+                       cp ../docker-compose.yml docker-compose.yml
+                       echo "Building db-migrator image..."
+-                      docker compose build --no-cache db-migrator
+-                      docker compose up db-migrator
+-                      docker compose build --no-cache abpapp
+-                      docker compose up -d abpapp 
++                      docker compose up --build db-migrator
++                      docker compose up --build abpapp -d 
+ 
+                       echo "Cleaning unused Docker images..."
+                       docker image prune -af || true
+
+commit 0039ec873833c9387c2d2db2128992d8323b3b3a
+Author: Ahmed <a.maghraby96@yahoo.com>
+Date:   Sun Feb 1 14:12:48 2026 +0200
+
+    Revert docker-compose.yml and staging.yml to commit f76e079
+
+diff --git a/.github/workflows/staging.yml b/.github/workflows/staging.yml
+index bd87f3af..4f1d09d7 100644
+--- a/.github/workflows/staging.yml
++++ b/.github/workflows/staging.yml
+@@ -29,12 +29,10 @@ jobs:
+                       git fetch origin
+                       git checkout staging
+                       git reset --hard origin/staging
+-
++                      cp ../docker-compose.yml docker-compose.yml
+                       echo "Building db-migrator image..."
+                       docker compose build --no-cache db-migrator
+                       docker compose up db-migrator
+-
+-                      echo "Building app image..."
+                       docker compose build --no-cache abpapp
+                       docker compose up -d abpapp 
+ 

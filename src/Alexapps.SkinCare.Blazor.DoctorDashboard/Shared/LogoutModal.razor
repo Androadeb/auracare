@@ -1,0 +1,67 @@
+﻿@using AlexApps.Classat.Blazor.Superadmin.Services
+@inject JsonLocalizationService L
+
+@if (IsVisible)
+{
+    @* Backdrop *@
+    <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/50 backdrop-blur-sm transition-opacity">
+
+        @* Modal Container *@
+        <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+            @* Close Button *@
+            <button type="button" @onclick="Close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="text-center">
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-20">
+                        <img src="/assets/images/authentication/logout-icon.png" alt="Logout" class="w-full h-full object-contain" />
+                    </div>
+                </div>
+
+             
+                <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-6">
+                    @L["Are you sure you want to log out?"]
+                </h4>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
+
+                 
+                    <button type="button" @onclick="ConfirmLogout"
+                            class="px-8 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-200 active:scale-95 w-48">
+                        @L["Yes, Logout"]
+                    </button>
+
+                    
+                    <button type="button" @onclick="Close"
+                            class="px-8 py-3 rounded-xl font-bold border-2 border-red-500 text-red-500 hover:bg-red-50 transition-colors w-48">
+                        @L["Cancel"]
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] private ynex.Services.Auth.IAuthService AuthService { get; set; }
+
+    private async Task ConfirmLogout()
+    {
+        await AuthService.LogoutAsync();
+        Navigation.NavigateTo("/auth/sign-in", forceLoad: true);
+    }
+
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+}

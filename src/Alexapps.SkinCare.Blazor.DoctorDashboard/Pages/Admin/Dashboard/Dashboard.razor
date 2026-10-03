@@ -1,0 +1,133 @@
+@page "/admin/dashboard"
+@using AlexApps.Classat.Blazor.Superadmin.Services
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService Loc
+@attribute [Authorize(Roles = "DOCTOR")]
+
+<div class="p-6">
+    @* --- Header --- *@
+    <div class="mb-6">
+        <h3 class="text-defaulttextcolor text-[1.125rem] font-bold">@Loc["Dashboard"]</h3>
+        <p class="text-[#8c9097] text-[0.75rem]">@Loc["Monitor Message"]</p>
+    </div>
+
+    @* --- Top Stats Cards --- *@
+    <div class="grid grid-cols-12 gap-x-6">
+        @foreach (var stat in GetTopStats())
+        {
+            <div class="xxl:col-span-4 xl:col-span-4 lg:col-span-6 md:col-span-6 col-span-12 mb-6">
+                <div class="box bg-white dark:!bg-[#1f2937] border border-gray-100 dark:border-gray-700 shadow-sm rounded-xl transition-all hover:shadow-md h-full">
+                    <div class="box-body p-4">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center justify-center w-14 h-14 rounded-xl @stat.BgColorOpacity">
+                                <i class="@stat.IconClass @stat.TextColor text-2xl"
+                                   style="filter: drop-shadow(0 0 8px @stat.GlowColor);"></i>
+                            </div>
+                            <div class="flex-1 text-start">
+                                @* جلب عنوان الكارت (Today Sessions, Active Cases, etc.) من ملف اللغة *@
+                                <div class="text-[#8c9097] dark:text-white/50 text-[0.75rem] mb-1 font-bold">@Loc[stat.TitleKey]</div>
+                                <div class="text-[#334155] dark:text-white font-bold text-[1.4rem] leading-none mb-1">@stat.Value</div>
+                                <div class="text-[0.7rem] flex items-center gap-1">
+                                    <span class="bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded font-bold">@stat.Percentage%</span>
+                                    <i class="ri-arrow-up-s-line text-emerald-500 font-bold text-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @* --- Middle Charts Row --- *@
+    <div class="grid grid-cols-12 gap-x-6 mb-6">
+        @* Appointments Bar Chart *@
+        <div class="xxl:col-span-8 xl:col-span-8 col-span-12">
+            <div class="box custom-box h-full border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937]">
+                <div class="box-header flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-700">
+                    <div class="box-title font-semibold text-[0.9rem]">@Loc["Cases per Day"]</div>
+                    <span class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">2026</span>
+                </div>
+                <div class="box-body p-4">
+                    <ApexChart TItem="AppointmentData" Options="barChartOptions" Height="300">
+                        <ApexPointSeries TItem="AppointmentData" Items="AppointmentList" Name="@Loc["Cases per Day"]" SeriesType="SeriesType.Bar" XValue="@(e => e.Day)" YValue="@(e => e.Count)" Color="#22c55e" />
+                        <ApexPointSeries TItem="AppointmentData" Items="AppointmentList" Name="Trend" SeriesType="SeriesType.Area" XValue="@(e => e.Day)" YValue="@(e => e.TrendValue)" Color="#f97316" />
+                    </ApexChart>
+                </div>
+            </div>
+        </div>
+
+        @* Monthly Test Performance Chart *@
+        <div class="xxl:col-span-4 xl:col-span-4 col-span-12">
+            <div class="box custom-box h-full border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937]">
+                <div class="box-header flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-700">
+                    <div class="box-title font-semibold text-[0.9rem]">@Loc["Monthly Performance"]</div>
+                    <select class="text-xs border-0 bg-transparent focus:ring-0 cursor-pointer">
+                        <option>2025</option>
+                    </select>
+                </div>
+                <div class="box-body p-4">
+                    <ApexChart TItem="PerformanceData" Options="performanceOptions" Height="240">
+                        <ApexPointSeries TItem="PerformanceData" Items="PerformanceList" Name="@Loc["Completed Cases"]" SeriesType="SeriesType.Line" XValue="@(e => e.Month)" YValue="@(e => e.Tests)" Color="#26bf94" />
+                        <ApexPointSeries TItem="PerformanceData" Items="PerformanceList" Name="Total Apointments" SeriesType="SeriesType.Line" XValue="@(e => e.Month)" YValue="@(e => e.Orders)" Color="#f5b849" />
+                    </ApexChart>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* --- Bottom Row --- *@
+    <div class="grid grid-cols-12 gap-x-6">
+        @* Test Status Breakdown (Radial Chart) *@
+        <div class="xxl:col-span-4 xl:col-span-4 col-span-12">
+            <div class="box custom-box h-full border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937]">
+                <div class="box-header p-4 border-b border-gray-100 dark:border-gray-700">
+                    <div class="box-title font-semibold text-[0.9rem]">@Loc["Status Overview"]</div>
+                </div>
+                <div class="box-body flex flex-col items-center justify-center p-4">
+                    <div class="w-full min-h-[260px]">
+                        <ApexChart TItem="StatusData" Options="radialOptions" Height="260">
+                            <ApexPointSeries TItem="StatusData"
+                                             Items="StatusList"
+                                             Name="Tests"
+                                             SeriesType="SeriesType.RadialBar"
+                                             XValue="@(e => e.Label)"
+                                             YValue="@(e => (decimal)e.Percentage)" />
+                        </ApexChart>
+                    </div>
+
+                    <div class="w-full space-y-3 mt-4 px-2 border-t border-dashed border-gray-100 pt-4">
+                        @foreach (var item in StatusList)
+                        {
+                            <div class="flex justify-between items-center text-[0.75rem]">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full" style="background-color: @item.Color"></span>
+                                    <span class="text-gray-500 font-medium">@Loc[item.Label]</span>
+                                </span>
+                                <span class="font-bold text-slate-700 dark:text-white">@item.Value</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Orders and Payments Chart *@
+        <div class="xxl:col-span-8 xl:col-span-8 col-span-12">
+            <div class="box custom-box h-full border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937]">
+                <div class="box-header flex justify-between p-4 border-b border-gray-100 dark:border-gray-700">
+                    <div>
+                        <div class="box-title font-semibold text-[0.9rem]">@Loc["Earnings Title"]</div>
+                        <p class="text-[0.65rem] text-success font-semibold">@Loc["Growth Message"]</p>
+                    </div>
+                    <i class="ri-more-2-fill text-[#8c9097] cursor-pointer"></i>
+                </div>
+                <div class="box-body p-4 min-h-[350px]">
+                    <ApexChart TItem="PerformanceData" Options="paymentOptions" Height="300">
+                        <ApexPointSeries TItem="PerformanceData" Items="PerformanceList" Name="Total Appointment" SeriesType="SeriesType.Line" XValue="@(e => e.Month)" YValue="@(e => e.Tests)" Color="#26bf94" />
+                        <ApexPointSeries TItem="PerformanceData" Items="PerformanceList" Name="Total Earnings" SeriesType="SeriesType.Line" XValue="@(e => e.Month)" YValue="@(e => e.Orders)" Color="#f5b849" />
+                    </ApexChart>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,151 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace ynex.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+@inject StateService stateService
+@using System.Text.Json;
+@using System.Globalization
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var appState = stateService.GetAppState();
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+    var isRtl = currentCulture.StartsWith("ar");
+    var direction = isRtl ? "rtl" : "ltr";
+
+    // تحديد الاتجاه التلقائي بناءً على اللغة
+    var autoDirection = currentCulture.StartsWith("ar", StringComparison.OrdinalIgnoreCase) ? "rtl" : "ltr";
+
+    // الأولوية لاتجاه appState إذا كان موجوداً، وإلا autoDirection
+    var finalDirection = !string.IsNullOrEmpty(appState?.Direction) ? appState.Direction : autoDirection;
+
+    string dynamicStyles = "";
+    string primary = !string.IsNullOrEmpty(appState?.ThemePrimary) ? appState.ThemePrimary : "241 166 142";
+    string primaryRGB = !string.IsNullOrEmpty(appState?.ThemePrimary1) ? appState.ThemePrimary1 : "241, 166, 142";
+
+    dynamicStyles += $"--primary: {primary}; ";
+    dynamicStyles += $"--primary-rgb: {primaryRGB}; ";
+
+    if (!string.IsNullOrEmpty(appState?.ThemeBackground))
+    {
+        dynamicStyles += $"--body-bg: {appState.ThemeBackground}; ";
+        dynamicStyles += $"--dark-bg: {appState.ThemeBackground1}; ";
+        dynamicStyles += $"--light: {appState.ThemeBackground1}; ";
+        dynamicStyles += $"--form-control-bg: rgb({appState.ThemeBackground1}); ";
+        dynamicStyles += $"--input-border: rgba(255,255,255,0.1); ";
+    }
+}
+
+<!DOCTYPE html>
+<html lang="@currentCulture" dir="@direction"
+      data-toggled="close"
+      class="@(appState?.ColorTheme ?? "light")"
+      data-nav-layout="@(appState?.NavigationStyles ?? "vertical")"
+      data-header-styles="@(appState?.HeaderColor ?? "")"
+      data-menu-styles="@(appState?.MenuColor ?? "color")"
+      data-nav-style="@(appState?.MenuStyles ?? "")"
+      data-page-style="@(appState?.PageStyles ?? "")"
+      data-width="@(appState?.WidthStyles ?? "")"
+      data-menu-position="@(appState?.MenuPosition ?? "")"
+      data-header-position="@(appState?.HeaderPosition ?? "")"
+      data-bg-img="@(appState?.BackgroundImage ?? "")"
+      style="@dynamicStyles">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <base href="~/" />
+
+    <title> Softé - Doctor Dashboard </title>
+
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="icon" href="@($"{NavigationManager.BaseUri}assets/images/authentication/logo-icon.png")" type="image/x-icon">
+
+    @if (finalDirection == "rtl")
+    {
+        <link href="@($"{NavigationManager.BaseUri}assets/css/style-rtl.css")" rel="stylesheet">
+    }
+    else
+    {
+        <link href="@($"{NavigationManager.BaseUri}assets/css/style.css")" rel="stylesheet">
+    }
+
+    <link href="_content/BlazorColorPicker/colorpicker.css" rel="stylesheet" />
+    <link href="_content/BlazorColorPicker/BlazorColorPicker.bundle.scp.css" rel="stylesheet" />
+
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+
+<body>
+    @RenderBody()
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="_framework/blazor.server.js"></script>
+    <script src="js/javaScriptInterop.js"></script>
+    <script src="js/resizeInterop.js"></script>
+
+    <script>
+        // تهيئة Quill Editor
+        window.initializeQuill = function (selector, content) {
+            var container = document.querySelector(selector);
+            if (container && !container.classList.contains('ql-container')) {
+                var quill = new Quill(selector, {
+                    theme: 'snow',
+                    placeholder: 'Write something awesome...',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            ['link']
+                        ]
+                    }
+                });
+                if (content) {
+                    quill.clipboard.dangerouslyPasteHTML(content);
+                }
+            }
+        };
+
+        window.getQuillContent = function (selector) {
+            var editor = document.querySelector(selector + ' .ql-editor');
+            return editor ? editor.innerHTML : "";
+        };
+
+        // تحميل ملفات الـ JS بشكل متسلسل
+        document.addEventListener("DOMContentLoaded", function () {
+            var scriptUrls = [
+                "_content/FlatpickrBlazor/flatpickr.min.js",
+                "_content/FlatpickrBlazor/flatpickr.blazor.js",
+                "assets/js/custom.js"
+            ];
+
+            scriptUrls.forEach(function (url) {
+                var script = document.createElement("script");
+                script.src = url;
+                script.async = false;
+                document.body.appendChild(script);
+            });
+        });
+
+        // تهيئة عناصر UI
+        setInterval(() => {
+            try {
+                if (window.HSStaticMethods) {
+                    window.HSStaticMethods.autoInit();
+                }
+            } catch (error) {}
+        }, 1000);
+
+        function CaptureElementAndCallBlazorFunction(event, menuData) {
+            var element = event.currentTarget;
+            window.DotNet.invokeMethodAsync("ynex.SubNavMenu", "TriggerFunction", element, menuData, null);
+        }
+
+        // إعدادات الـ LocalStorage الأولية
+      
+    </script>
+    
+</body>
+</html>

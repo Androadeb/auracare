@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <NoWarn>CS8632</NoWarn> <!-- Suppress this specific warning -->
+
+    <RootNamespace>Alexapps.SkinCare</RootNamespace>
+        <WarningsAsErrors>CS8602</WarningsAsErrors> <!-- Optional: Suppress specific nullable warnings -->
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Alexapps.SkinCare.Domain.Shared\Alexapps.SkinCare.Domain.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Hangfire" Version="1.8.23" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.24" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.21.1" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.24" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.19" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.30">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.19" />
+    <PackageReference Include="Volo.Abp.Emailing" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.Identity.Domain" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.AuditLogging.Domain" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Domain" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Domain" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.OpenIddict" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
+
+

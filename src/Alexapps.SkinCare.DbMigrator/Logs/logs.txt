@@ -1,0 +1,257 @@
+2026-02-01 10:51:54.539 +02:00 [INF] Started database migrations...
+2026-02-01 10:51:54.541 +02:00 [INF] Migrating schema for host database...
+2026-02-01 10:51:55.744 +02:00 [INF] Executing host database seed...
+2026-02-01 10:51:56.678 +02:00 [INF] Successfully completed host database migrations.
+2026-02-01 10:51:57.246 +02:00 [INF] Successfully completed all database migrations.
+2026-02-01 10:51:57.246 +02:00 [INF] You can safely end this process...
+2026-02-08 04:29:00.571 +02:00 [INF] Started database migrations...
+2026-02-08 04:29:00.578 +02:00 [INF] Migrating schema for host database...
+2026-02-08 04:29:04.096 +02:00 [INF] Executing host database seed...
+2026-02-08 04:29:10.961 +02:00 [ERR] Failed executing DbCommand (18ms) [Parameters=[@p3='?' (DbType = Guid), @p0='?', @p4='?', @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime), @p5='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "AbpUsers" SET "ConcurrencyStamp" = @p0, "EntityVersion" = @p1, "LastModificationTime" = @p2
+WHERE "Id" = @p3 AND "ConcurrencyStamp" = @p4;
+DELETE FROM "Doctors"
+WHERE "Id" = @p5;
+2026-02-08 04:29:11.026 +02:00 [ERR] An exception occurred in the database while saving changes for context type 'Alexapps.SkinCare.EntityFrameworkCore.SkinCareDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23001: update or delete on table "Doctors" violates RESTRICT setting of foreign key constraint "FK_AppHomeServiceSessions_Doctors_DoctorId" on table "AppHomeServiceSessions"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23001
+    MessageText: update or delete on table "Doctors" violates RESTRICT setting of foreign key constraint "FK_AppHomeServiceSessions_Doctors_DoctorId" on table "AppHomeServiceSessions"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: AppHomeServiceSessions
+    ConstraintName: FK_AppHomeServiceSessions_Doctors_DoctorId
+    File: ri_triggers.c
+    Line: 2797
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23001: update or delete on table "Doctors" violates RESTRICT setting of foreign key constraint "FK_AppHomeServiceSessions_Doctors_DoctorId" on table "AppHomeServiceSessions"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23001
+    MessageText: update or delete on table "Doctors" violates RESTRICT setting of foreign key constraint "FK_AppHomeServiceSessions_Doctors_DoctorId" on table "AppHomeServiceSessions"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: AppHomeServiceSessions
+    ConstraintName: FK_AppHomeServiceSessions_Doctors_DoctorId
+    File: ri_triggers.c
+    Line: 2797
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Volo.Abp.EntityFrameworkCore.AbpDbContext`1.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Volo.Abp.Domain.Repositories.EntityFrameworkCore.EfCoreRepository`2.DeleteAsync(TEntity entity, Boolean autoSave, CancellationToken cancellationToken)
+   at Castle.DynamicProxy.AsyncInterceptorBase.ProceedAsynchronous(IInvocation invocation, IInvocationProceedInfo proceedInfo)
+   at Volo.Abp.Castle.DynamicProxy.CastleAbpMethodInvocationAdapter.ProceedAsync()
+   at Volo.Abp.Uow.UnitOfWorkInterceptor.InterceptAsync(IAbpMethodInvocation invocation)
+   at Volo.Abp.Castle.DynamicProxy.CastleAsyncAbpInterceptorAdapter`1.InterceptAsync(IInvocation invocation, IInvocationProceedInfo proceedInfo, Func`3 proceed)
+   at Volo.Abp.Domain.Repositories.RepositoryExtensions.HardDeleteWithUnitOfWorkAsync[TEntity](IBasicRepository`1 repository, TEntity entity, Boolean autoSave, CancellationToken cancellationToken, IUnitOfWork currentUow)
+   at Volo.Abp.Domain.Repositories.RepositoryExtensions.HardDeleteAsync[TEntity](IBasicRepository`1 repository, TEntity entity, Boolean autoSave, CancellationToken cancellationToken)
+   at Alexapps.SkinCare.Seeders.DoctorsAndHomeServicesDataSeeder.SeedDoctorsAsync() in C:\Users\amagh\github_projects\-skincare-be\src\Alexapps.SkinCare.Domain\Seeders\DoctorsAndHomeServicesDataSeeder.cs:line 82
+   at Alexapps.SkinCare.Seeders.DoctorsAndHomeServicesDataSeeder.SeedAsync(DataSeedContext context) in C:\Users\amagh\github_projects\-skincare-be\src\Alexapps.SkinCare.Domain\Seeders\DoctorsAndHomeServicesDataSeeder.cs:line 50
+   at Alexapps.SkinCare.Seeders.DatabaseSeeder.SeedAsync(DataSeedContext context) in C:\Users\amagh\github_projects\-skincare-be\src\Alexapps.SkinCare.Domain\Seeders\DatabaseSeeder.cs:line 20
+   at Alexapps.SkinCare.Data.SkinCareDbMigrationService.SeedDataAsync(Tenant tenant) in C:\Users\amagh\github_projects\-skincare-be\src\Alexapps.SkinCare.Domain\Data\SkinCareDbMigrationService.cs:line 117
+2026-02-08 04:29:11.041 +02:00 [INF] Successfully completed host database migrations.
+2026-02-08 04:29:11.981 +02:00 [INF] Successfully completed all database migrations.
+2026-02-08 04:29:11.982 +02:00 [INF] You can safely end this process...
+2026-03-31 11:27:42.018 +02:00 [INF] Started database migrations...
+2026-03-31 11:27:42.025 +02:00 [INF] Migrating schema for host database...
+2026-03-31 11:27:43.197 +02:00 [WRN] The foreign key property 'LabSchedule.LabId1' was created in shadow state because a conflicting property with the simple name 'LabId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-03-31 11:27:43.921 +02:00 [INF] Executing host database seed...
+2026-03-31 11:27:49.030 +02:00 [INF] Successfully completed host database migrations.
+2026-03-31 11:27:49.981 +02:00 [INF] Successfully completed all database migrations.
+2026-03-31 11:27:49.981 +02:00 [INF] You can safely end this process...
+2026-03-31 15:13:59.506 +02:00 [INF] Started database migrations...
+2026-03-31 15:13:59.512 +02:00 [INF] Migrating schema for host database...
+2026-03-31 15:14:00.491 +02:00 [WRN] The foreign key property 'LabSchedule.LabId1' was created in shadow state because a conflicting property with the simple name 'LabId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-03-31 15:14:00.960 +02:00 [INF] Executing host database seed...
+2026-03-31 15:14:04.586 +02:00 [INF] Successfully completed host database migrations.
+2026-03-31 15:14:05.129 +02:00 [INF] Successfully completed all database migrations.
+2026-03-31 15:14:05.129 +02:00 [INF] You can safely end this process...
+2026-04-06 15:42:29.230 +02:00 [INF] Started database migrations...
+2026-04-06 15:42:29.234 +02:00 [INF] Migrating schema for host database...
+2026-04-06 15:42:30.529 +02:00 [INF] Executing host database seed...
+2026-04-06 15:42:34.423 +02:00 [INF] Successfully completed host database migrations.
+2026-04-06 15:42:34.691 +02:00 [INF] Successfully completed all database migrations.
+2026-04-06 15:42:34.691 +02:00 [INF] You can safely end this process...
+2026-04-06 15:50:10.193 +02:00 [INF] Started database migrations...
+2026-04-06 15:50:10.198 +02:00 [INF] Migrating schema for host database...
+2026-04-06 15:50:11.626 +02:00 [INF] Executing host database seed...
+2026-04-06 15:50:13.134 +02:00 [ERR] Failed executing DbCommand (10ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Guid), @p3='?' (DbType = Guid), @p2='?' (DbType = DateTime), @p5='?' (DbType = Guid), @p4='?' (DbType = DateTime), @p7='?' (DbType = Guid), @p6='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "MedicalTestSampleType" ("MedicalTestsId", "SampleTypesId")
+VALUES (@p0, @p1);
+UPDATE "MedicalTests" SET "LastModificationTime" = @p2
+WHERE "Id" = @p3;
+UPDATE "SampleTypes" SET "LastModificationTime" = @p4
+WHERE "Id" = @p5;
+UPDATE "TestCategories" SET "LastModificationTime" = @p6
+WHERE "Id" = @p7;
+2026-04-06 15:50:13.164 +02:00 [ERR] An exception occurred in the database while saving changes for context type 'Alexapps.SkinCare.EntityFrameworkCore.SkinCareDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23505: duplicate key value violates unique constraint "PK_MedicalTestSampleType"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23505
+    MessageText: duplicate key value violates unique constraint "PK_MedicalTestSampleType"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: MedicalTestSampleType
+    ConstraintName: PK_MedicalTestSampleType
+    File: nbtinsert.c
+    Line: 673
+    Routine: _bt_check_unique
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23505: duplicate key value violates unique constraint "PK_MedicalTestSampleType"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23505
+    MessageText: duplicate key value violates unique constraint "PK_MedicalTestSampleType"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: MedicalTestSampleType
+    ConstraintName: PK_MedicalTestSampleType
+    File: nbtinsert.c
+    Line: 673
+    Routine: _bt_check_unique
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChangesAsync(IList`1 entries, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Volo.Abp.EntityFrameworkCore.AbpDbContext`1.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-04-06 15:50:13.170 +02:00 [INF] Successfully completed host database migrations.
+2026-04-06 15:50:13.453 +02:00 [INF] Successfully completed all database migrations.
+2026-04-06 15:50:13.453 +02:00 [INF] You can safely end this process...
+2026-04-07 00:08:28.180 +02:00 [INF] Started database migrations...
+2026-04-07 00:08:28.184 +02:00 [INF] Migrating schema for host database...
+2026-04-07 00:08:29.652 +02:00 [ERR] Failed executing DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE "LabSchedules" DROP CONSTRAINT "FK_LabSchedules_Labs_LabId1";
+2026-04-07 00:11:31.411 +02:00 [INF] Started database migrations...
+2026-04-07 00:11:31.415 +02:00 [INF] Migrating schema for host database...
+2026-04-07 00:11:32.969 +02:00 [ERR] Failed executing DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE "LabSchedules" DROP CONSTRAINT "FK_LabSchedules_Labs_LabId1";
+2026-04-07 00:31:20.953 +02:00 [INF] Started database migrations...
+2026-04-07 00:31:20.958 +02:00 [INF] Migrating schema for host database...
+2026-04-07 00:31:22.304 +02:00 [INF] Executing host database seed...
+2026-04-07 00:31:26.016 +02:00 [INF] Successfully completed host database migrations.
+2026-04-07 00:31:26.586 +02:00 [INF] Successfully completed all database migrations.
+2026-04-07 00:31:26.586 +02:00 [INF] You can safely end this process...
+2026-04-15 09:47:07.699 +02:00 [INF] Started database migrations...
+2026-04-15 09:47:07.704 +02:00 [INF] Migrating schema for host database...
+2026-04-15 09:47:09.152 +02:00 [INF] Executing host database seed...
+2026-04-15 09:47:13.798 +02:00 [INF] Successfully completed host database migrations.
+2026-04-15 09:47:14.507 +02:00 [INF] Successfully completed all database migrations.
+2026-04-15 09:47:14.507 +02:00 [INF] You can safely end this process...
+2026-10-01 19:14:46.399 +03:00 [INF] Started database migrations...
+2026-10-01 19:14:46.403 +03:00 [INF] Migrating schema for host database...
+2026-10-01 19:14:47.290 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'HomeService'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:14:47.291 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Medication'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:19:44.836 +03:00 [INF] Started database migrations...
+2026-10-01 19:19:44.839 +03:00 [INF] Migrating schema for host database...
+2026-10-01 19:19:45.720 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'HomeService'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:19:45.721 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Medication'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:26:54.620 +03:00 [INF] Started database migrations...
+2026-10-01 19:26:54.624 +03:00 [INF] Migrating schema for host database...
+2026-10-01 19:26:55.415 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'HomeService'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:26:55.415 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Medication'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:33:33.065 +03:00 [INF] Started database migrations...
+2026-10-01 19:33:33.068 +03:00 [INF] Migrating schema for host database...
+2026-10-01 19:33:33.873 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'HomeService'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:33:33.873 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Medication'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:35:55.532 +03:00 [INF] Started database migrations...
+2026-10-01 19:35:55.535 +03:00 [INF] Migrating schema for host database...
+2026-10-01 19:35:56.408 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'HomeService'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:35:56.408 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Medication'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:38:09.256 +03:00 [INF] Started database migrations...
+2026-10-01 19:38:09.260 +03:00 [INF] Migrating schema for host database...
+2026-10-01 19:38:10.107 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'HomeService'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:38:10.107 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Medication'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:42:09.033 +03:00 [INF] Started database migrations...
+2026-10-01 19:42:09.037 +03:00 [INF] Migrating schema for host database...
+2026-10-01 19:42:22.704 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'HomeService'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-10-01 19:42:22.704 +03:00 [WRN] No store type was specified for the decimal property 'Price' on entity type 'Medication'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.

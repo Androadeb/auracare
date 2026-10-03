@@ -1,0 +1,43 @@
+﻿@page "/admin/legal/terms"
+@* For Privacy Policy use: @page "/admin/legal/privacy" *@
+
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService L
+
+<div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+    @* Header Section *@
+    <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-50 dark:border-gray-800">
+        <div class="w-14 h-14 rounded-2xl bg-[#F1A68E]/10 flex items-center justify-center border border-[#F1A68E]/20">
+            <i class="ri-file-shield-2-line text-[#F1A68E] text-2xl"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-slate-800 dark:text-gray-200">@L["TermsConditions"]</h2>
+            <p class="text-gray-400 text-sm">@L["LastRevised"]: December 16, 2013</p>
+        </div>
+    </div>
+
+    @* Content Section *@
+    <div class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-gray-300 leading-relaxed space-y-6">
+        <p class="font-medium text-slate-800 dark:text-gray-100">
+            @L["LegalWelcomeText"]
+        </p>
+
+        <section>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-gray-100 mb-2">1. @L["YourAgreement"]</h3>
+            <p>@L["AgreementDetailsText"]</p>
+        </section>
+
+        <section class="p-4 bg-orange-50/30 dark:bg-orange-900/10 rounded-xl border border-orange-100/50">
+            <p class="text-sm font-bold text-orange-800 dark:text-orange-300 italic">
+                @L["PleaseNoteTitle"]: @L["PleaseNoteText"]
+            </p>
+        </section>
+
+        <section>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-gray-100 mb-2">2. @L["Privacy"]</h3>
+            <p>@L["PrivacyLinkText"]</p>
+        </section>
+
+        @* Add more sections as needed based on the image *@
+    </div>
+</div>

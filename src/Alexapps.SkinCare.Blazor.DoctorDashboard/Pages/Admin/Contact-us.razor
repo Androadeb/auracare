@@ -1,0 +1,101 @@
+﻿@page "/admin/contact-us"
+@using Microsoft.Extensions.Localization
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService L
+@inject IJSRuntime JSRuntime
+
+@* --- Main Container --- *@
+<div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+    @* Header Section *@
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-10">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#F1A68E]/10 flex items-center justify-center flex-shrink-0 border border-[#F1A68E]/20">
+                <i class="ri-customer-service-2-fill text-[#F1A68E] text-3xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 dark:text-gray-200">@L["ContactUs"]</h2>
+                <p class="text-gray-400 text-sm">@L["ContactUsDescription"]</p>
+            </div>
+        </div>
+    </div>
+
+    @* Social Media Items List *@
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @foreach (var item in ContactMethods)
+        {
+            <div class="group flex items-center gap-4 transition-all duration-300 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50">
+
+                @* Platform Icon *@
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md transition-transform group-hover:scale-110 flex-shrink-0"
+                     style="background: @item.Color">
+                    <i class="@item.Icon text-xl"></i>
+                </div>
+
+              
+                @* Value Container *@
+                <div class="flex-grow relative group/input">
+                    <input type="text"
+                           value="@item.Value"
+                           readonly
+                           dir="ltr"
+                           class="w-full @(IsRtl ? "pl-12 pr-5" : "pr-12 pl-5") py-3.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-2xl text-slate-600 dark:text-gray-300 font-medium outline-none transition-all duration-300 group-hover:border-[#F1A68E]/30 group-hover:bg-white dark:group-hover:bg-gray-900 shadow-sm" />
+
+                    @* Modern Copy Button *@
+                    <button class="absolute top-1/2 -translate-y-1/2 @(IsRtl ? "left-2" : "right-2") h-9 flex items-center justify-center rounded-xl transition-all duration-300 shadow-sm
+                   @(item.IsCopied ? "px-3 bg-green-500 border-green-500 text-white" : "w-9 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-400 hover:text-[#F1A68E]")"
+                            title="@L["CopyToClipboard"]"
+                            @onclick="() => CopyToClipboard(item)">
+
+                        @if (item.IsCopied)
+                        {
+                            <div class="flex items-center gap-1 animate-scale-in">
+                                <i class="ri-check-line text-lg"></i>
+                                <span class="text-xs font-bold">Copied</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <i class="ri-file-copy-2-line text-lg"></i>
+                        }
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool IsRtl => System.Threading.Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft;
+
+    private List<ContactMethod> ContactMethods = new()
+    {
+        new ContactMethod { Icon = "ri-phone-fill", Value = "+966 22 333 4444", Color = "#2c3e50" },
+        new ContactMethod { Icon = "ri-whatsapp-line", Value = "+966 22 333 4444", Color = "#25D366" },
+        new ContactMethod { Icon = "ri-mail-fill", Value = "support@alexapps.com", Color = "#EA4335" },
+        new ContactMethod { Icon = "ri-facebook-fill", Value = "facebook.com/alexapps", Color = "#1877F2" },
+        new ContactMethod { Icon = "ri-instagram-line", Value = "@alexapps_tech", Color = "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)" },
+        new ContactMethod { Icon = "ri-telegram-fill", Value = "t.me/alexapps", Color = "#0088cc" }
+    };
+
+    private async Task CopyToClipboard(ContactMethod item)
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", item.Value);
+
+        // تغيير الحالة إلى "تم النسخ"
+        item.IsCopied = true;
+        StateHasChanged();
+
+        // العودة للحالة الطبيعية بعد ثانية ونصف
+        await Task.Delay(1500);
+        item.IsCopied = false;
+        StateHasChanged();
+    }
+
+    public class ContactMethod
+    {
+        public string Icon { get; set; }
+        public string Value { get; set; }
+        public string Color { get; set; }
+        public bool IsCopied { get; set; }
+    }
+}

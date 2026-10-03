@@ -1,0 +1,61 @@
+﻿@page "/admin/legal/faq"
+@using Microsoft.Extensions.Localization
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService L
+
+<div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+    @* Page Header *@
+    <div class="mb-10">
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-gray-200">@L["FAQTitle"]</h2>
+        <div class="w-12 h-1 bg-[#F1A68E] rounded-full mt-2"></div> @* Decorative underline *@
+    </div>
+
+    @* FAQ Accordion List *@
+    <div class="flex flex-col gap-4">
+        @foreach (var faq in FaqList)
+        {
+            <div class="transition-all duration-300 border @(faq.IsOpen ? "border-[#F1A68E]/30 bg-[#F1A68E]/5" : "border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800/40") rounded-2xl overflow-hidden">
+
+                @* Question Toggle Button *@
+                <button class="w-full flex items-center justify-between p-5 text-start outline-none"
+                        @onclick="() => faq.IsOpen = !faq.IsOpen">
+                    <span class="font-bold text-[15px] @(faq.IsOpen ? "text-[#F1A68E]" : "text-slate-700 dark:text-gray-200")">
+                        @L[faq.QuestionKey]
+                    </span>
+                    <i class="@(faq.IsOpen ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line") text-xl transition-transform @(faq.IsOpen ? "text-[#F1A68E]" : "text-gray-400")"></i>
+                </button>
+
+                @* Answer Section *@
+                @if (faq.IsOpen)
+                {
+                    <div class="px-5 pb-6 text-slate-600 dark:text-gray-400 text-sm leading-relaxed animate-fade-in">
+                        <div class="pt-2 border-t border-gray-100 dark:border-gray-700 mt-1">
+                            @L[faq.AnswerKey]
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    // FAQ Data structure using localization keys
+    private List<FaqItem> FaqList = new()
+    {
+        new FaqItem { QuestionKey = "FAQ_Q1", AnswerKey = "FAQ_A1" },
+        new FaqItem { QuestionKey = "FAQ_Q2", AnswerKey = "FAQ_A2" },
+        new FaqItem { QuestionKey = "FAQ_Q3", AnswerKey = "FAQ_A3" },
+        new FaqItem { QuestionKey = "FAQ_Q4", AnswerKey = "FAQ_A4", IsOpen = true }, // Default open like screenshot
+        new FaqItem { QuestionKey = "FAQ_Q5", AnswerKey = "FAQ_A5" },
+        new FaqItem { QuestionKey = "FAQ_Q6", AnswerKey = "FAQ_A6" },
+        new FaqItem { QuestionKey = "FAQ_Q7", AnswerKey = "FAQ_A7" }
+    };
+
+    public class FaqItem
+    {
+        public string QuestionKey { get; set; }
+        public string AnswerKey { get; set; }
+        public bool IsOpen { get; set; }
+    }
+}

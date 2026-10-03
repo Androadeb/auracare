@@ -1,0 +1,74 @@
+﻿@page "/legal/privacy-policy"
+@layout MainLayout
+
+@attribute [Authorize(Roles = "LAB")]
+
+<div class="container-fluid py-8 px-4 sm:px-10 bg-gray-50 min-h-screen">
+    <div class="max-w-5xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#002B49] mb-2 lowercase">privacy policy</h1>
+            <p class="text-sm text-gray-500">Last Revised: December 16, 2023</p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-100 leading-relaxed">
+
+            <div class="space-y-8 text-gray-600">
+                <p class="text-sm">
+                    Welcome to www.lorem-ipsum.info. This site is provided as a service to our visitors and may be used for informational purposes only. Because the Terms and Conditions contain legal obligations, please read them carefully.
+                </p>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">1. YOUR AGREEMENT</h2>
+                    <p class="text-sm mb-4">
+                        By using this Site, you agree to be bound by, and to comply with, these Terms and Conditions. If you do not agree to these Terms and Conditions, please do not use this site.
+                    </p>
+                    <p class="text-sm italic bg-orange-50 p-4 rounded-xl border-l-4 border-[#f1a68e]">
+                        <strong>PLEASE NOTE:</strong> We reserve the right, at our sole discretion, to change, modify or otherwise alter these Terms and Conditions at any time. Please review these Terms and Conditions periodically.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">2. PRIVACY</h2>
+                    <p class="text-sm">
+                        Please review our Privacy Policy, which also governs your visit to this Site, to understand our practices.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">3. LINKED SITES</h2>
+                    <p class="text-sm">
+                        This Site may contain links to other independent third-party Web sites ("Linked Sites"). These Linked Sites are provided solely as a convenience to our visitors. Such Linked Sites are not under our control, and we are not responsible for and does not endorse the content of such Linked Sites.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">4. FORWARD LOOKING STATEMENTS</h2>
+                    <p class="text-sm">
+                        All materials reproduced on this site speak as of the original date of publication or filing. The fact that a document is available on this site does not mean that the information contained in such document has not been modified or superseded by events or by a subsequent document or filing.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">5. DISCLAIMER OF WARRANTIES AND LIMITATION OF LIABILITY</h2>
+                    <div class="text-xs uppercase leading-6 border-t pt-6 space-y-4">
+                        <p>
+                            A. THIS SITE MAY CONTAIN INACCURACIES AND TYPOGRAPHICAL ERRORS. WE DOES NOT WARRANT THE ACCURACY OR COMPLETENESS OF THE MATERIALS OR THE RELIABILITY OF ANY ADVICE, OPINION, STATEMENT OR OTHER INFORMATION DISPLAYED OR DISTRIBUTED THROUGH THE SITE.
+                        </p>
+                        <p>
+                            (ii) THE SITE IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS; (iii) EXCEPT AS EXPRESSLY PROVIDED HEREIN WE DISCLAIM ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED.
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+            <div class="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-end gap-4">
+                <button class="px-10 py-3 border-2 border-gray-300 text-gray-400 font-bold rounded-2xl hover:bg-gray-50 transition-all">
+                    Cancel
+                </button>
+                <button class="px-10 py-3 bg-[#f1a68e] text-white font-bold rounded-2xl shadow-sm hover:bg-[#e0957d] transition-all">
+                    Accept Policy
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

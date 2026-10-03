@@ -1,0 +1,142 @@
+@page "/test"
+@layout CustomLayout
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap');
+
+    body,
+    .almarai-font {
+        font-family: 'Almarai', sans-serif;
+    }
+</style>
+
+<div class="min-h-screen flex almarai-font" dir="rtl">
+    <!-- Right Side - Login Form (shown first in RTL) -->
+    <div class="w-full lg:w-1/2 flex items-center justify-centerpx-8 py-12">
+        <div class="w-full max-w-md">
+            <!-- Logo and Brand -->
+            <div class="flex items-center justify-end gap-3 mb-12">
+                <div class="text-right">
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">كلاسات</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Classat</p>
+                </div>
+                <div class="w-14 h-14">
+                    <img src="../assets/images/brand-logos/classat-logo.png" alt="Classat Logo"
+                        class="w-full h-full object-contain" />
+                </div>
+            </div>
+
+            <!-- Page Title -->
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">تسجيل دخول الأدمن</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400">مرحباً بك في لوحة التحكم الإدارية لمنصة كلاسات</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="space-y-5">
+                <!-- Email Input -->
+                <div>
+                    <label class="block text-right text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">البريد
+                        الإلكتروني</label>
+                    <div class="relative">
+                        <input type="email" @bind="email"
+                            class="w-full px-4 py-3 pr-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-[#54B0D7] focus:border-transparent"
+                            placeholder="البريد الإلكتروني" />
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label class="block text-right text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">كلمة
+                        المرور</label>
+                    <div class="relative">
+                        <input type="@(showPassword ? "text" : "password")" @bind="password"
+                            class="w-full px-4 py-3 pr-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-[#54B0D7] focus:border-transparent"
+                            placeholder="••••••••" />
+                        <button type="button" @onclick="TogglePasswordVisibility"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                            @if (showPassword)
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            }
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <a href="reset-password-cover" class="text-sm text-[#54B0D7] hover:underline">نسيت كلمة المرور؟</a>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm text-gray-600 dark:text-gray-400 cursor-pointer"
+                            for="remember">تذكرني</label>
+                        <input type="checkbox" id="remember" @bind="rememberMe"
+                            class="w-4 h-4 text-[#54B0D7] border-gray-300 rounded focus:ring-[#54B0D7]" />
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button type="button" @onclick="HandleLogin"
+                    class="w-full bg-[#54B0D7] hover:bg-[#4299BF] text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#54B0D7] focus:ring-offset-2">
+                    تسجيل الدخول
+                </button>
+
+                <!-- Footer Text -->
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        هذه البوابة مخصصة للمسؤولين فقط. يرجى الالتزام بصلاحيات الوصول الخاصة بك
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Left Side - Image (shown second in RTL) -->
+    <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        <img src="../../assets/images/app/rect-login.png" alt="Office Meeting" class="w-full h-full object-cover"
+            onerror="this.src='https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80'" />
+        <div class="absolute inset-0 bg-gradient-to-br from-black/20 to-black/40"></div>
+    </div>
+</div>
+
+@code {
+    private string email = "";
+    private string password = "";
+    private bool rememberMe = false;
+    private bool showPassword = false;
+
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+    }
+
+    private void HandleLogin()
+    {
+        // Add your login logic here
+        // For now, just navigate to home
+        NavigationManager.NavigateTo("/home");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}

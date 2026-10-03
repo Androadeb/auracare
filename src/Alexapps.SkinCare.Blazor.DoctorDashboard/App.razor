@@ -1,0 +1,74 @@
+﻿@using ynex.Models.Auth
+@using ynex.Pages.Auth
+@inject NavigationManager Navigation
+@inject AuthState CurrentAuthState
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    @{
+                        Navigation.NavigateTo("/auth/sign-in");
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p>عذراً، هذه الصفحة غير موجودة.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+<style>
+    /* الأنيميشن السحري لإخفاء الرسالة في أول نصف ثانية */
+    .auth-loading-container {
+        opacity: 0;
+        animation: fadeInAuth 0.4s forwards;
+        animation-delay: 0.6s; /* لن تظهر الرسالة إلا لو استغرق التحقق أكثر من 0.6 ثانية */
+    }
+
+    @@keyframes fadeInAuth {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+
+@code {
+    [Inject] private StateService? StateService { get; set; }
+    private bool _isInitializing = true; // متغير جديد لمنع الطرد المبكر
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var currentUri = new Uri(Navigation.Uri);
+            var currentPath = currentUri.AbsolutePath;
+
+            // إذا كان المسار هو الجذر، نتوجه لتسجيل الدخول
+            if (currentPath == "/")
+            {
+                Navigation.NavigateTo("/auth/sign-in");
+                return;
+            }
+
+            if (StateService != null)
+            {
+                // جلب البيانات قبل أي شيء
+                if (currentPath != "/landing" && currentPath != "/landing-jobs" && !currentPath.StartsWith("/landing/"))
+                {
+                    await StateService.retrieveFromLocalStorage();
+                }
+                else
+                {
+                    await StateService.retrieveFromLandingLocalStorage();
+                }
+
+                _isInitializing = false; 
+                StateHasChanged();
+            }
+        }
+    }
+}

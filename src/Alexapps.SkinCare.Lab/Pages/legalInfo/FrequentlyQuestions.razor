@@ -1,0 +1,76 @@
+﻿@page "/legal/frequently-questions"
+@layout MainLayout
+
+@attribute [Authorize(Roles = "LAB")]
+
+<div class="container-fluid py-8 px-4 sm:px-10 bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#002B49]">Frequently asked questipons</h1>
+        </div>
+
+        <div class="hs-accordion-group space-y-4">
+
+            <div class="hs-accordion bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden" id="faq-1">
+                <button class="hs-accordion-toggle hs-accordion-active:text-[#002B49] group py-5 px-6 inline-flex items-center justify-between gap-x-3 w-full text-start text-sm font-bold text-[#002B49] transition hover:text-gray-500" aria-controls="faq-collapse-1">
+                    How can I view my upcoming appointments?
+                    <i class="bi bi-chevron-down hs-accordion-active:rotate-180 transition-transform text-gray-400"></i>
+                </button>
+                <div id="faq-collapse-1" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-1">
+                    <div class="pb-5 px-6 text-sm text-gray-500">
+                        You can view all your scheduled laboratory visits and home sample collections in the "Appointments" tab of your dashboard.
+                    </div>
+                </div>
+            </div>
+
+            <div class="hs-accordion bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden" id="faq-2">
+                <button class="hs-accordion-toggle hs-accordion-active:text-[#002B49] group py-5 px-6 inline-flex items-center justify-between gap-x-3 w-full text-start text-sm font-bold text-[#002B49] transition hover:text-gray-500" aria-controls="faq-collapse-2">
+                    Why am I not receiving notifications
+                    <i class="bi bi-chevron-down hs-accordion-active:rotate-180 transition-transform text-gray-400"></i>
+                </button>
+                <div id="faq-collapse-2" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-2">
+                    <div class="pb-5 px-6 text-sm text-gray-500">
+                        Please ensure that notifications are enabled in your browser settings and that your email address is verified in your profile settings.
+                    </div>
+                </div>
+            </div>
+
+            <div class="hs-accordion active bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden" id="faq-3">
+                <button class="hs-accordion-toggle hs-accordion-active:text-[#002B49] group py-5 px-6 inline-flex items-center justify-between gap-x-3 w-full text-start text-sm font-bold text-[#002B49] transition hover:text-gray-500" aria-controls="faq-collapse-3">
+                    How can I update my profile information ?
+                    <i class="bi bi-chevron-up hs-accordion-active:rotate-180 transition-transform text-gray-400"></i>
+                </button>
+                <div id="faq-collapse-3" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 bg-gray-50/50" aria-labelledby="faq-3">
+                    <div class="pb-5 px-6 text-sm text-gray-500">
+                        You can update your personal and professional information from the Profile Settings section inside your dashboard.
+                    </div>
+                </div>
+            </div>
+
+            <div class="hs-accordion bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden" id="faq-4">
+                <button class="hs-accordion-toggle hs-accordion-active:text-[#002B49] group py-5 px-6 inline-flex items-center justify-between gap-x-3 w-full text-start text-sm font-bold text-[#002B49] transition hover:text-gray-500" aria-controls="faq-collapse-4">
+                    Which devices and browsers are supported?
+                    <i class="bi bi-chevron-down hs-accordion-active:rotate-180 transition-transform text-gray-400"></i>
+                </button>
+                <div id="faq-collapse-4" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-4">
+                    <div class="pb-5 px-6 text-sm text-gray-500">
+                        Our platform supports all modern browsers including Chrome, Firefox, Safari, and Edge on both desktop and mobile devices.
+                    </div>
+                </div>
+            </div>
+
+            <div class="hs-accordion bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden" id="faq-5">
+                <button class="hs-accordion-toggle hs-accordion-active:text-[#002B49] group py-5 px-6 inline-flex items-center justify-between gap-x-3 w-full text-start text-sm font-bold text-[#002B49] transition hover:text-gray-500" aria-controls="faq-collapse-5">
+                    Where can I find the Terms & Conditions?
+                    <i class="bi bi-chevron-down hs-accordion-active:rotate-180 transition-transform text-gray-400"></i>
+                </button>
+                <div id="faq-collapse-5" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" aria-labelledby="faq-5">
+                    <div class="pb-5 px-6 text-sm text-gray-500">
+                        You can access the Terms & Conditions and Privacy Policy via the links in the footer of any page.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

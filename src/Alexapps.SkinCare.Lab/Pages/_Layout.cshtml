@@ -1,0 +1,164 @@
+@using Microsoft.AspNetCore.Components.Web
+@namespace ynex.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+@inject StateService stateService
+@using System.Text.Json;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var appState = stateService.GetAppState();
+}
+<!DOCTYPE html>
+<html lang="en"
+      @if (!string.IsNullOrEmpty(appState?.Direction))
+      {
+          <text>
+              dir="@appState.Direction"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.NavigationStyles))
+      {
+          <text>data-nav-layout="@appState.NavigationStyles"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.ColorTheme))
+      {
+          <text>class="@appState.ColorTheme"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.HeaderColor))
+      {
+          <text>data-header-styles="@appState.HeaderColor"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.MenuColor))
+      {
+          <text>data-menu-styles="@appState.MenuColor"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.MenuStyles))
+      {
+          <text>data-nav-style="@appState.MenuStyles"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.PageStyles))
+      {
+          <text>data-page-style="@appState.PageStyles"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.WidthStyles))
+      {
+          <text>data-width="@appState.WidthStyles"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.MenuPosition))
+      {
+          <text>data-menu-position="@appState.MenuPosition"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.HeaderPosition))
+      {
+          <text>data-header-position="@appState.HeaderPosition"</text>
+      }
+      @if (!string.IsNullOrEmpty(appState?.BackgroundImage))
+      {
+          <text>data-bg-img="@appState.BackgroundImage"</text>
+      }
+      @{
+          string style = "";
+
+          if (!string.IsNullOrEmpty(appState?.ThemePrimary))
+          {
+              style += $"--primary: {appState.ThemePrimary}; ";
+              style += $"--primary-rgb: {appState.ThemePrimary1}; ";
+          }
+
+          if (!string.IsNullOrEmpty(appState?.ThemeBackground))
+          {
+              style += $"--body-bg: {appState.ThemeBackground}; ";
+              style += $"--dark-bg: {appState.ThemeBackground1}; ";
+              style += $"--light: {appState.ThemeBackground1}; ";
+              style += $"--form-control-bg: rgb({appState.ThemeBackground1}); ";
+              style += $"--input-border: rgba(255,255,255,0.1); ";
+          }
+      }
+      style="@style">
+
+<head>
+    <!-- META DATA -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="Description" content="Tailwind Css Responsive Admin Web Dashboard HTML5 Template">
+    <meta name="Author" content="Spruko Technologies Private Limited">
+    <meta name="keywords"
+          content="tailwind admin dashboard template, admin panel template, dashboard, dashboard tailwind, dashboard admin, template admin panel, admin panel template, admin, tailwind css, net blazor, admin dashboard design, admin dashboard ui, admin panel design, tailwind dashboard, blazor server">
+    <base href="~/"/>
+
+    <!-- TITLE -->
+    <title> Lab Dashboard </title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/images/brand-logos/favicon.ico" type="image/x-icon">
+
+    <!-- Style Css -->
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <!-- ColorPicker CSS -->
+    <link href="_content/BlazorColorPicker/colorpicker.css" rel="stylesheet"/>
+    <link href="_content/BlazorColorPicker/BlazorColorPicker.bundle.scp.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="assets/libs/sweetalert2/sweetalert2.min.css">
+
+    <link rel="stylesheet" href="/app.css">
+    <component type="typeof(HeadOutlet)" render-mode="Server"/>
+
+</head>
+
+<body>
+@RenderBody()
+
+<!-- Popper JS -->
+<script src="assets/libs/@@popperjs/core/umd/popper.min.js"></script>
+
+<script async defer>
+    window.onload = function () {
+        setTimeout(() => {
+            let javascriptLinks = ["/assets/js/custom.js"]
+            javascriptLinks.map((link) => {
+                var scriptElement = document.createElement('script');
+                scriptElement.src = link;
+                document.head.appendChild(scriptElement);
+            })
+        }, 1000);
+    };
+</script>
+
+
+<script>
+    // Load scripts after DOM content is loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        var scriptUrls = ["../assets/libs/sweetalert2/sweetalert2.all.min.js"];
+        // Load each script dynamically
+        scriptUrls.forEach(function (url) {
+            var script = document.createElement("script");
+            script.src = url;
+            document.body.appendChild(script);
+        });
+    });
+</script>
+
+<script src="/preline/preline.js"></script>
+<script src="_framework/blazor.server.js"></script>
+<script src="js/javaScriptInterop.js"></script>
+<script src="js/resizeInterop.js"></script>
+
+
+<script>
+    setInterval(() => {
+        try {
+            window.HSStaticMethods?.autoInit();
+        } catch (error) { }
+    }, 1000);
+</script>
+
+<script>
+    function CaptureElementAndCallBlazorFunction(event, menuData) {
+        var element = event.currentTarget;
+        var menuId = element.dataset.menuId;
+        window.DotNet.invokeMethodAsync("ynex.SubNavMenu", "TriggerFunction", element, menuData, null);
+    }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <LayoutView Layout="@typeof(EmptyLayout)">
+                        <RedirectToSignIn/>
+                    </LayoutView>
+                </NotAuthorized>
+
+                <Authorizing>
+                    <LayoutView Layout="@typeof(EmptyLayout)">
+                        <div class="flex items-center justify-center min-h-screen bg-gray-50">
+                            <div class="text-center">
+                                <div class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-blue-600 rounded-full"
+                                     role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p class="mt-2 text-gray-500 font-medium">جاري التحقق من الصلاحيات...</p>
+                            </div>
+                        </div>
+                    </LayoutView>
+                </Authorizing>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(EmptyLayout)">
+                <div class="text-center p-20">
+                    <h1 class="text-4xl font-bold">404</h1>
+                    <p role="alert" class="text-gray-500">Sorry, there's nothing at this address.</p>
+                </div>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

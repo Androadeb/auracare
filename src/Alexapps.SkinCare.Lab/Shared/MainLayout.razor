@@ -1,0 +1,108 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JsRuntime
+@inject StateService StateService
+@inject AuthService AuthService
+@inject ITokenProvider TokenProvider
+
+<PageTitle>Lab Dashboard</PageTitle>
+
+<div class="page">
+    <MainHeader/>
+    <!-- Start::app-content -->
+    <div class="flex flex-1">
+        <NavMenu @ref="navMenuRef"/>
+        <main class="flex-1 p-6 overflow-y-auto">
+            @Body
+        </main>
+    </div>
+
+    @if (ShowButton)
+    {
+        <!-- Scroll To Top -->
+        <div class="scrollToTop bg-white cursor-pointer" @onclick="ScrollToTop">
+            <img src="assets/images/icons/arrow-up-s-fill.svg" alt="Alternate Text" class="text-[20px] "/>
+        </div>
+        <!-- Scroll To Top -->
+    }
+</div>
+
+@code {
+    NavMenu? navMenuRef;
+    bool ShowButton { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // This reads LocalStorage and hydrates the TokenProvider & AuthState
+            if (!string.IsNullOrEmpty(TokenProvider.AccessToken))
+            {
+                await AuthService.InitializeAsync();
+            }
+            else
+            {
+                await AuthService.LogoutAsync();
+            }
+
+            await StateService.retrieveFromLocalStorage();
+            await JsRuntime.InvokeVoidAsync("interop.loadScript", "preline/preline.js");
+            await JsRuntime.InvokeVoidAsync("interop.updateScrollVisibility", DotNetObjectReference.Create(this));
+
+
+            @* var dataNavLayout = await JsRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-layout");
+            var inner = await JsRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+            if (dataNavLayout == "horizontal" && inner >= 992)
+            {
+                navMenuRef?.closeMenuFn();
+            } *@
+        }
+    }
+
+    [JSInvokable]
+    public void UpdateScrollVisibility(int scrollHeight)
+    {
+        ShowButton = scrollHeight >= 100;
+        StateHasChanged();
+    }
+
+    async Task ScrollToTop()
+    {
+        await JsRuntime.InvokeVoidAsync("interop.scrollToTop");
+    }
+
+}
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentState = new AppState();
+        var newState = StateService.GetAppState();
+        if (!currentState.Equals(newState))
+        {
+        }
+
+        // Ensure the direction is applied to the HTML dir attribute on initial load
+        await StateService.directionFn(newState.Direction);
+
+        StateHasChanged();
+        await base.OnInitializedAsync();
+    }
+
+    @* private async void icontextCloseFn()
+    {
+        var dataToggled = await JsRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+        var dataNavLayout = await JsRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-layout");
+        var inner = await JsRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+        if (dataToggled == "icon-text-close")
+        {
+            await JsRuntime.InvokeAsync<string>("interop.removeAttributeFromHtml", "data-icon-text");
+        }
+
+        if (dataNavLayout == "horizontal" && inner >= 992)
+        {
+            navMenuRef?.closeMenuFn();
+        }
+    } *@
+
+}

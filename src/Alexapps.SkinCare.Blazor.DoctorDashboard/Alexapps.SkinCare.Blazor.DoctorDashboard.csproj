@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+    <RootNamespace>ynex</RootNamespace>
+    <AssemblyName>ynex</AssemblyName>
+	  <GenerateStaticWebAssetsManifest>true</GenerateStaticWebAssetsManifest>
+	  <HotReloadEnabled>true</HotReloadEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+	  <Watch Remove="wwwroot\**" />
+    <PackageReference Include="Abp" Version="8.4.0" />
+    <PackageReference Include="BlazorColorPicker" Version="3.1.1" />
+    <PackageReference Include="BlazorJWT.BlazoredLocalStorage" Version="1.0.1-tags-v1-0-0.1" />
+    <PackageReference Include="CountryData.Standard" Version="1.5.0" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.23" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.24" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.19" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.19" />
+    <PackageReference Include="Soenneker.Blazor.TomSelect" Version="2.1.642" />
+    <PackageReference Include="WMBlazorOverlayScrollbars" Version="1.0.0" />
+    <PackageReference Include="Blazor-ApexCharts" Version="3.1.0" />
+    <PackageReference Include="Fun.Blazor.ApexCharts" Version="2.3.3" />
+    <PackageReference Include="WMBlazorSlickCarousel" Version="1.0.1" />
+    <PackageReference Include="FlatpickrBlazor" Version="5.0.8" />
+    <PackageReference Include="Blazored.TextEditor" Version="1.1.0" />
+    <PackageReference Include="Soenneker.Blazor.FilePond" Version="2.1.604" />
+    <PackageReference Include="LeafletForBlazor" Version="2.0.2.8" />
+    <PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.6.0" />
+    <PackageReference Include="BlazorCalendar" Version="2.6.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.6" />
+    <PackageReference Include="NoUiSlider.Blazor" Version="0.1.5" />
+    <PackageReference Include="Excubo.Blazor.TreeViews" Version="4.0.12" />
+    <PackageReference Include="VDT.Core.Blazor.Wizard" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Resource\Languages\ar.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

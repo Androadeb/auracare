@@ -1,0 +1,347 @@
+@page "/typography"
+
+<!-- Prism CSS -->
+<link rel="stylesheet" href="../assets/libs/prismjs/themes/prism-coy.min.css">
+
+    <!-- Page Header -->
+    <div class="block justify-between page-header md:flex">
+        <div>
+            <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.125rem] font-semibold">Typography</h3>
+        </div>
+        <ol class="flex items-center whitespace-nowrap min-w-0">
+            <li class="text-[0.813rem] ps-[0.5rem]">
+                <a class="flex items-center text-primary hover:text-primary dark:text-primary truncate" href="javascript:void(0);">
+                Utilities
+                <i class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
+                </a>
+            </li>
+            <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-primary dark:text-[#8c9097] dark:text-white/50 " aria-current="page">
+                Typography
+            </li>
+        </ol>
+    </div>
+    <!-- Page Header Close -->
+
+    <!-- Start::row-1 -->
+    <div class="grid grid-cols-12 gap-x-6">
+        <div class="col-span-12 lg:col-span-6">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                Heading tags
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-3">
+            <h1 class="font-semibold text-gray-800 dark:text-white text-4xl">h1. Tailwind heading</h1>
+            <h2 class="font-semibold text-gray-800 dark:text-white text-3xl">h2. Tailwind heading</h2>
+            <h3 class="font-semibold text-gray-800 dark:text-white text-2xl">h3. Tailwind heading</h3>
+            <h4 class="font-semibold text-gray-800 dark:text-white text-xl">h4. Tailwind heading</h4>
+            <h5 class="font-semibold text-gray-800 dark:text-white text-lg">h5. Tailwind heading</h5>
+            <h6 class="font-semibold text-gray-800 dark:text-white text-base">h6. Tailwind heading</h6>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;h1&gt; class="font-semibold text-gray-800 dark:text-white text-4xl"&gt;h1. Tailwind heading&lt;/h1&gt;
+&lt;h2&gt; class="font-semibold text-gray-800 dark:text-white text-3xl"&gt;h2. Tailwind heading&lt;/h2&gt;
+&lt;h3&gt; class="font-semibold text-gray-800 dark:text-white text-2xl"&gt;h3. Tailwind heading&lt;/h3&gt;
+&lt;h4&gt; class="font-semibold text-gray-800 dark:text-white text-xl"&gt;h4. Tailwind heading&lt;/h4&gt;
+&lt;h5&gt; class="font-semibold text-gray-800 dark:text-white text-lg"&gt;h5. Tailwind heading&lt;/h5&gt;
+&lt;h6&gt; class="font-semibold text-gray-800 dark:text-white text-base"&gt;h6. Tailwind heading&lt;/h6&gt;
+            </code></pre>
+            <!-- Prism Code -->
+        </div>
+        </div>
+        </div>
+        <div class="col-span-12 lg:col-span-6">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                Inline text elements
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-3">
+            <p class="text-gray-800 dark:text-white">You can use the mark tag to <mark>highlight</mark> text.</p>
+            <p class="text-gray-800 dark:text-white"><del>This line of text is meant to be treated as deleted text.</del></p>
+            <p class="text-gray-800 dark:text-white"><s>This line of text is meant to be treated as no longer accurate.</s></p>
+            <p class="text-gray-800 dark:text-white"><ins>This line of text is meant to be treated as an addition to the document.</ins></p>
+            <p class="text-gray-800 dark:text-white"><u>This line of text will render as underlined.</u></p>
+            <p class="text-gray-800 dark:text-white"><small>This line of text is meant to be treated as fine print.</small></p>
+            <p class="text-gray-800 dark:text-white"><strong>This line rendered as bold text.</strong></p>
+            <p class="text-gray-800 dark:text-white"><em>This line rendered as italicized text.</em></p>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;p class="text-gray-800 dark:text-white"&gt;You can use the mark tag to &lt;mark&gt;highlight&lt;/mark&gt; text.&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white"&gt;&lt;del&gt;This line of text is meant to be treated as deleted text.&lt;/del&gt;&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white"&gt;&lt;s&gt;This line of text is meant to be treated as no longer accurate.&lt;/s&gt;&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white"&gt;&lt;ins&gt;This line of text is meant to be treated as an addition to the document.&lt;/ins&gt;&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white"&gt;&lt;u&gt;This line of text will render as underlined.&lt;/u&gt;&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white"&gt;&lt;small&gt;This line of text is meant to be treated as fine print.&lt;/small&gt;&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white"&gt;&lt;strong&gt;This line rendered as bold text.&lt;/strong&gt;&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white"&gt;&lt;em&gt;This line rendered as italicized text.&lt;/em&gt;&lt;/p&gt;
+            </code></pre>
+            <!-- Prism Code -->
+        </div>
+        </div>
+        </div>
+        <div class="col-span-12 lg:col-span-6">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                Description list alignment
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-3">
+            <dl class="grid sm:grid-cols-3 gap-1 sm:gap-3">
+                <dt class="sm:col-span-1 font-semibold dark:text-white">Description lists</dt>
+                <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">A description list is perfect for defining terms.</dd>
+
+                <dt class="sm:col-span-1 font-semibold dark:text-white">Term</dt>
+                <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">
+                    <p>Definition for the term.</p>
+                    <p>And some more placeholder definition text.</p>
+                </dd>
+
+                <dt class="sm:col-span-1 font-semibold dark:text-white">Another term</dt>
+                <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">This definition is short, so no extra paragraphs or anything.</dd>
+
+                <dt class="sm:col-span-1 font-semibold truncate dark:text-white">Truncated term is truncated</dt>
+                <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">This can be useful when space is tight. Adds an ellipsis at the end.</dd>
+
+                <dt class="sm:col-span-1 font-semibold dark:text-white">Nesting</dt>
+                <dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white">
+                    <dl class="grid sm:grid-cols-5 gap-1 sm:gap-3 dark:text-white">
+                    <dt class="sm:col-span-2 font-semibold dark:text-white">Nested definition list</dt>
+                    <dd class="sm:col-span-3 mb-3 sm:mb-0 dark:text-white">I heard you like definition lists. Let me put a definition list inside your definition list.</dd>
+                    </dl>
+                </dd>
+                </dl>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;dl class="grid sm:grid-cols-3 gap-1 sm:gap-3"&gt;
+&lt;dt&gt; class="sm:col-span-1 font-semibold dark:text-white"&gt;Description lists&lt;/dt&gt;
+&lt;dd&gt; class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white"&gt;A description list is perfect for defining terms.&lt;/dd&gt;
+
+&lt;dt&gt; class="sm:col-span-1 font-semibold dark:text-white"&gt;Term&lt;/dt&gt;
+&lt;dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white"&gt;
+&lt;p&gt;Definition for the term.&lt;/p&gt;
+&lt;p&gt;And some more placeholder definition text.&lt;/p&gt;
+&lt;/dd&gt;
+
+&lt;dt&gt; class="sm:col-span-1 font-semibold dark:text-white"&gt;Another term&lt;/dt&gt;
+&lt;dd&gt; class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white"&gt;This definition is short, so no extra paragraphs or anything.&lt;/dd&gt;
+
+&lt;dt&gt; class="sm:col-span-1 font-semibold truncate dark:text-white"&gt;Truncated term is truncated&lt;/dt&gt;
+&lt;dd&gt; class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white"&gt;This can be useful when space is tight. Adds an ellipsis at the end.&lt;/dd&gt;
+
+&lt;dt&gt; class="sm:col-span-1 font-semibold dark:text-white"&gt;Nesting&lt;/dt&gt;
+&lt;dd class="sm:col-span-2 mb-3 sm:mb-0 dark:text-white"&gt;
+&lt;dl class="grid sm:grid-cols-5 gap-1 sm:gap-3 dark:text-white"&gt;
+&lt;dt&gt; class="sm:col-span-2 font-semibold dark:text-white"&gt;Nested definition list&lt;/dt&gt;
+&lt;dd&gt; class="sm:col-span-3 mb-3 sm:mb-0 dark:text-white"&gt;I heard you like definition lists. Let me put a definition list inside your definition list.&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+            </code></pre>
+            <!-- Prism Code -->
+        </div>
+        </div>
+        </div>
+        <div class="col-span-12 lg:col-span-6">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                First-line and first-letter
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-8">
+            <p class="first-line:uppercase first-line:tracking-widest first-letter:text-slate-900 first-letter:text-7xl first-letter:leading-none first-letter:float-start first-letter:font-bold first-letter:me-3 dark:first-letter:text-white">
+                Well, let me tell you something, funny boy. Y'know that little stamp, the one that says "New York Public Library"? Well that may not mean anything to you, but that means a lot to me. One whole hell of a lot.
+            </p>
+            <p class="">
+                Sure, go ahead, laugh if you want to. I've seen your type before: Flashy, making the scene, flaunting convention. Yeah, I know what you're thinking. What's this guy making such a big stink about old library books? Well, let me give you a hint, junior.
+            </p>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;p class="first-line:uppercase first-line:tracking-widest first-letter:text-slate-900 first-letter:text-7xl first-letter:leading-none first-letter:float-start first-letter:font-bold first-letter:me-3 dark:first-letter:text-white"&gt;
+Well, let me tell you something, funny boy. Y'know that little stamp, the one that says "New York Public Library"? Well that may not mean anything to you, but that means a lot to me. One whole hell of a lot.
+&lt;/p&gt;
+&lt;p class=""&gt;
+Sure, go ahead, laugh if you want to. I've seen your type before: Flashy, making the scene, flaunting convention. Yeah, I know what you're thinking. What's this guy making such a big stink about old library books? Well, let me give you a hint, junior.
+&lt;/p&gt;
+            </code></pre>
+            <!-- Prism Code -->
+        </div>
+        </div>
+        </div>
+        <div class="col-span-12 lg:col-span-6">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                Font Sizes
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-3">
+            <p class="text-gray-800 dark:text-white text-xs">text-xs</p>
+            <p class="text-gray-800 dark:text-white text-sm">text-sm</p>
+            <p class="text-gray-800 dark:text-white text-base">text-base</p>
+            <p class="text-gray-800 dark:text-white text-lg">text-lg</p>
+            <p class="text-gray-800 dark:text-white text-xl">text-xl</p>
+            <p class="text-gray-800 dark:text-white text-2xl">text-2xl</p>
+            <p class="text-gray-800 dark:text-white text-3xl">text-3xl</p>
+            <p class="text-gray-800 dark:text-white text-4xl">text-4xl</p>
+            <p class="text-gray-800 dark:text-white text-5xl">text-5xl</p>
+            <p class="text-gray-800 dark:text-white text-6xl">text-6xl</p>
+            <p class="text-gray-800 dark:text-white text-7xl">text-7xl</p>
+            <p class="text-gray-800 dark:text-white text-8xl">text-8xl</p>
+            <p class="text-gray-800 dark:text-white text-[6.5rem] leading-none sm:text-9xl">text-9xl</p>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;p&gt; class="text-gray-800 dark:text-white text-xs"&gt;text-xs&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-sm"&gt;text-sm&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-base"&gt;text-base&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-lg"&gt;text-lg&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-xl"&gt;text-xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-2xl"&gt;text-2xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-3xl"&gt;text-3xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-4xl"&gt;text-4xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-5xl"&gt;text-5xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-6xl"&gt;text-6xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-7xl"&gt;text-7xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-8xl"&gt;text-8xl&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white text-9xl"&gt;text-9xl&lt;/p&gt;
+            </code></pre>
+            <!-- Prism Code -->
+        </div>
+        </div>
+        </div>
+        <div class="col-span-12 lg:col-span-6">
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                Open/closed state
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-8">
+            <div class="">
+                <details class="open:bg-white dark:open:bg-bodybg open:ring-1 open:ring-black/5 dark:open:ring-white/10 open:shadow-lg p-6 rounded-lg" open>
+                <summary class="text-sm leading-6 text-gray-800 dark:text-white font-semibold select-none">
+                    Why do they call it Ovaltine?
+                </summary>
+                <div class="mt-3 text-sm leading-6 text-gray-800 dark:text-gray-300">
+                    <p>The mug is round. The jar is round. They should call it Roundtine.</p>
+                </div>
+                </details>
+            </div>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;div class=""&gt;
+&lt;details class="open:bg-white dark:open:bg-bodybg open:ring-1 open:ring-black/5 dark:open:ring-white/10 open:shadow-lg p-6 rounded-lg" open&gt;
+&lt;summary class="text-sm leading-6 text-gray-800 dark:text-white font-semibold select-none"&gt;
+Why do they call it Ovaltine?
+&lt;/summary&gt;
+&lt;div class="mt-3 text-sm leading-6 text-gray-800 dark:text-gray-300"&gt;
+&lt;p&gt;The mug is round. The jar is round. They should call it Roundtine.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+            </code></pre>
+            <!-- Prism Code -->
+        </div>
+        </div>
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                Text Decoration
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-3">
+            <p class="text-gray-800 dark:text-white underline ">This line of text will render as underlined. </p>
+            <p class="text-gray-800 dark:text-white no-underline ">This line of text will render as Not underlined.. </p>
+            <p class="text-gray-800 dark:text-white overline">This line of text will render as overline..</p>
+            <p class="text-gray-800 dark:text-white line-through">This line of text will render as line through.</p>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;p&gt; class="text-gray-800 dark:text-white underline "&gt;This line of text will render as underlined. &lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white no-underline "&gt;This line of text will render as Not underlined.. &lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white overline"&gt;This line of text will render as overline..&lt;/p&gt;
+&lt;p&gt; class="text-gray-800 dark:text-white line-through"&gt;This line of text will render as line through.&lt;/p&gt;
+            </code></pre>
+            <!-- Prism Code -->
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-header justify-between">
+                <div class="box-title">
+                Text Transform
+                </div>
+                <div class="prism-toggle">
+                    <button type="button" class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                        Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                </div>
+            </div>
+            <div class="box-body space-y-3">
+            <p class="text-gray-800 dark:text-white lowercase ">Lowercased text. </p>
+            <p class="text-gray-800 dark:text-white uppercase ">Uppercased text</p>
+            <p class="text-gray-800 dark:text-white capitalize">Captalized text</p>
+            <p class="text-gray-800 dark:text-white normal-case">Normal Text</p>
+            </div>
+            <div class="box-footer hidden border-t-0">
+            <!-- Prism Code -->
+            <pre class="language-html" tabindex="0"><code class="language-html">
+&lt;p class="text-gray-800 dark:text-white lowercase "&gt;Lowercased text. &lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white uppercase "&gt;Uppercased text&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white capitalize"&gt;Captalized text&lt;/p&gt;
+&lt;p class="text-gray-800 dark:text-white normal-case"&gt;Normal Text&lt;/p&gt;
+            </code></pre>
+            <!-- Prism Code -->
+        </div>
+        </div>
+        </div>
+    </div>
+    <!-- End::row-1 -->
+
+    
+<!-- Prism JS -->
+<script src="../assets/libs/prismjs/prism.js"></script>
+<script src="../assets/js/prism-custom.js"></script>

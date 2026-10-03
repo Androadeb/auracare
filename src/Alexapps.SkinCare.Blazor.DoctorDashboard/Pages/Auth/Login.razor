@@ -1,0 +1,132 @@
+@page "/auth/sign-in"
+@using Microsoft.Extensions.Localization
+@layout CustomLayout
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService L
+
+<div class="min-h-screen flex items-center justify-center bg-white overflow-hidden relative theme-light light" dir="rtl">
+    <div class="container mx-auto flex flex-col md:flex-row items-center justify-center gap-12 px-6 z-10">
+
+        <div class="flex-1 max-w-md w-full p-8 text-right">
+            <div class="text-center mb-8">
+                <img src="assets/images/authentication/logo-icon.png" class="h-20 w-auto mx-auto mb-2 object-contain" alt="Logo" />
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest">@L["Doctor Dashboard"]</h2>
+                <h1 class="text-3xl font-bold mt-6 text-slate-800 border-none outline-none shadow-none">
+                    @(showEmailInput? L["Login"] : L["Send Verification Code"])
+                </h1>
+            </div>
+
+            @* √“—«— «· »œÌ· *@
+            <div class="flex border-b border-gray-100 mb-6">
+                <button type="button" @onclick="SwitchToEmail"
+                        class="flex-1 py-3 text-sm font-bold transition-all @(showEmailInput ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400")">
+                    @L["Email Address"]
+                </button>
+                <button type="button" @onclick="SwitchToPhone"
+                        class="flex-1 py-3 text-sm font-bold transition-all @(!showEmailInput ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400")">
+                    @L["Phone Number"]
+                </button>
+            </div>
+
+            <div class="bg-gray-50 p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="mb-4 p-3 bg-red-50 border-r-4 border-red-500 text-red-700 text-sm font-bold rounded">
+                        @errorMessage
+                    </div>
+                }
+
+                @if (showEmailInput)
+                {
+                    <EditForm EditContext="emailContext" OnSubmit="HandleEmailLogin" noValidate>
+                        <DataAnnotationsValidator />
+                        <div class="mb-5">
+                            <label class="block text-sm font-bold text-gray-600 mb-2 mr-1">@L["Email Address"]</label>
+                            <InputText @bind-Value="emailModel.Email"
+                                       class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none"
+                                       placeholder="example@mail.com" />
+                            <ValidationMessage For="@(() => emailModel.Email)" class="text-red-500 text-[11px] font-bold mt-1" />
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-sm font-bold text-gray-600 mb-2 mr-1">@L["Password"]</label>
+                            <InputText @bind-Value="emailModel.Password" type="password"
+                                       class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none"
+                                       placeholder="********" />
+                            <ValidationMessage For="@(() => emailModel.Password)" class="text-red-500 text-[11px] font-bold mt-1" />
+                        </div>
+
+                        <button type="submit" disabled="@isSubmitting"
+                                class="w-full mt-8 py-4 bg-black text-white font-black rounded-xl shadow-xl transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:bg-gray-400">
+                            @if (isSubmitting)
+                            {
+                                <span class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                            }
+                            else
+                            {
+                                <span>@L["Login"]</span>
+                            }
+                        </button>
+                    </EditForm>
+                }
+                else
+                {
+                    <EditForm EditContext="phoneContext" OnSubmit="HandlePhoneLogin" noValidate>
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-5" dir="rtl">
+                            <label class="block text-sm font-bold text-gray-600 mb-2 mr-1 text-right">@L["Phone Number"]</label>
+
+                            @* --- Õﬁ· «·Â« › „⁄ œ—Ê» œ«Ê‰ «·œÊ· --- *@
+                            <div class="flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-100 transition-all" dir="ltr">
+
+                                @* ﬁ”„ «·⁄·„ Ê«·ﬂÊœ - ÌŸ· À«» « »‰«¡ ⁄·Ï «Œ Ì«— «·œÊ·… *@
+                                <div class="flex items-center gap-1 px-3 bg-gray-50 border-r border-gray-100 cursor-pointer relative group min-w-[90px] justify-center">
+                                    <img src="https://flagcdn.com/w40/@(selectedCountryIso?.ToLower() ?? "sa").png" class="w-6 shadow-sm" alt="flag" />
+                                    <span class="text-xs font-bold text-gray-700">@("+" + selectedPhoneCode?.Replace("+", ""))</span>
+
+                                    <select @onchange="OnCountryChange" class="absolute inset-0 opacity-0 cursor-pointer w-full">
+                                        @foreach (var country in allCountries)
+                                        {
+                                            <option value="@country.CountryShortCode" selected="@(country.CountryShortCode == selectedCountryIso)">
+                                                @country.CountryName (+@country.PhoneCode.Replace("+", ""))
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                @* Õﬁ· ≈œŒ«· «·—ﬁ„ - «·„” Œœ„ Ìﬂ » Â‰« 50077944 ›ﬁÿ *@
+                                <InputText @bind-Value="phoneModel.Phone"
+                                           class="flex-1 px-4 py-3 outline-none border-none text-left font-bold tracking-widest"
+                                           placeholder="50XXXXXXX" />
+                            </div>
+
+                            <ValidationMessage For="@(() => phoneModel.Phone)" class="text-red-500 text-[11px] font-bold mt-1 text-right" />
+                        </div>
+
+                        <p class="text-[11px] text-gray-400 font-bold mr-1">@L["VerificationSMSNote"]</p>
+
+                        <button type="submit" disabled="@isSubmitting"
+                                class="w-full mt-8 py-4 bg-black text-white font-black rounded-xl shadow-xl transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:bg-gray-400">
+                            @if (isSubmitting)
+                            {
+                                <span class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                            }
+                            else
+                            {
+                                <span>@L["Send Verification Code"]</span>
+                            }
+                        </button>
+                    </EditForm>
+                }
+            </div>
+        </div>
+
+    
+        <div class="hidden md:flex flex-1 h-full items-center justify-center bg-slate-50/5 relative order-2">
+            <div class="w-full h-full p-12 relative z-10">
+                <img src="/assets/images/authentication/doctor.png" alt="Doctor" class="w-full h-full object-contain drop-shadow-2xl" />
+            </div>
+        </div>
+
+    </div>
+</div>

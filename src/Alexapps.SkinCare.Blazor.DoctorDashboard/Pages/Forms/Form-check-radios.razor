@@ -1,0 +1,629 @@
+@page "/form_check_radios"
+
+    <!-- Page Header -->
+    <div class="block justify-between page-header md:flex">
+        <div>
+            <h3
+                class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.125rem] font-semibold">
+                Checks &amp; Radios</h3>
+        </div>
+        <ol class="flex items-center whitespace-nowrap min-w-0">
+            <li class="text-[0.813rem] ps-[0.5rem]">
+                <a class="flex items-center text-primary hover:text-primary dark:text-primary truncate"
+                    href="javascript:void(0);">
+                    Form Elements
+                    <i
+                        class="ti ti-chevrons-right flex-shrink-0 text-[#8c9097] dark:text-white/50 px-[0.5rem] overflow-visible rtl:rotate-180"></i>
+                </a>
+            </li>
+            <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-primary dark:text-[#8c9097] dark:text-white/50 "
+                aria-current="page">
+                Checks &amp; Radios
+            </li>
+        </ol>
+    </div>
+    <!-- Page Header Close -->
+
+    <!-- Start:: row-1 -->
+    <div class="grid grid-cols-12 gap-6">
+        <div class="xl:col-span-3 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Checks
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Default checkbox
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
+                            checked>
+                        <label class="form-check-label" for="flexCheckChecked">
+                            Checked checkbox
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"&gt;
+&lt;label class="form-check-label" for="flexCheckDefault"&gt;
+Default checkbox
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
+checked&gt;
+&lt;label class="form-check-label" for="flexCheckChecked"&gt;
+Checked checkbox
+&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-3 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Disabled
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDisabled"
+                            disabled>
+                        <label class="form-check-label" for="flexCheckDisabled">
+                            Disabled checkbox
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input opacity-[0.6]" type="checkbox" value=""
+                            id="flexCheckCheckedDisabled" checked disabled>
+                        <label class="form-check-label" for="flexCheckCheckedDisabled">
+                            Disabled checked checkbox
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="flexCheckDisabled"
+disabled&gt;
+&lt;label class="form-check-label" for="flexCheckDisabled"&gt;
+Disabled checkbox
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="checkbox" value=""
+id="flexCheckCheckedDisabled" checked disabled&gt;
+&lt;label class="form-check-label" for="flexCheckCheckedDisabled"&gt;
+Disabled checked checkbox
+&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-3 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Radios
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault"
+                            id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Default radio
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault"
+                            id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Default checked radio
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="radio" name="flexRadioDefault"
+id="flexRadioDefault1"&gt;
+&lt;label class="form-check-label" for="flexRadioDefault1"&gt;
+Default radio
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="radio" name="flexRadioDefault"
+id="flexRadioDefault2" checked&gt;
+&lt;label class="form-check-label" for="flexRadioDefault2"&gt;
+Default checked radio
+&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-3 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Disabled
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDisabled"
+                            id="flexRadioDisabled" disabled>
+                        <label class="form-check-label" for="flexRadioDisabled">
+                            Disabled radio
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input opacity-[0.6]" type="radio" name="flexRadioDisabled"
+                            id="flexRadioCheckedDisabled" checked disabled>
+                        <label class="form-check-label" for="flexRadioCheckedDisabled">
+                            Disabled checked radio
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="radio" name="flexRadioDisabled"
+id="flexRadioDisabled" disabled&gt;
+&lt;label class="form-check-label" for="flexRadioDisabled"&gt;
+Disabled radio
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="radio" name="flexRadioDisabled"
+id="flexRadioCheckedDisabled" checked disabled&gt;
+&lt;label class="form-check-label" for="flexRadioCheckedDisabled"&gt;
+Disabled checked radio
+&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End:: row-1 -->
+
+    <!-- Start:: row-2 -->
+    <div class="grid grid-cols-12 gap-6">
+        <div class="xl:col-span-6 lg:col-span-6 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Default (stacked)
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            Default checkbox
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2"
+                            disabled>
+                        <label class="form-check-label" for="defaultCheck2">
+                            Disabled checkbox
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="exampleRadios"
+                            id="exampleRadios1" value="option1" checked>
+                        <label class="form-check-label" for="exampleRadios1">
+                            Default radio
+                        </label>
+                    </div>
+                    <div class="form-check mb-0">
+                        <input class="form-check-input" type="radio" name="exampleRadios"
+                            id="exampleRadios3" value="option3" disabled>
+                        <label class="form-check-label" for="exampleRadios3">
+                            Disabled radio
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="defaultCheck1"&gt;
+&lt;label class="form-check-label" for="defaultCheck1"&gt;
+Default checkbox
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="defaultCheck2"
+disabled&gt;
+&lt;label class="form-check-label" for="defaultCheck2"&gt;
+Disabled checkbox
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="radio" name="exampleRadios"
+id="exampleRadios1" value="option1" checked&gt;
+&lt;label class="form-check-label" for="exampleRadios1"&gt;
+Default radio
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check mb-0"&gt;
+&lt;input class="form-check-input" type="radio" name="exampleRadios"
+id="exampleRadios3" value="option3" disabled&gt;
+&lt;label class="form-check-label" for="exampleRadios3"&gt;
+Disabled radio
+&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-6 lg:col-span-6 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Switches
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body flex flex-col gap-y-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="hs-basic-with-description-checked" class="ti-switch"
+                            checked>
+                        <label for="hs-basic-with-description-checked"
+                            class="text-sm text-gray-500 ms-3 dark:text-[#8c9097] dark:text-white/50">Checked</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="hs-basic-with-description-unchecked" class="ti-switch">
+                        <label for="hs-basic-with-description-unchecked"
+                            class="text-sm text-gray-500 ms-3 dark:text-[#8c9097] dark:text-white/50">Unchecked</label>
+                    </div>
+                    <div class="flex items-center">
+                        <label
+                            class="text-sm text-gray-500 me-3 dark:text-[#8c9097] dark:text-white/50">On</label>
+                        <input type="checkbox" id="hs-basic-with-description" class="ti-switch">
+                        <label
+                            class="text-sm text-gray-500 ms-3 dark:text-[#8c9097] dark:text-white/50">Off</label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">&lt;div class="form-check form-switch"&gt;
+&lt;input class="form-check-input" type="checkbox" role="switch"
+id="flexSwitchCheckDefault"&gt;
+&lt;label class="form-check-label" for="flexSwitchCheckDefault"&gt;Default switch
+checkbox input&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-switch"&gt;
+&lt;input class="form-check-input" type="checkbox" role="switch"
+id="flexSwitchCheckChecked" checked&gt;
+&lt;label class="form-check-label" for="flexSwitchCheckChecked"&gt;Checked switch
+checkbox input&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-switch"&gt;
+&lt;input class="form-check-input" type="checkbox" role="switch"
+id="flexSwitchCheckDisabled" disabled&gt;
+&lt;label class="form-check-label" for="flexSwitchCheckDisabled"&gt;Disabled
+switch
+checkbox input&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-switch mb-0"&gt;
+&lt;input class="form-check-input" type="checkbox" role="switch"
+id="flexSwitchCheckCheckedDisabled" checked disabled&gt;
+&lt;label class="form-check-label" for="flexSwitchCheckCheckedDisabled"&gt;Disabled
+checked switch checkbox input&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End:: row-2 -->
+
+    <!-- Start:: row-3 -->
+    <div class="grid grid-cols-12 gap-6">
+        <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Checkbox Sizes
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkebox-sm" checked>
+                        <label class="form-check-label" for="checkebox-sm">
+                            Default
+                        </label>
+                    </div>
+                    <div class="form-check form-check-md flex items-center">
+                        <input class="form-check-input" type="checkbox" value="" id="checkebox-md" checked>
+                        <label class="form-check-label" for="checkebox-md">
+                            Medium
+                        </label>
+                    </div>
+                    <div class="form-check form-check-lg flex items-center">
+                        <input class="form-check-input" type="checkbox" value="" id="checkebox-lg" checked>
+                        <label class="form-check-label" for="checkebox-lg">
+                            Large
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="checkebox-sm" checked&gt;
+&lt;label class="form-check-label" for="checkebox-sm"&gt;
+Default
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-md flex items-center"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="checkebox-md" checked&gt;
+&lt;label class="form-check-label" for="checkebox-md"&gt;
+Medium
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-lg flex items-center"&gt;
+&lt;input class="form-check-input" type="checkbox" value="" id="checkebox-lg" checked&gt;
+&lt;label class="form-check-label" for="checkebox-lg"&gt;
+Large
+&lt;/label&gt;
+&lt;/div&gt;
+            </code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+        <div class="xxl:col-span-6 xl:col-span-12 lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Radio Sizes
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Radio" id="Radio-sm">
+                        <label class="form-check-label" for="Radio-sm">
+                            default
+                        </label>
+                    </div>
+                    <div class="form-check form-check-md">
+                        <input class="form-check-input" type="radio" name="Radio" id="Radio-md">
+                        <label class="form-check-label" for="Radio-md">
+                            Medium
+                        </label>
+                    </div>
+                    <div class="form-check form-check-lg">
+                        <input class="form-check-input" type="radio" name="Radio" id="Radio-lg" checked>
+                        <label class="form-check-label" for="Radio-lg">
+                            Large
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">
+&lt;div class="form-check"&gt;
+&lt;input class="form-check-input" type="radio" name="Radio" id="Radio-sm"&gt;
+&lt;label class="form-check-label" for="Radio-sm"&gt;
+default
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-md"&gt;
+&lt;input class="form-check-input" type="radio" name="Radio" id="Radio-md"&gt;
+&lt;label class="form-check-label" for="Radio-md"&gt;
+Medium
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-lg"&gt;
+&lt;input class="form-check-input" type="radio" name="Radio" id="Radio-lg" checked&gt;
+&lt;label class="form-check-label" for="Radio-lg"&gt;
+Large
+&lt;/label&gt;
+&lt;/div&gt;
+            </code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End:: row-3 -->
+
+    <!-- Start:: row-4 -->
+    <div class="grid grid-cols-12 gap-6">
+        <div class="xl:col-span-6 lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Inline
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="flex gap-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1"
+                                value="option1">
+                            <label class="form-check-label" for="inlineCheckbox1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2"
+                                value="option2">
+                            <label class="form-check-label" for="inlineCheckbox2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox3"
+                                value="option3" disabled>
+                            <label class="form-check-label" for="inlineCheckbox3">3 (disabled)</label>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                id="inlineRadio1" value="option1">
+                            <label class="form-check-label" for="inlineRadio1">1</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                id="inlineRadio2" value="option2">
+                            <label class="form-check-label" for="inlineRadio2">2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                id="inlineRadio3" value="option3" disabled>
+                            <label class="form-check-label" for="inlineRadio3">3 (disabled)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">
+&lt;div class="form-check form-check-inline"&gt;
+&lt;input class="form-check-input" type="checkbox" id="inlineCheckbox1"
+value="option1"&gt;
+&lt;label class="form-check-label" for="inlineCheckbox1"&gt;1&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-inline"&gt;
+&lt;input class="form-check-input" type="checkbox" id="inlineCheckbox2"
+value="option2"&gt;
+&lt;label class="form-check-label" for="inlineCheckbox2"&gt;2&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-inline"&gt;
+&lt;input class="form-check-input" type="checkbox" id="inlineCheckbox3"
+value="option3" disabled&gt;
+&lt;label class="form-check-label" for="inlineCheckbox3"&gt;3 (disabled)&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-inline"&gt;
+&lt;input class="form-check-input" type="radio" name="inlineRadioOptions"
+id="inlineRadio1" value="option1"&gt;
+&lt;label class="form-check-label" for="inlineRadio1"&gt;1&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-inline"&gt;
+&lt;input class="form-check-input" type="radio" name="inlineRadioOptions"
+id="inlineRadio2" value="option2"&gt;
+&lt;label class="form-check-label" for="inlineRadio2"&gt;2&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-inline"&gt;
+&lt;input class="form-check-input" type="radio" name="inlineRadioOptions"
+id="inlineRadio3" value="option3" disabled&gt;
+&lt;label class="form-check-label" for="inlineRadio3"&gt;3 (disabled)&lt;/label&gt;
+&lt;/div&gt;
+            </code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+        <div class="xl:col-span-6  lg:col-span-12 md:col-span-12 sm:col-span-12 col-span-12">
+            <div class="box">
+                <div class="box-header justify-between">
+                    <div class="box-title">
+                        Reverse
+                    </div>
+                    <div class="prism-toggle">
+                        <button type="button"
+                            class="ti-btn !py-1 !px-2 ti-btn-primary !text-[0.75rem] !font-medium btn-wave">Show
+                            Code<i class="ri-code-line ms-2 inline-block align-middle"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="form-check form-check-reverse mb-4">
+                        <input class="form-check-input" type="checkbox" value="" id="reverseCheck1">
+                        <label class="form-check-label" for="reverseCheck1">
+                            Reverse checkbox
+                        </label>
+                    </div>
+                    <div class="form-check form-check-reverse mb-4">
+                        <input class="form-check-input" type="checkbox" value="" id="reverseCheck2"
+                            disabled>
+                        <label class="form-check-label" for="reverseCheck2">
+                            Disabled reverse checkbox
+                        </label>
+                    </div>
+                </div>
+                <div class="box-footer hidden border-t-0">
+                    <!-- Prism Code -->
+                    <pre class="language-html"><code class="language-html">&lt;div class="form-check form-check-reverse mb-4"&gt;
+&lt;input class="form-check-input" type="checkbox" value=""
+id="reverseCheck1"&gt;
+&lt;label class="form-check-label" for="reverseCheck1"&gt;
+Reverse checkbox
+&lt;/label&gt;
+&lt;/div&gt;
+&lt;div class="form-check form-check-reverse mb-4"&gt;
+&lt;input class="form-check-input" type="checkbox" value=""
+id="reverseCheck2" disabled&gt;
+&lt;label class="form-check-label" for="reverseCheck2"&gt;
+Disabled reverse checkbox
+&lt;/label&gt;
+&lt;/div&gt;
+
+&lt;div class="form-check form-switch form-check-reverse"&gt;
+&lt;input class="form-check-input" type="checkbox"
+id="flexSwitchCheckReverse"&gt;
+&lt;label class="form-check-label" for="flexSwitchCheckReverse"&gt;Reverse
+switch
+checkbox input&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+                    <!-- Prism Code -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End:: row-4 -->

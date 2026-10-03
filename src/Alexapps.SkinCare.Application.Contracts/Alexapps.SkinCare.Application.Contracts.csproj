@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <NoWarn>CS8632</NoWarn> <!-- Suppress this specific warning -->
+
+    <RootNamespace>Alexapps.SkinCare</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Alexapps.SkinCare.Domain.Shared\Alexapps.SkinCare.Domain.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Hangfire" Version="1.8.23" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.24" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.21.1" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.24" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.19" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.30">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.19" />
+    <PackageReference Include="Volo.Abp.FluentValidation" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.ObjectExtending" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.Identity.Application.Contracts" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application.Contracts" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Application.Contracts" Version="9.0.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dtos\City\Validators\" />
+    <Folder Include="Dtos\Lab\" />
+    <Folder Include="Dtos\Nationality\Validators\" />
+  </ItemGroup>
+
+</Project>
+
+

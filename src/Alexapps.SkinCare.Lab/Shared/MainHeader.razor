@@ -1,0 +1,186 @@
+@inject StateService StateService
+@inject IJSRuntime JsRuntime
+
+<header class="flex items-center justify-between !bg-lab-peach h-14 w-full">
+    <div class="w-64 flex items-center justify-center h-full">
+        <a href="/dashboard" class="flex items-center">
+            <img src="assets/images/brand-logos/logo.png" alt="logo" width="64" height="64" class="white-filter brightness-0 invert"/>
+            <span class="text-white text-xl font-semibold">Lap Dashboard</span>
+        </a>
+    </div>
+
+    <div class="flex ">
+        <div
+            class="header-element md:px-[0.65rem] px-2 header-country hs-dropdown ti-dropdown hidden sm:block [--placement:bottom-right] rtl:[--placement:bottom-left]">
+            <button id="dropdown-flag" type="button"
+                    class="hs-dropdown-toggle !p-0 flex-shrink-0  !border-0 !rounded-full !shadow-none">
+                <img src="@_selectedLanguageFlag" alt="flag-img" class="h-6 w-6">
+            </button>
+            <div class="hs-dropdown-menu ti-dropdown-menu min-w-[10rem] hidden !-mt-3"
+                 aria-labelledby="dropdown-flag">
+                <div class="ti-dropdown-divider divide-y divide-gray-200 dark:divide-white/10">
+                    <div class="py-2 first:pt-0 last:pb-0">
+                        <div class="ti-dropdown-item !p-[0.65rem] "
+                             @onclick='async () => await HandleLanguageChangeAsync("en")'>
+                            <div class="flex items-center space-x-2 rtl:space-x-reverse w-full">
+                                <div class="h-[1.375rem] flex items-center w-[1.375rem] rounded-full">
+                                    <img src="assets/images/flags/us_flag.png" alt="flag-img"
+                                         class="h-[1rem] w-[1rem] ">
+                                </div>
+                                <div>
+                                    <p class="!text-[0.8125rem] font-medium">
+                                        English
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ti-dropdown-item !p-[0.65rem]"
+                             @onclick='async () => await HandleLanguageChangeAsync("ar")'>
+                            <div class="flex items-center space-x-2 rtl:space-x-reverse w-full">
+                                <div class="h-[1.375rem] w-[1.375rem] flex items-center rounded-full">
+                                    <img src="assets/images/flags/uae_flag.png" alt="flag-img"
+                                         class="h-[1rem] w-[1rem] ">
+                                </div>
+                                <div>
+                                    <p class="!text-[0.8125rem] font-medium">
+                                        Arabic
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end header country -->
+
+        <!-- Header Profile -->
+        <div
+            class="header-element md:!px-[0.65rem] px-2 hs-dropdown !items-center ti-dropdown [--placement:bottom-left]">
+            <a href="/profile">
+                <img src="assets/images/menu/user-circle.svg" alt="Image Description" class="h-6 w-6" title="Go To Lab Profile">
+            </a>
+        </div>
+        <!-- End Header Profile -->
+    </div>
+</header>
+
+@code {
+    private string? _selectedLanguageFlag;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = StateService.GetAppState();
+        ChangeLanguage(state.Direction == "rtl" ? "ar" : "en");
+        await base.OnInitializedAsync();
+    }
+
+    private async Task HandleLanguageChangeAsync(string language)
+    {
+        await ChangeDirection(language == "ar" ? "rtl" : "ltr");
+        ChangeLanguage(language);
+    }
+
+    private void ChangeLanguage(string language)
+    {
+        _selectedLanguageFlag = language switch
+        {
+            "en" => "assets/images/flags/us_flag.png",
+            "ar" => "assets/images/flags/uae_flag.png",
+            _ => _selectedLanguageFlag
+        };
+    }
+
+    private async Task ChangeDirection(string val)
+    {
+        //Localstorage
+        await StateService.directionFn(val);
+
+        if (val == "rtl")
+        {
+            await JsRuntime.InvokeVoidAsync("interop.setCultureCookie", "ar-SA");
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("interop.setCultureCookie", "en-US");
+        }
+    }
+
+
+    @* private async void ToggleMenu()
+    {
+        var toggled = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+        var verticalStyle = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-vertical-style");
+        var navStyle = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-style");
+        var isdoubleMenuActive = await JSRuntime.InvokeAsync<bool>("interop.isEleExist", ".double-menu-active");
+        var inner = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+
+        if (inner <= 992)
+        {
+            if (toggled == "open")
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "close");
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "open");
+            }
+        }
+        else
+        {
+            if (navStyle != null)
+            {
+                if (toggled != null)
+                {
+                    await JSRuntime.InvokeAsync<string>("interop.removeAttributeFromHtml", "data-toggled");
+                }
+                else
+                {
+                    await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", navStyle + "-closed");
+                }
+            }
+            else if (verticalStyle != null)
+            {
+                if (verticalStyle == "doublemenu")
+                {
+                    if (toggled == "double-menu-open" && isdoubleMenuActive)
+                    {
+                        await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "double-menu-close");
+                    }
+                    else
+                    {
+                        if (isdoubleMenuActive)
+                        {
+                            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "double-menu-open");
+                        }
+                    }
+                }
+                else if (toggled != null)
+                {
+                    await JSRuntime.InvokeAsync<string>("interop.removeAttributeFromHtml", "data-toggled");
+                }
+                else
+                {
+                    switch (verticalStyle)
+                    {
+                        case "closed":
+                            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "close-menu-close");
+                            break;
+                        case "icontext":
+                            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "icon-text-close");
+                            break;
+                        case "overlay":
+                            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "icon-overlay-close");
+                            break;
+                        case "detached":
+                            await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", "detached-close");
+                            break;
+                    }
+                }
+            }
+        }
+    } *@
+
+
+}

@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <NoWarn>CS8632</NoWarn> <!-- Suppress this specific warning -->
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+    <None Remove="appsettings.secrets.json" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.secrets.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>    
+    <PackageReference Include="Hangfire" Version="1.8.24" />    
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.21.1" />    
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.24" />    
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.19" />    
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.19" />    
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="2.0.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Autofac" Version="9.0.0" />
+    <ProjectReference Include="..\Alexapps.SkinCare.Application.Contracts\Alexapps.SkinCare.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Alexapps.SkinCare.EntityFrameworkCore\Alexapps.SkinCare.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Logs\**" />
+    <Content Remove="Logs\**" />
+    <EmbeddedResource Remove="Logs\**" />
+    <None Remove="Logs\**" />
+  </ItemGroup>
+
+   <ItemGroup>
+    <None Include="SeedData\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- EF Core Tools design-time package needed by PMC/dotnet-ef when startup project is this project -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
+
+
+

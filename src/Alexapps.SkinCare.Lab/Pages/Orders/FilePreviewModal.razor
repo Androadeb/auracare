@@ -1,0 +1,47 @@
+@* FilePreviewModal.razor *@
+<div id="preview-modal"
+     class="hs-overlay hidden w-full h-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none">
+  <div
+    class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-4xl sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
+    <div class="flex flex-col bg-white border shadow-sm rounded-3xl pointer-events-auto w-full h-[90vh]">
+      <div class="flex justify-between items-center py-3 px-4 border-b">
+        <h3 class="font-bold text-[#002B49]">@FileName</h3>
+        <button type="button" class="text-gray-400 hover:text-gray-500" data-hs-overlay="#preview-modal">
+          X
+        </button>
+      </div>
+      <div class="p-4 overflow-y-auto flex-grow bg-gray-50">
+        @if (IsImage)
+        {
+          <img src="@PreviewUrl" class="max-w-full h-auto mx-auto rounded-xl shadow-sm" alt="@FileName"/>
+        }
+        else if (IsPdf)
+        {
+          <iframe src="@PreviewUrl" class="w-full h-full rounded-xl border-none"></iframe>
+        }
+        else
+        {
+          <div class="flex flex-col items-center justify-center h-full text-gray-500">
+            <i class="bi bi-file-earmark-word text-6xl mb-4"></i>
+            <p>Preview not available for @FileName. Please download to view.</p>
+            <a href="@PreviewUrl" download="@FileName"
+               class="mt-4 px-6 py-2 bg-[#f1a68e] text-white rounded-xl font-bold">
+              Download File
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+  [Parameter] public string? PreviewUrl { get; set; } = "";
+  [Parameter] public string? FileName { get; set; } = "";
+  [Parameter] public string? ContentType { get; set; }
+  public bool IsImage => !string.IsNullOrEmpty(ContentType) && ContentType.StartsWith("image/");
+
+  public bool IsPdf => !string.IsNullOrEmpty(FileName) &&
+                       FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase);
+
+}

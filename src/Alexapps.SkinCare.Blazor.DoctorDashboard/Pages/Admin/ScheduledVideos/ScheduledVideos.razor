@@ -1,0 +1,280 @@
+﻿@page "/admin/scheduled-videos"
+@namespace Alexapps.SkinCare.Blazor.Pages.Admin
+@using Alexapps.SkinCare.Blazor.Pages.Admin
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService Loc
+@attribute [Authorize(Roles = "DOCTOR")]
+
+<div class="p-6">
+
+    <h3 class="text-defaulttextcolor dark:text-white text-[1.5rem] font-bold mb-6">@Loc["Scheduled Videos"]</h3>
+
+    @* --- قسم الإحصائيات --- *@
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        @if (StatisticsList != null)
+        {
+            @foreach (var stat in StatisticsList)
+            {
+                <div class="box bg-white dark:!bg-[#1f2937] border border-gray-100 dark:border-white/10 shadow-sm rounded-xl transition-all hover:shadow-md h-full">
+                    <div class="box-body p-5">
+                        <div class="flex justify-between items-start">
+                            <div class="text-start">
+                                <p class="text-[#8c9097] dark:text-white/50 text-[0.8rem] mb-1 font-bold">@Loc[stat.TitleKey]</p>
+                                <h4 class="text-[1.8rem] font-bold text-[#334155] dark:text-white leading-none mb-4">@stat.Value</h4>
+
+                                <div class="flex items-center gap-1 text-[0.75rem]">
+                                    @if (stat.Percentage > 0)
+                                    {
+                                        <span class="text-green-500 font-bold flex items-center">
+                                            <i class="ri-arrow-up-s-line text-lg"></i> +@stat.Percentage%
+                                        </span>
+                                        <span class="text-[#8c9097] dark:text-white/40">@Loc["From Yesterday"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="@stat.TextColor font-medium">@Loc[stat.SubTitleKey ?? ""]</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="p-3 @stat.BgColorOpacity rounded-xl">
+                                <i class="@stat.IconClass @stat.TextColor text-3xl"
+                                   style="filter: drop-shadow(0 0 8px @stat.GlowColor);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @* --- Tabs لتبديل الفلتر (Upcoming vs Completed) --- *@
+    <div class="flex gap-8 mb-6 border-b border-gray-100 dark:border-white/10 px-4">
+        <button @onclick="() => FilterSessions(false)"
+                class="pb-3 text-sm font-bold transition-all relative @(!ShowCompleted ? "text-[#F1A68E]" : "text-gray-400 hover:text-gray-600")">
+            @Loc["Upcoming Consultations"]
+            @if (!ShowCompleted)
+            {
+                <div class="absolute bottom-0 left-0 w-full h-0.5 bg-[#F1A68E]"></div>
+            }
+        </button>
+        <button @onclick="() => FilterSessions(true)"
+                class="pb-3 text-sm font-bold transition-all relative @(ShowCompleted ? "text-[#F1A68E]" : "text-gray-400 hover:text-gray-600")">
+            @Loc["Completed History"]
+            @if (ShowCompleted)
+            {
+                <div class="absolute bottom-0 left-0 w-full h-0.5 bg-[#F1A68E]"></div>
+            }
+        </button>
+    </div>
+
+    @* --- القائمة المجدولة --- *@
+    <div class="box custom-box bg-white dark:bg-[#1f2937] border border-gray-100 dark:border-white/10 rounded-xl overflow-hidden shadow-sm">
+        <div class="p-5 border-b border-gray-100 dark:border-white/10">
+            <div class="flex items-center gap-2 mb-1">
+                <i class="ri-calendar-event-line text-xl"></i>
+                <h3 class="text-[1rem] font-bold text-defaulttextcolor dark:text-white">
+                    @(ShowCompleted? Loc["Past Consultations"] : Loc["Scheduled Calls List"])
+                </h3>
+            </div>
+            <p class="text-[#8c9097] text-[0.75rem]">@Loc["Manage and track your video sessions"]</p>
+        </div>
+
+        <div class="p-5 flex flex-col gap-4">
+            @if (ScheduledCalls != null && ScheduledCalls.Any())
+            {
+                @foreach (var call in ScheduledCalls)
+                {
+                    <div class="flex items-center justify-between p-4 border border-gray-100 dark:border-white/10 rounded-2xl hover:bg-gray-50/50 dark:hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-100 shadow-sm bg-gray-50">
+                                @if (!string.IsNullOrEmpty(call.PatientImageUrl))
+                                {
+                                    <img src="@call.PatientImageUrl" alt="Patient" class="w-full h-full object-cover" />
+                                }
+                                else
+                                {
+                                    <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                                        <i class="ri-user-fill text-2xl"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div>
+                                <h4 class="text-[1rem] font-bold text-defaulttextcolor dark:text-white mb-1">@call.PatientName</h4>
+                                <div class="flex flex-wrap items-center gap-y-2 gap-x-4 text-[#94a3b8] text-[0.75rem]">
+
+                                    @* --- تعديل: تخزين التاريخ الخام UTC لاستخدامه في التحويل --- *@
+                                    <span class="flex items-center gap-1.5 bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-md border border-gray-100 dark:border-white/10">
+                                        <i class="ri-calendar-event-line text-[#F1A68E]"></i>
+                                        @* كلاس js-local-date للتحويل للجزء الخاص بالتاريخ فقط *@
+                                        <span class="font-semibold text-defaulttextcolor dark:text-white js-local-date"
+                                              data-utc="@call.ScheduledStartTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                            @call.ScheduledStartTime.ToString("dddd, dd MMMM yyyy") @* قيمة افتراضية *@
+                                        </span>
+                                    </span>
+
+                                    <span class="flex items-center gap-1.5 bg-gray-50 dark:bg-white/5 px-2 py-1 rounded-md border border-gray-100 dark:border-white/10">
+                                        <i class="ri-time-line text-[#F1A68E]"></i>
+                                        @* كلاس js-local-time للتحويل للجزء الخاص بالوقت فقط *@
+                                        <span class="font-semibold text-defaulttextcolor dark:text-white js-local-time"
+                                              data-utc="@call.ScheduledStartTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                            @call.ScheduledStartTime.ToString("hh:mm tt") @* قيمة افتراضية *@
+                                        </span>
+                                    </span>
+
+                                    <span class="flex items-center gap-1.5 ml-1">
+                                        <i class="ri-timer-line"></i>
+                                        <span>@call.DurationMinutes @Loc["min"]</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (!ShowCompleted)
+                        {
+                            <button disabled="@(!call.CanStart)"
+                                    @onclick="() => StartMeeting(call)"
+                                    class="text-white px-8 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:opacity-90 active:scale-95 shadow-lg shadow-[#F1A68E]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    style="background-color: #F1A68E !important;">
+                                <i class="ri-video-chat-line text-lg"></i> @Loc["Start"]
+                            </button>
+                        }
+                    </div>
+                }
+
+                @* --- Pagination Section --- *@
+                @if (TotalPages > 1)
+                {
+                    <div class="flex items-center justify-between mt-6 px-4 py-3 border-t border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-black/10 rounded-xl">
+                        <div class="text-[0.8rem] text-gray-500 font-medium">
+                            @Loc["Page"] <span class="text-defaulttextcolor dark:text-white font-bold">@CurrentPage</span> @Loc["of"] <span class="text-defaulttextcolor dark:text-white font-bold">@TotalPages</span>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button @onclick="() => ChangePage(CurrentPage - 1)"
+                                    disabled="@(!HasPreviousPage)"
+                                    class="px-4 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm font-bold transition-all hover:bg-white dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed">
+                                <i class="ri-arrow-left-s-line mr-1"></i> @Loc["Previous"]
+                            </button>
+
+                            <button @onclick="() => ChangePage(CurrentPage + 1)"
+                                    disabled="@(!HasNextPage)"
+                                    class="px-4 py-2 border border-gray-200 dark:border-white/10 rounded-lg text-sm font-bold transition-all hover:bg-white dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed">
+                                @Loc["Next"] <i class="ri-arrow-right-s-line ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center p-10">
+                    <i class="ri-calendar-todo-line text-5xl text-gray-300 mb-3"></i>
+                    <p class="text-gray-400">@Loc["No sessions found for this category"]</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (isMeetingActive)
+{
+    <div class="video-call-overlay"
+         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 9999; display: flex; align-items: center; justify-content: center;">
+
+        <div id="video-sdk-container" style="width: 100vw; height: 100vh; position: fixed; top: 0; left: 0;"></div>
+
+        <button @onclick="() => isMeetingActive = false"
+                style="position: absolute; top: 20px; right: 20px; z-index: 10000;"
+                class="btn btn-danger">
+            @Loc["Close"]
+        </button>
+    </div>
+}
+
+<script src="https://sdk.videosdk.live/rtc-js-prebuilt/0.3.43/rtc-js-prebuilt.js"></script>
+
+<script>
+    window.videoSDKHandler = {
+        meeting: null,
+        init: async function (roomId, token, displayName, cameraErrorMsg) {
+            console.log("Attempting to break browser lock...");
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+                stream.getTracks().forEach(track => track.stop());
+                console.log("Browser permissions granted.");
+            } catch (err) {
+                console.error("Browser lock detected:", err);
+                alert(cameraErrorMsg);
+                return;
+            }
+            this.startMeeting(roomId, token, displayName);
+        },
+        startMeeting: function (roomId, token, displayName) {
+            const config = {
+                meetingId: roomId,
+                token: token,
+                name: displayName,
+                apiKey: "efb2aa08-8462-42ef-b414-c4cd3c058cce",
+                containerId: "video-sdk-container",
+                participantCanToggleSelfMic: true,
+                participantCanToggleSelfWebcam: true,
+                micEnabled: false,
+                webcamEnabled: false,
+                theme: "DARK",
+                precallVideocheck: true,
+                perpermissions: {
+                    pin: true,
+                    askToJoin: false,
+                    toggleParticipantWebcam: true,
+                    toggleParticipantMic: true,
+                    toggleParticipantMode: true,
+                    canToggleParticipantTab: true,
+                    toggleParticipantScreenshare: true,
+                    removeParticipant: true,
+                    endMeeting: true,
+                    drawOnWhiteboard: true,
+                    toggleWhiteboard: true,
+                    toggleVirtualBackground: true,
+                    toggleRecording: true,
+                    toggleLivestream: true,
+                    changeLayout: true,
+                },
+                responsive: { enabled: false }
+            };
+            this.meeting = new VideoSDKMeeting();
+            this.meeting.init(config);
+        }
+    };
+</script>
+<script>
+    function convertScheduledTimes() {
+        // 1. تحويل التواريخ (اليوم، اليوم من الشهر، السنة)
+        document.querySelectorAll('.js-local-date').forEach(el => {
+            const utcStr = el.getAttribute('data-utc');
+            if (utcStr) {
+                const date = new Date(utcStr);
+                // عرض التاريخ بصيغة: Saturday, 04 May 2026 (أو حسب لغة المتصفح)
+                el.innerText = date.toLocaleDateString(undefined, {
+                    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+                });
+            }
+        });
+
+        // 2. تحويل الوقت (الساعة والدقيقة)
+        document.querySelectorAll('.js-local-time').forEach(el => {
+            const utcStr = el.getAttribute('data-utc');
+            if (utcStr) {
+                const date = new Date(utcStr);
+                el.innerText = date.toLocaleTimeString(undefined, {
+                    hour: '2-digit', minute: '2-digit', hour12: true
+                });
+            }
+        });
+    }
+
+    // التنفيذ عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', convertScheduledTimes);
+
+    // ملاحظة: إذا كنت تستخدم Blazor Server/WebAssembly وتغيرت القائمة بدون إعادة تحميل الصفحة،
+    // ستحتاج لاستدعاء convertScheduledTimes() من داخل C# باستخدام JSInterop.
+</script>

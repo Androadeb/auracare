@@ -1,0 +1,19 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Web
+@namespace ynex.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Globalization
+@using Microsoft.AspNetCore.Localization
+@{
+    var cultureCookie = Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
+    if (cultureCookie != null)
+    {
+        var culture = CookieRequestCultureProvider.ParseCookieValue(cultureCookie).Cultures[0].Value;
+        CultureInfo.CurrentCulture = new CultureInfo(culture);
+        CultureInfo.CurrentUICulture = new CultureInfo(culture);
+    }
+
+    Layout = "_Layout";
+}
+<script src="https://sdk.videosdk.live/rtc-js-prebuilt/0.3.43/rtc-js-prebuilt.js"></script>
+<component type="typeof(App)" render-mode="Server" />

@@ -1,0 +1,194 @@
+﻿@page "/admin/medical-tests-details/{Id}"
+@namespace ynex.Pages.Admin.Medical_Tests
+@using ynex.Services.MedicalTest
+@using Microsoft.Extensions.Localization
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService L
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "DOCTOR")]
+
+
+<div class="p-6 bg-[#f8fafc] min-h-screen">
+    <h3 class="text-[1.3rem] font-bold text-slate-800 mb-6">@L["MedicalTestDetails"]</h3>
+
+    @if (OrderDetail == null)
+    {
+        <div class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+    }
+    else
+    {
+        <div class="flex justify-center gap-6 mb-8">
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <button @onclick="HandleDownloadFile"
+                        disabled="@(OrderDetail == null || string.IsNullOrEmpty(OrderDetail.resultFileUrl))"
+                        class="flex items-center justify-center gap-3 min-w-[200px] px-6 py-3 text-white font-bold rounded-md shadow-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        style="background-color: #F1A68E !important; border: none !important;">
+                    <i class="ri-download-cloud-2-line text-xl"></i>
+                    <span>@L["DownloadFile"]</span>
+                </button>
+
+                <button @onclick="HandleSendResult"
+                        disabled="@(_isSending || OrderDetail == null)"
+                        class="flex items-center justify-center gap-3 min-w-[200px] px-6 py-3 font-bold rounded-md shadow-sm border transition-all hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        style="background-color: white !important; color: #1e293b !important; border: 1px solid #e2e8f0 !important;">
+
+                    @if (_isSending)
+                    {
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                        <span>@L["Sending..."]</span>
+                    }
+                    else
+                    {
+                        <i class="ri-send-plane-line text-xl"></i>
+                        <span>@L["SendResultToPatient"]</span>
+                    }
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[1100px] mx-auto">
+            @* Patient Information *@
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+                <div class="flex items-center gap-3 mb-6">
+                    <i class="ri-menu-2-line text-2xl font-bold"></i>
+                    <h4 class="text-xl font-bold text-slate-800">@L["PatientInfo"]</h4>
+                </div>
+
+                <div class="flex items-center gap-4 mb-6">
+                    @{
+                        // عنوان السيرفر الأساسي
+                        var baseUrl = "https://auraskin.runasp.net";
+
+                        // بناء الرابط الكامل للصورة
+                        var fullImageUrl = !string.IsNullOrEmpty(OrderDetail?.patientImage)
+                        ? $"{baseUrl.TrimEnd('/')}/{OrderDetail.patientImage.TrimStart('/')}"
+                        : null;
+                    }
+
+                    @if (!string.IsNullOrEmpty(fullImageUrl))
+                    {
+                        @* عرض الصورة الشخصية للمريض بحجم كبير *@
+                        <img src="@fullImageUrl"
+                             class="w-16 h-16 rounded-full object-cover border-2 border-slate-100 shadow-sm"
+                             alt="@OrderDetail?.patientName" />
+                    }
+                    else
+                    {
+                        @* عرض دائرة ملونة بالحرف الأول في حال عدم وجود صورة *@
+                        <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-500 border-2 border-slate-200">
+                            @(string.IsNullOrEmpty(OrderDetail?.patientName) ? "?" : OrderDetail.patientName[0].ToString().ToUpper())
+                        </div>
+                    }
+
+                    <div>
+                        <h5 class="text-lg font-bold text-slate-900 dark:text-white">@OrderDetail?.patientName</h5>
+                     
+                        <p class="text-xs text-slate-400">@L["Patient Profile"]</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 mt-4 border-t border-slate-300">
+                    <div class="py-4 border-b border-slate-300">
+                        <p class="text-slate-400 text-sm mb-1  font-bold">@L["Age"]</p>
+                        <p class="font-bold text-slate-900">@OrderDetail.age</p>
+                    </div>
+                    <div class="py-4 border-b border-slate-300 pl-4">
+                        <p class="text-slate-400 text-sm mb-1 font-bold">@L["Gender"]</p>
+                        <p class="font-bold text-slate-900">@L[OrderDetail.patientGender ?? "N/A"]</p>
+                    </div>
+                    <div class="py-4 border-b border-slate-300">
+                        <p class="text-slate-400 text-sm mb-1 font-bold">@L["Email"]</p>
+                        <p class="font-bold text-slate-900 text-xs">@OrderDetail.patientEmail</p>
+                    </div>
+                    <div class="py-4 border-b border-slate-300 pl-4">
+                        <p class="text-slate-400 text-sm mb-1 font-bold">@L["Phone"]</p>
+                        <p class="font-bold text-slate-900">@OrderDetail.patientPhone</p>
+                    </div>
+                </div>
+
+                <div class="py-4 border-t border-slate-300">
+                    <p class="text-[14px] text-slate-400 uppercase tracking-tighter font-bold">@L["MedicalHistorySummary"]</p>
+                    <p class="text-sm text-slate-800 leading-relaxed dark:text-white/70">
+                        @(string.IsNullOrEmpty(OrderDetail.medicalHistorySummary) ? L["NoHistoryAvailable"] : OrderDetail.medicalHistorySummary)
+                    </p>
+                </div>
+            </div>
+
+            @* Test Information *@
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+                <div class="flex items-center gap-3 mb-10">
+                    <i class="ri-file-list-3-line text-2xl font-bold"></i>
+                    <h4 class="text-xl font-bold text-slate-800">@L["TestInformation"]</h4>
+                </div>
+
+                <div class="grid grid-cols-2 gap-y-20 gap-x-12 mb-14">
+                    <div class="space-y-3">
+                        <p class="text-[14px] text-slate-400 uppercase tracking-wider font-bold">@L["TestType"]</p>
+                        <p class="text-xl font-extrabold text-slate-900 dark:text-white">@OrderDetail.testType</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-[14px] text-slate-400 uppercase tracking-wider font-bold">@L["Category"]</p>
+                        <p class="text-xl font-extrabold text-slate-900 dark:text-white">@OrderDetail.category</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-[14px] text-slate-400 uppercase tracking-wider font-bold">@L["SampleType"]</p>
+                        <p class="text-xl font-extrabold text-slate-900 dark:text-white">@OrderDetail.sampleType</p>
+                    </div>
+
+                </div>
+
+                <div class="pt-8 border-t border-gray-100 mt-10">
+                    <div class="flex items-center gap-3">
+                        <i class="ri-flask-line text-2xl"></i>
+                        <div>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-tighter font-bold">@L["AssignedLab"]</p>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-tighter font-bold">@(OrderDetail.labName ?? L["NotAssignedYet"])</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Attachments *@
+            <div class="col-span-1 md:col-span-2 bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-[24px] p-8 shadow-sm dark:shadow-none mt-2 box custom-box animate-zoom-in">
+                <h4 class="text-lg font-bold text-slate-800 mb-6">@L["Attachments"]</h4>
+                <div class="space-y-4">
+                    @* التحقق من وجود رابط الملف *@
+                    @if (!string.IsNullOrEmpty(OrderDetail?.resultFileUrl))
+                    {
+                        <div class="flex items-center justify-between p-4 border border-gray-100 dark:border-white/10 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                            <div class="flex items-center gap-4 text-left">
+                                <div class="flex items-center justify-center bg-orange-50 dark:bg-orange-500/10 p-2 rounded-lg">
+                                    <i class="ri-file-list-3-fill text-3xl text-orange-400"></i>
+                                </div>
+                                <div>
+                                    @* سيعرض الآن "david waheeb-1.pdf" كما جاء من الـ API *@
+                                    <h5 class="font-bold text-slate-800 dark:text-white mb-0">@OrderDetail.FileName</h5>
+                                    <span class="text-[11px] text-gray-400">PDF Document</span>
+                                </div>
+                            </div>
+
+                            @* رابط العرض المباشر *@
+                            <a href="@OrderDetail.FullFileUrl"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="flex items-center gap-2 px-8 py-2 text-white rounded-xl font-bold text-sm transition-all hover:brightness-110"
+                               style="background-color: #F1A68E !important; text-decoration: none; cursor: pointer;">
+                                <i class="ri-eye-line"></i> @L["Preview"]
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        @* عرض رسالة في حال عدم وجود مرفقات *@
+                        <div class="text-center py-6">
+                            <p class="text-gray-400 italic">@L["NoAttachmentsFound"]</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

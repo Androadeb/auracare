@@ -1,0 +1,174 @@
+    @inject IJSRuntime JSRuntime
+    @inject StateService stateService
+    @using BlazorColorPicker
+    
+    <!-- ========== Switcher  ========== -->
+  <div id="switcher-canvas" class="hs-overlay hidden ti-offcanvas ti-offcanvas-right" tabindex="-1">
+    <div class="ti-offcanvas-header z-10 relative">
+      <h5 class="ti-offcanvas-title">
+        Switcher
+      </h5>
+      <button type="button"
+        class="ti-btn flex-shrink-0 p-0 !mb-0  transition-none text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-gray-700 focus:ring-gray-400 focus:ring-offset-white  dark:hover:text-white/80 dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
+        data-hs-overlay="#switcher-canvas">
+        <span class="sr-only">Close modal</span>
+        <i class="ri-close-circle-line leading-none text-lg"></i>
+      </button>
+    </div>
+    <div class="ti-offcanvas-body" id="switcher-body">
+      <div id="switcher-1" role="tabpanel" aria-labelledby="switcher-item-1" class="">
+        <div class="">
+          <p class="switcher-style-head">Theme Color Mode:</p>
+          <div class="grid grid-cols-3 switcher-style">
+            <div class="flex items-center">
+              <input type="radio" name="theme-style" class="ti-form-radio" id="switcher-light-theme" @onclick='() => colorthemeFn("light")' checked="@(currentState.ColorTheme == "light")">
+              <label for="switcher-light-theme"
+                class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Light</label>
+            </div>
+            <div class="flex items-center">
+              <input type="radio" name="theme-style" class="ti-form-radio" id="switcher-dark-theme" @onclick='() => colorthemeFn("dark")' checked="@(currentState.ColorTheme == "dark")">
+              <label for="switcher-dark-theme"
+                class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Dark</label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="switcher-style-head">Directions:</p>
+          <div class="grid grid-cols-3  switcher-style">
+            <div class="flex items-center">
+              <input type="radio" name="direction" class="ti-form-radio" id="switcher-ltr" @onclick='() => directionFn("ltr")'  checked="@(currentState.Direction == "ltr")">
+              <label for="switcher-ltr" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">LTR</label>
+            </div>
+            <div class="flex items-center">
+              <input type="radio" name="direction" class="ti-form-radio" id="switcher-rtl" @onclick='() => directionFn("rtl")'  checked="@(currentState.Direction == "rtl")">
+              <label for="switcher-rtl" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">RTL</label>
+            </div>
+          </div>
+        </div>
+        <div class="theme-colors">
+          <p class="switcher-style-head">Theme Primary:</p>
+          <div class="flex switcher-style space-x-3 rtl:space-x-reverse">
+            <div class="ti-form-radio switch-select">
+              <input class="ti-form-radio color-input color-primary-1" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("58 88 146","58, 88, 146")' checked="@(currentState.ThemePrimary == "58, 88, 146")"
+                id="switcher-primary">
+            </div>
+            <div class="ti-form-radio switch-select">
+              <input class="ti-form-radio color-input color-primary-2" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("92 144 163","92, 144, 163")' checked="@(currentState.ThemePrimary == "92, 144, 163")"
+                id="switcher-primary1">
+            </div>
+            <div class="ti-form-radio switch-select">
+              <input class="ti-form-radio color-input color-primary-3" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("161 90 223","161, 90, 223")' checked="@(currentState.ThemePrimary == "161, 90, 223")"
+                id="switcher-primary2">
+            </div>
+            <div class="ti-form-radio switch-select">
+              <input class="ti-form-radio color-input color-primary-4" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("78 172 76","78, 172, 76")' checked="@(currentState.ThemePrimary == "78, 172, 76")"
+                id="switcher-primary3">
+            </div>
+            <div class="ti-form-radio switch-select">
+              <input class="ti-form-radio color-input color-primary-5" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("223 90 90","223, 90, 90")' checked="@(currentState.ThemePrimary == "223, 90, 90")"
+                id="switcher-primary4">
+            </div>
+            <div class="ti-form-radio switch-select ps-0 color-primary-light">
+              <a href="javascript:void(0);" @onclick="PrimaryModal">
+                  <div style="background-color:rgb(@primarycolor)" class="buttonColor m-0"></div>
+              </a>
+              <ColorPicker IsOpened="isPrimaryOpened" Closed="PrimaryClosedEvent" MyColor="@primarycolor" />
+            </div>
+          </div>
+        </div>
+        <p class="switcher-style-head">Reset:</p>
+        <div class="text-center">
+          <a href="javascript:void(0);" id="reset-all" @onclick='() => Landingreset()' class="ti-btn ti-btn-danger-full m-3">Reset</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ========== END Switcher  ========== -->
+
+    
+@code {
+    string[] colors = new string[] { "#FFFFFF", "#000000", "#999999","#845adf" };
+    bool isPrimaryOpened = false;
+    string primarycolor = "132 90 223";
+
+
+    void PrimaryModal() => isPrimaryOpened = true;
+    
+    public static (int R, int G, int B) HexToRgb(string hex)
+    {
+        // Remove the leading '#' if it exists
+        hex = hex.TrimStart('#');
+
+        // Ensure the hex string is 6 characters long
+        if (hex.Length != 6)
+        {
+            throw new ArgumentException("Invalid hex color code.");
+        }
+
+        // Parse the hex string into RGB values   
+        int r = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+        int g = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+        int b = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+        return (r, g, b);
+    }
+    async void PrimaryClosedEvent(string value)
+    {
+        var rgbValue = HexToRgb(value);
+        var val = $"{rgbValue.R} {rgbValue.G} {rgbValue.B}";
+        var val2 = $"{rgbValue.R}, {rgbValue.G}, {rgbValue.B}";
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimary", val);
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimaryRGB", val2);
+        await stateService.themePrimaryFn(val, val2);
+        primarycolor = val;
+        isPrimaryOpened = false;
+        StateHasChanged(); // Force re-render
+    }
+    
+
+}
+
+
+@code {
+    private AppState currentState => stateService.GetAppState();
+    private async void colorthemeFn(string val)
+    {
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexcolortheme", val);
+        await stateService.colorthemeFn(val, false);
+        StateHasChanged(); // Force re-render
+    }
+
+    private async void directionFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexdirection", val);
+        // await stateService.directionFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void themePrimaryFn(string val, string val2)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimary", val);
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimaryRGB", val2);
+        await stateService.themePrimaryFn(val,val2);
+        StateHasChanged(); // Force re-render
+    }
+    private async void Landingreset(){
+        await stateService.Landingreset();
+        StateHasChanged(); // Force re-render
+    }
+    protected override void OnInitialized()
+    {
+        StateHasChanged(); // Force re-render
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        stateService.OnStateChanged += RefreshState;
+        await base.OnInitializedAsync();
+    }
+
+    private async void RefreshState()
+    {
+        // Trigger a re-render when the state changes
+        await InvokeAsync(StateHasChanged);
+    }
+}

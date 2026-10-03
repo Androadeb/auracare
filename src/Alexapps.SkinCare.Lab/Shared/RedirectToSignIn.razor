@@ -1,0 +1,31 @@
+@layout EmptyLayout
+@inject NavigationManager Navigation
+@inject ITokenProvider TokenProvider
+
+
+<div class="flex items-center justify-center min-h-screen bg-gray-50">
+  <div class="text-center">
+    <div
+      class="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-blue-600 rounded-full mb-4"
+      role="status">
+      <span class="sr-only">Redirecting...</span>
+    </div>
+    <p class="text-gray-500 font-medium">Redirecting to sign in...</p>
+  </div>
+</div>
+
+@code {
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      // Wait a tiny bit for MainLayout's InitializeAsync to finish
+      await Task.Delay(500);
+
+      if (string.IsNullOrEmpty(TokenProvider.AccessToken))
+      {
+        Navigation.NavigateTo("/sign-in");
+      }
+    }
+  }
+}

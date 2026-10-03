@@ -1,0 +1,391 @@
+.WMBOS-loading {
+    @apply hidden;
+}
+
+/* Start::Blazor Slick Carousel js */
+
+.slick-list {
+    @apply rounded-lg;
+  }
+  .slick-slider {
+    @apply touch-none #{!important};
+  }
+  .slick-arrow {
+    @apply w-[1.563rem] h-[1.563rem] text-white bg-[rgba(0,0,0,0.3)] rounded-md shadow-none #{!important};
+  }
+  
+  .slick-arrow:after {
+    @apply text-xs font-extrabold #{!important};
+  }
+  
+  .slick-prev,
+  .swiper-rtl .slick-next {
+    @apply start-2.5 end-auto #{!important};
+    &::before {
+        @apply content-["\ea64"] font-remixicon #{!important};
+    }
+  }
+  
+  .slick-next,
+  .swiper-rtl .slick-prev {
+    @apply start-auto end-2.5 #{!important};
+    &::before {
+        @apply content-["\ea6e"] font-remixicon #{!important}
+    }
+  }
+  .slick-dots {
+    @apply w-full absolute text-center transition-[0.3s] duration-[opacity] z-10 start-0 bottom-2.5;
+    transform: translate3d(0, 0, 0);
+    li {
+      button {
+        @apply p-0 bg-white #{!important};
+      }
+      &.slick-active button {
+        @apply opacity-100 bg-white #{!important};
+      }
+    }
+  }
+  .Dynamic-slick-dots {
+    li {
+      button {
+        @apply w-5 h-1 rounded-md p-0;
+      }
+    }
+  }
+  .Dynamic-slick-dots2 {
+    @apply top-auto -bottom-5;
+    li {
+      button {
+        @apply w-5 h-1 rounded-md p-0 bg-primary/80 #{!important};
+      }
+      &.slick-active button {
+       @apply bg-primary #{!important}
+      }
+    }
+  }
+  .Fraction-slick-dots {
+    li {
+        @apply w-full hidden m-0 #{!important};
+      &.slick-active {
+        @apply flex #{!important};
+        button {
+          @apply bg-transparent #{!important};
+        }
+      }
+      button {
+        @apply w-full h-full rounded-md bg-transparent p-0;
+        &::after {
+            @apply content-[attr(aria-label)] block text-sm text-white mt-[5px] font-arial;
+        }
+      }
+    }
+  }
+  .Custom-slick-dots {
+    li {
+        @apply w-6 h-6 #{!important};
+      &.slick-active {
+        button {
+            @apply w-6 h-6 text-black #{!important};
+        }
+      }
+      button {
+        @apply text-sm text-white rounded-md #{!important};
+      }
+    }
+  }
+  .Custom-slick-dots2 {
+    li {
+        @apply w-6 h-6 #{!important};
+      &.slick-active {
+        button {
+            @apply w-6 h-6 text-white bg-primary #{!important};
+        }
+      }
+      button {
+        @apply text-sm text-black rounded-md bg-white #{!important};
+      }
+    }
+  }
+  .slick-dotted.slick-slider {
+    @apply mb-0  #{!important};
+  }
+  .Vertical-slick-dots {
+    @apply grid m-0 top-[40%] bottom-2/4 justify-end #{!important};
+    li {
+        @apply m-[5px];
+    }
+  }
+  .slick-slide img {
+    @apply w-full;
+  }
+  .CallBack-container {
+    @apply mb-8;
+  }
+  [dir="rtl"] {
+    .slick-slider {
+      @apply dir-ltr;
+      .slick-slide{
+        @apply dir-rtl;
+      }
+    }
+  }
+  /* End:: Blazor Slick Carousel */
+
+html[data-toggled=open] #responsive-overlay {
+  @apply visible;
+}
+[type=checkbox], [type=radio] {
+  @apply border-defaultborder dark:border-defaultborder/10 #{!important};
+}
+
+[type=text],
+input:where(:not([type])),
+[type=email],
+[type=url],
+[type=password],
+[type=number],
+[type=date],
+[type=datetime-local],
+[type=month],
+[type=search],
+[type=tel],
+[type=time],
+[type=week],
+[multiple],
+textarea,
+select {
+  @apply border-defaultborder dark:border-defaultborder/10 rounded-[0.35rem] text-[0.85rem] #{!important};
+}
+
+.progress-bar-striped {
+  @apply bg-custom-gradient bg-custom-size;
+}
+
+.progress-bar-animated{
+  @apply animate-progressbaranimated;
+}
+
+select {
+  @apply bg-[right_0.5rem_center] rtl:bg-[left_0.5rem_center] #{!important};
+}
+.flatpickr-monthSelect-month {
+  @apply dark:text-defaulttextcolor/70 #{!important};
+}
+.flatpickr-monthSelect-month:hover, .flatpickr-monthSelect-month:focus {
+  @apply dark:bg-bodybg2 #{!important};
+}
+.color-picker-header,
+.color-picker-palette {    
+  @apply dark:bg-bodybg2 #{!important};
+}
+.color-picker-content{
+  @apply dark:shadow-none #{!important};
+}
+.ti-btn.ti-btn-outline-primary:hover .badge, 
+.ti-btn.ti-btn-outline-primary:focus .badge,
+.ti-btn.ti-btn-outline-primary:active .badge {
+  @apply bg-white text-black ;
+}
+.ti-btn.ti-btn-outline-secondary:hover .badge, 
+.ti-btn.ti-btn-outline-secondary:focus .badge, 
+.ti-btn.ti-btn-outline-secondary:active .badge {
+  @apply bg-white text-black ;
+}
+.ti-btn.ti-btn-outline-success:hover .badge, 
+.ti-btn.ti-btn-outline-success:focus .badge, 
+.ti-btn.ti-btn-outline-success:active .badge {
+  @apply bg-white text-black ;
+}
+.ti-btn.ti-btn-outline-info:hover .badge, 
+.ti-btn.ti-btn-outline-info:focus .badge, 
+.ti-btn.ti-btn-outline-info:active .badge {
+  @apply bg-white text-black ;
+}
+.authentication-page {
+  @apply dark:bg-bodybg; 
+}
+.apexcharts-canvas {
+  @apply rtl:dir-ltr #{!important};
+}
+.apexcharts-text.apexcharts-datalabel-label {
+  @apply dark:fill-defaulttextcolor/70;
+}
+.leaflet-container img.leaflet-image-layer {
+  @apply w-[20] h-[25px] #{!important};
+}
+.svg-purple {
+  @apply fill-[#8920ad]; 
+}
+.svg-pink {
+  @apply fill-[#e791bc]; 
+}
+.os-theme-dark>.os-scrollbar>.os-scrollbar-track>.os-scrollbar-handle {
+  @apply bg-[#f0f1f7] dark:bg-bodybg2 #{!important};
+}
+.authentication-page h1,
+.aunthentication-cover-content h1:focus-visible {
+  @apply focus-visible:outline-0;
+}
+.single.input-active .ts-control,
+.currency-exchange-area .ts-control,
+.mail-settings-page .ts-control,
+.crypto-buy-sell .ts-control,
+#buy-crypto2 .ts-control, 
+#sell-crypto2 .ts-control {
+  @apply flex-nowrap;
+}
+.ts-wrapper .ts-control:after {
+  @apply content-["_"] block h-0 mt-[-3px] absolute w-0 opacity-50 border-t-defaulttextcolor border-t-[5px] border-b-transparent border-b-0 border-x-transparent border-x-[5px] border-solid start-auto end-[15px] top-2/4;
+}   
+
+/* Start:: Blazor Treeview */
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-collapsed div {
+  @apply text-base relative leading-loose first:before:content-["\ed5a"] first:before:text-base first:before:absolute first:before:text-defaulttextcolor font-inter start-[25px];
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-collapsed
+  div:first-child::before {
+  @apply font-remixicon #{!important};
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-collapsed
+  div
+  > div
+  > div::before {
+  @apply hidden;
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-collapsed svg {
+  @apply hidden h-4 me-2;
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-collapsed svg path {
+  @apply stroke-defaulttextcolor stroke-[1px];
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-collapsed
+  input[type="checkbox"] {
+  @apply relative w-[1.1em] h-[1.1em] bg-[$custom-white] border border-[$input-border] border-solid checked:bg-[$primary] checked:border-[$primary] start-[1.2rem];
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-nochildren.excubo-blazor-treeview-item-expanded
+  div:first-child::before {
+  @apply content-["\ed6a"];
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-nochildren.excubo-blazor-treeview-item-expanded
+  div
+  > div
+  > div::before {
+  @apply hidden;
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-expanded div {
+  @apply text-base relative leading-loose first:before:content-["\ed74"] first:before:text-base first:before:absolute first:before:text-defaulttextcolor font-inter start-[25px];
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-expanded
+  div:first-child::before {
+    @apply font-remixicon #{!important};
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-expanded
+  div
+  > div
+  > div::before {
+  @apply hidden;
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-expanded svg {
+  @apply hidden h-4 me-[8px];
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-expanded svg path {
+  @apply stroke-defaulttextcolor stroke-[1px];
+}
+.excubo-blazor-treeview-item.excubo-blazor-treeview-item-expanded
+  input[type="checkbox"] {
+  @apply relative w-[1.1em] h-[1.1em] bg-white dark:bg-bodybg border border-inputborder border-solid checked:bg-primary checked:border-primary start-[1.2rem];
+}
+.stronger-indent {
+  @apply pl-[2em] pb-[2em] #{!important};
+}
+.red-border {
+  @apply border border-defaultborder dark:border-defaultborder/10 border-solid;
+}
+.card-body > .default-tree-view-ul {
+  @apply mb-0 p-0;
+}
+.markup span {
+  @apply text-base relative leading-loose font-inter;
+}
+.markup svg {
+  @apply h-4 me-[8px];
+}
+.markup svg path {
+  @apply stroke-defaulttextcolor stroke-[2px];
+}
+/* End:: Blazor Treeview */
+.wizard-body {
+ @apply p-[3rem] #{!important};
+}
+.blazorwizard-step.ti-btn.active {
+  @apply bg-primary text-white #{!important};
+}
+.payment-card-container {
+  @apply relative p-[0.625rem] border border-inputborder dark:border-defaultborder/10 rounded-[0.3rem];
+}
+.color-picker-close-button {
+  @apply rtl:float-left #{!important};
+}
+.star-rating {
+  @apply rtl:dir-ltr #{!important};
+}
+.ri-arrow-left-s-line:before {
+  @apply rtl:content-["\ea6e"];
+}
+.ri-arrow-right-s-line:before {
+  @apply rtl:content-["\ea64"];
+}
+.jvm-tooltip {
+  @apply hidden;
+}
+@media (max-width: 700px) {
+  .job-search .companies-search-input {
+    @apply block;
+  }
+}
+@media (min-width: 700px) {
+  .job-search .ts-control {
+    @apply w-[16.875rem];
+  }
+}
+.hours {
+  @apply border dark:border-defaultborder/10 #{!important};
+}
+.cellule,
+.calendar-container {
+  @apply dark:border-defaultborder/10 #{!important}; 
+}
+.mail-settings-page .ts-control>input {
+  @apply min-w-0;
+} 
+#buy-crypto2 .ts-control>input,
+.mail-select .ts-control>input,
+.crypto-buy-sell .ts-control>input {
+  @apply min-w-0 #{!important};
+} 
+.flatpickr-calendar {
+  @apply hidden ;
+}
+.landing-body .app-sidebar {
+  @apply fixed #{!important};
+}   
+.newproject .ts-control {
+  @apply w-[220px];
+}
+@media (min-width:992px) {
+  [data-nav-layout="horizontal"] {
+    .landing-body .app-sidebar .side-menu__item .side-menu__angle {
+      @apply end-[-2px] #{!important};
+    }
+  } 
+}
+#bitcoin-price-graph, 
+#etherium-price-graph, 
+#dash-price-graph, 
+#ripple-price-graph, 
+#iota-price-graph, 
+#neo-price-graph {
+  .apexcharts-canvas {
+    @apply overflow-hidden ;
+  }
+}

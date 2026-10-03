@@ -1,0 +1,226 @@
+﻿@page "/orders"
+@layout MainLayout
+
+@attribute [Authorize(Roles = "LAB")]
+
+
+@if (_orderItems.Count == 0)
+{
+    <div class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-14 w-14 border-4 border-orange-300 border-t-transparent"></div>
+    </div>
+}
+else
+{
+    <h2 class="font-semibold text-2xl text-defaulttextcolor dark:text-defaulttextcolor/70 !mb-1">Orders</h2>
+
+    <div class="bg-white my-4 p-4 rounded-xl">
+
+        <div class="flex items-center gap-8 border-b border-gray-100 mb-6">
+            <button @onclick="() => FilterByStatus(null)"
+                    class="pb-4 text-sm font-medium relative @(SelectedStatus == null ? "text-slate-800" : "text-gray-400")">
+                All <span class="px-2 py-0.5 bg-slate-800 text-white text-[11px] rounded-md">@TotalCount</span>
+                @if (SelectedStatus == null)
+                {
+                    <div class="absolute bottom-0 start-0 w-full h-0.5 bg-slate-800"></div>
+                }
+            </button>
+
+            <button @onclick="() => FilterByStatus(DiagnosticTestStatus.Requested)"
+                    class="pb-4 text-sm font-medium relative @(SelectedStatus == DiagnosticTestStatus.Requested ? "text-slate-800" : "text-gray-400")">
+                New <span class=" px-2 py-0.5 bg-blue-100 text-blue-600 text-[11px] rounded-md">@NewCount</span>
+                @if (SelectedStatus == DiagnosticTestStatus.Requested)
+                {
+                    <div class="absolute bottom-0 start-0 w-full h-0.5 bg-slate-800"></div>
+                }
+            </button>
+
+            <button @onclick="() => FilterByStatus(DiagnosticTestStatus.InProgress)"
+                    class="pb-4 text-sm font-medium relative @(SelectedStatus == DiagnosticTestStatus.InProgress ? "text-slate-800" : "text-gray-400")">
+                In Progress
+                <span
+                    class=" px-2 py-0.5 bg-orange-100 text-orange-500 text-[11px] rounded-md">
+                    @InProgressCount
+                </span>
+                @if (SelectedStatus == DiagnosticTestStatus.InProgress)
+                {
+                    <div class="absolute bottom-0 start-0 w-full h-0.5 bg-slate-800"></div>
+                }
+            </button>
+            <button @onclick="() => FilterByStatus(DiagnosticTestStatus.ResultReady)"
+                    class="pb-4 text-sm font-medium relative @(SelectedStatus == DiagnosticTestStatus.ResultReady ? "text-slate-800" : "text-gray-400")">
+                Result Ready
+                <span
+                    class=" px-2 py-0.5 bg-green-100 text-green-600 text-[11px] rounded-md">
+                    @ResultReadyCount
+                </span>
+                @if (SelectedStatus == DiagnosticTestStatus.ResultReady)
+                {
+                    <div class="absolute bottom-0 start-0 w-full h-0.5 bg-slate-800"></div>
+                }
+            </button>
+        </div>
+        <div class="flex justify-evenly gap-2 w-full mb-4 relative">
+            <input type="text" id="order-searchbar" name="order"
+                   class="p-3 ps-10 mb-2 block w-full border-gray-100 rounded-xl text-sm bg-white shadow-sm"
+                   placeholder="Search for orders with patient name (e.g. Softe user)..." @oninput="OnSearchInput">
+            <div class="absolute inset-y-0 start-0 flex items-center justify-center ps-3 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+
+            <div>
+                <select id="lab-service-type" name="service-type" @bind="SelectedLabServiceType"
+                        @bind:after="HandleFilterChange"
+                        class="w-auto min-w-48 bg-gray-50 border-none rounded-xl p-3 ps-2 text-sm ">
+                    <option value="">All Service Types</option>
+                    @foreach (var status in Enum.GetValues<LabServiceType>())
+                    {
+                        <option value="@status">@SplitCamelCase(status.ToString())</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <input type="date" @bind="RequestDate" @bind:after="HandleDateChange"
+                       class="w-auto min-w-48 bg-gray-50 border-none rounded-xl p-3 ps-2 text-sm">
+            </div>
+        </div>
+
+        <div
+            class="table-responsive overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 dark:rgba(0,0,0,0.7)">
+
+            <table class="table w-full min-w-full rounded-xl table-fixed">
+                <thead>
+                <tr class="bg-gray-300 border-b border-gray-100">
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Number Order</th>
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Doctor Name</th>
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Service type</th>
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Medical Test</th>
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Patient Name</th>
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Date</th>
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Status</th>
+                    <th class="text-start text-xs font-bold text-[#002B49] uppercase p-4">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                @foreach (var orderItem in _orderItems)
+                {
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="p-4 text-sm text-gray-600">@orderItem.NumberOrder</td>
+                        <td class="p-4 text-sm font-bold text-[#002B49]">@orderItem.DoctorName</td>
+                        <td class="p-4 text-sm text-gray-600">@SplitCamelCase(orderItem.ServiceType)</td>
+                        <td class="p-4 text-sm text-gray-600">@orderItem.MedicalTestName</td>
+                        <td class="p-4 text-sm text-gray-600">@orderItem.PatientName</td>
+                        <td class="p-4 text-sm text-gray-600">@orderItem.Date.ToShortDateString()</td>
+                        <td class="text-nowrap">
+                            @if (Enum.Parse<DiagnosticTestStatus>(orderItem.Status) == DiagnosticTestStatus.Requested)
+                            {
+                                <span class="px-3 py-1 text-xs font-bold bg-blue-100 text-blue-600 rounded-lg">
+                                    New
+                                </span>
+                            }
+                            else if (Enum.Parse<DiagnosticTestStatus>(orderItem.Status) == DiagnosticTestStatus.ResultReady)
+                            {
+                                <span class="px-3 py-1 text-xs font-bold bg-green-100 text-green-600 rounded-lg">
+                                    Result Ready
+                                </span>
+                            }
+                            else if (Enum.Parse<DiagnosticTestStatus>(orderItem.Status) ==
+                                     DiagnosticTestStatus.SampleCollected)
+                            {
+                                <span class="px-3 py-1 text-xs font-bold bg-green-100 text-green-600 rounded-lg">
+                                    Sample Collected
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="px-3 py-1 text-xs font-bold bg-orange-100 text-orange-600 rounded-lg">
+                                    In Progress
+                                </span>
+                            }
+                        </td>
+                        <td class="flex items-center justify-center max-w-12">
+                            <div class="hs-dropdown ti-dropdown relative inline-flex [--placement:bottom-right]">
+                                <button id="dropdown-@orderItem.Id" type="button"
+                                        class="hs-dropdown-toggle ti-dropdown-toggle p-1 text-gray-400 hover:text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                         fill="currentColor"
+                                         class="icon icon-tabler icons-tabler-filled icon-tabler-dots-vertical text-lg">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path
+                                            d="M14 12a2 2 0 1 1 -4 0q 0 -.053 .005 -.102a1.996 1.996 0 0 1 1.995 -1.898a2 2 0 0 1 2 2"/>
+                                        <path
+                                            d="M14 19a2 2 0 1 1 -4 0q 0 -.052 .005 -.102a1.996 1.996 0 0 1 1.995 -1.898a2 2 0 0 1 2 2"/>
+                                        <path
+                                            d="M14 5a2 2 0 1 1 -4 0q 0 -.053 .005 -.102a1.996 1.996 0 0 1 1.995 -1.898a2 2 0 0 1 2 2"/>
+                                    </svg>
+                                </button>
+
+                                <div class="hs-dropdown-menu ti-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[10rem] bg-white shadow-md rounded-lg p-2 mt-2 z-10 border border-gray-100"
+                                     aria-labelledby="dropdown-@orderItem.Id">
+
+                                    <button @onclick="() => ViewOrder(orderItem.Id)"
+                                            class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 w-full">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="icon icon-tabler icons-tabler-outline icon-tabler-eye mr-1">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/>
+                                            <path
+                                                d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/>
+                                        </svg> View
+                                    </button>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+
+            </table>
+            <div class="flex items-center justify-between p-4 bg-white border-t border-gray-50 w-full">
+                <div class="flex items-center gap-2">
+                    <button @onclick="PrevPage" disabled="@(CurrentPage == 1)"
+                            class="p-2 border rounded-lg text-gray-400 hover:bg-gray-50 disabled:opacity-30">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M15 6l-6 6l6 6"/>
+                        </svg>
+                    </button>
+
+                    <span class="text-sm text-gray-500">
+                        @((CurrentPage - 1) * PageSize + 1) - @Math.Min(CurrentPage * PageSize, TotalCount) of
+                        @TotalCount
+                    </span>
+
+                    <button @onclick="NextPage" disabled="@(CurrentPage == TotalPages)"
+                            class="p-2 border rounded-lg text-gray-400 hover:bg-gray-50 disabled:opacity-30">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 6l6 6l-6 6"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                    Rows per page:
+                    <select @onchange="ChangePageSize"
+                            class="border-none bg-transparent font-bold text-[#002B49] focus:ring-0 cursor-pointer">
+                        <option value="6">6</option>
+                        <option value="12">12</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}

@@ -1,0 +1,250 @@
+@using static System.Net.WebRequestMethods
+@using ynex.Models.Auth
+@using ynex.Pages.Auth
+@using System.Net.Http.Json
+@inject NavigationManager NavManager
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService Loc
+@inject StateService stateService
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+
+<header class="app-header" style="background-color: rgba(241, 166, 142) !important;">
+    <div class="main-header-container container-fluid">
+        <div class="header-content-left" style="display: flex !important; align-items: center !important; background-color: rgb(241, 166, 142) !important;">
+            <div class="header-element" style="display: flex !important; align-items: center !important; margin-left:10px">
+                <a aria-label="Hide Sidebar" @onclick="ToggleMenu" class="sidemenu-toggle header-link animated-arrow hor-toggle horizontal-navtoggle" style="display: flex !important; align-items: center !important; z-index: 100 !important; cursor: pointer !important;">
+                    <i class="fe fe-menu" style="color: #ffffff !important; font-size: 1.5rem !important; margin-left: 15px !important;"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="header-content-right">
+
+            @* --- Dark/Light Mode Toggle --- *@
+            <div class="header-element header-theme-mode hidden !items-center sm:block !py-[1rem] md:!px-[0.65rem] px-2" @onclick='() => colorthemeFn()'>
+                <a aria-label="anchor"
+                   class="hs-dark-mode-active:hidden flex hs-dark-mode group flex-shrink-0 justify-center items-center gap-2 rounded-full font-medium transition-all text-xs dark:bg-bgdark dark:hover:bg-black/20 dark:text-[#8c9097] dark:text-white/50 dark:hover:text-white dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
+                   href="javascript:void(0);" data-hs-theme-click-value="dark">
+                    <i class="bx bx-moon header-link-icon"></i>
+                </a>
+                <a aria-label="anchor"
+                   class="hs-dark-mode-active:flex hidden hs-dark-mode group flex-shrink-0 justify-center items-center gap-2 rounded-full font-medium text-defaulttextcolor transition-all text-xs dark:bg-bodybg dark:bg-bgdark dark:hover:bg-black/20 dark:text-[#8c9097] dark:text-white/50 dark:hover:text-white dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
+                   href="javascript:void(0);" data-hs-theme-click-value="light">
+                    <i class="bx bx-sun header-link-icon"></i>
+                </a>
+            </div>
+
+            @* --- Language Dropdown --- *@
+            <div class="header-element py-[1rem] md:px-[0.65rem] px-2 header-country hs-dropdown ti-dropdown hidden sm:block [--placement:bottom-right]">
+                <button id="dropdown-flag" type="button" class="hs-dropdown-toggle ti-dropdown-toggle !p-0 flex-shrink-0 !border-0 !rounded-full !shadow-none">
+                    @if (System.Globalization.CultureInfo.CurrentCulture.Name.StartsWith("ar"))
+                    {
+                        <img src="/assets/images/flags/saudi_arabia_flag.png" class="h-[1.25rem] w-[1.25rem] rounded-full">
+                    }
+                    else
+                    {
+                        <img src="/assets/images/flags/us_flag.png" class="h-[1.25rem] w-[1.25rem] rounded-full">
+                    }
+                </button>
+                <div class="hs-dropdown-menu ti-dropdown-menu min-w-[10rem] hidden !-mt-3">
+                    <div class="py-2">
+                        @* ·€… ≈‰Ã·Ì“Ì… *@
+                        <button @onclick='() => ChangeLanguage("en", "ltr")'
+                                class="ti-dropdown-item flex items-center space-x-2 w-full text-start">
+                            <img src="/assets/images/flags/us_flag.png" class="h-[1rem] w-[1rem] rounded-full">
+                            <p class="font-medium">@Loc["English"]</p>
+                        </button>
+
+                        @* ·€… ⁄—»Ì… *@
+                        <button @onclick='() => ChangeLanguage("ar", "rtl")'
+                                class="ti-dropdown-item flex items-center space-x-2 w-full text-start">
+                            <img src="/assets/images/flags/saudi_arabia_flag.png" class="h-[1rem] w-[1rem] rounded-full">
+                            <p class="font-medium">@Loc["Arabic"]</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            @* --- Notifications --- *@
+            <div class="header-element py-[1rem] md:px-[0.65rem] px-2 notifications-dropdown hs-dropdown ti-dropdown !hidden md:!block [--placement:bottom-left]">
+                <button type="button" class="hs-dropdown-toggle relative ti-dropdown-toggle !p-0 !border-0">
+                    <i class="bx bx-bell header-link-icon text-[1.125rem]"></i>
+                    <span class="relative inline-flex justify-center items-center rounded-full h-[14.7px] w-[14px] bg-secondary text-[0.625rem] text-white">@NotifyListData.Count</span>
+                </button>
+                <div class="main-header-dropdown hs-dropdown-menu ti-dropdown-menu bg-white !w-[22rem] hidden">
+                    <div class="ti-dropdown-header !p-4 flex justify-between items-center">
+                        <p class="mb-0 text-[1.0625rem] font-semibold">Notifications</p>
+                        <span class="bg-secondary/10 text-secondary px-2 rounded-sm">@NotifyListData.Count Unread</span>
+                    </div>
+                    <ul class="list-none !m-0 !p-0">
+                        @foreach (var notify in NotifyListData)
+                        {
+                            <li class="ti-dropdown-item !block">
+                                <div class="flex items-start">
+                                    <div class="pe-2">
+                                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-full @notify.iconBg">
+                                            <i class="@notify.icon text-[1.125rem]"></i>
+                                        </span>
+                                    </div>
+                                    <div class="grow flex items-center justify-between">
+                                        <div>
+                                            <p class="mb-0 font-semibold text-[0.8125rem]">@notify.title</p>
+                                            <span class="text-[0.75rem] opacity-70">@notify.description</span>
+                                        </div>
+                                        <a href="javascript:void(0);" @onclick="@(() => DeleteNotifyList(notify))"><i class="ti ti-x text-[1rem]"></i></a>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            @* --- Profile Dropdown --- *@
+            <div class="header-element md:!px-[0.65rem] px-2 hs-dropdown !items-center ti-dropdown [--placement:bottom-left]">
+                <button type="button" class="hs-dropdown-toggle ti-dropdown-toggle !gap-3 !p-0 flex-shrink-0 !rounded-full !border-0 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        <img class="w-full h-full object-cover"
+                             src="@(string.IsNullOrEmpty(userInfo.profilePictureUrl) ? "https://ui-avatars.com/api/?name=" + userInfo.name : userInfo.profilePictureUrl)"
+                             alt="Profile">
+                    </div>
+
+                    <div class="md:block hidden text-start">
+                        @if (isUserLoading)
+                        {
+                            <div class="animate-pulse h-3 w-20 bg-gray-200 rounded"></div>
+                        }
+                        else
+                        {
+                            <p class="font-semibold mb-0 text-[#536485] text-[0.85rem] leading-none">@userInfo.name</p>
+                            <span class="opacity-70 text-[0.75rem] block text-[#536485] mt-1">Doctor</span>
+                        }
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+@code {
+    public class UserInfo
+    {
+        public string name { get; set; } = "";
+        public string profilePictureUrl { get; set; } = "";
+    }
+
+    public class NotifyList
+    {
+        public int id { get; set; }
+        public string? icon { get; set; }
+        public string? iconBg { get; set; }
+        public string? title { get; set; }
+        public string? description { get; set; }
+    }
+
+    private UserInfo userInfo = new();
+    private bool isUserLoading = true;
+    private string relativeUri => "/" + NavManager.ToBaseRelativePath(NavManager.Uri);
+
+    [Inject] public AuthState Auth { get; set; } = default!;
+
+    List<NotifyList> NotifyListData = new List<NotifyList>() {
+        new NotifyList { id= 1, icon= "ti ti-gift", iconBg= "bg-primary-transparent", title= "Shipped", description= "Order Shipped" },
+        new NotifyList { id= 2, icon= "ti ti-discount-2", iconBg= "bg-secondary-transparent", title= "Discount", description= "Available now" }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetMyInfo();
+        }
+    }
+    private async Task directionFn(string val)
+    {
+        // await stateService.directionFn(val);
+        StateHasChanged();
+    }
+    private async Task ChangeLanguage(string culture, string direction)
+    {
+        // 1.  ÕœÌÀ «·« Ã«Â „Õ·Ì«
+        await directionFn(direction);
+
+        // 2. «·Õ’Ê· ⁄·Ï «·„”«— «·Õ«·Ì »œÊ‰ «·‹ Host
+        // ‰” Œœ„ Uri.PathAndQuery ··Õ’Ê· ⁄·Ï «·„”«— «·’«›Ì („À·« /admin/dashboard)
+        var uri = new Uri(NavManager.Uri);
+        var safePath = uri.PathAndQuery;
+
+        //  ‰ŸÌ› «·„”«— ≈–« ﬂ«‰ ÌÕ ÊÌ ⁄·Ï "Culture" „ﬂ——… „‰ √Œÿ«¡ ”«»ﬁ…
+        if (safePath.Contains("/Culture/SetCulture"))
+        {
+            safePath = "/admin/dashboard"; // „”«— «› —«÷Ì ¬„‰ ›Ì Õ«· ÕœÊÀ Œÿ√
+        }
+
+        // 3. »‰«¡ —«»ÿ «·‹ Controller »‘ﬂ· „ÿ·ﬁ (Ì»œ√ »‹ /)
+        var encodedUri = System.Net.WebUtility.UrlEncode(safePath);
+
+        //  √ﬂœ „‰ ÊÃÊœ «·‹ / ›Ì »œ«Ì… «·—«»ÿ Â‰«
+        var controllerUrl = $"/Culture/SetCulture?culture={culture}&redirectionUri={encodedUri}";
+
+        NavManager.NavigateTo(controllerUrl, forceLoad: true);
+    }
+    private async Task GetMyInfo()
+    {
+        try
+        {
+            isUserLoading = true;
+            await InvokeAsync(StateHasChanged);
+
+      
+            var response = await Http.GetAsync("api/v1/auth/my-info");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<UserInfo>();
+                if (result != null) userInfo = result;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during GetMyInfo: {ex.Message}");
+        }
+        finally
+        {
+            isUserLoading = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    void DeleteNotifyList(NotifyList item) => NotifyListData.Remove(item);
+
+    private async Task ToggleMenu()
+    {
+        try
+        {
+            var toggled = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-toggled");
+            var navStyle = await JSRuntime.InvokeAsync<string>("interop.getAttributeToHtml", "data-nav-style");
+            var inner = await JSRuntime.InvokeAsync<int>("interop.inner", "innerWidth");
+
+            if (inner <= 992)
+            {
+                await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", (toggled == "open" ? "close" : "open"));
+            }
+            else
+            {
+                if (toggled != null) await JSRuntime.InvokeAsync<string>("interop.removeAttributeFromHtml", "data-toggled");
+                else await JSRuntime.InvokeAsync<string>("interop.addAttributeToHtml", "data-toggled", (navStyle ?? "vertical") + "-closed");
+            }
+        }
+        catch { }
+    }
+
+    private AppState currentState => stateService.GetAppState();
+
+    private async Task colorthemeFn()
+    {
+        var val = currentState.ColorTheme == "light" ? "dark" : "light";
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexcolortheme", val);
+        await stateService.colorthemeFn(val, true);
+    }
+}

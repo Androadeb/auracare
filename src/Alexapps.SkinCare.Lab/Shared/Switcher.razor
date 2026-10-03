@@ -1,0 +1,601 @@
+@inject StateService stateService
+@using BlazorColorPicker
+@inject IActionService ActionService
+@using Microsoft.JSInterop;
+@inject IJSRuntime JSRuntime
+
+<!-- ========== Switcher  ========== -->
+<div id="switcher-canvas" class="hs-overlay hidden ti-offcanvas ti-offcanvas-right" tabindex="-1">
+  <div class="ti-offcanvas-header z-10 relative">
+    <h5 class="ti-offcanvas-title">
+      Switcher
+    </h5>
+    <button type="button"
+      class="ti-btn flex-shrink-0 p-0 !mb-0  transition-none text-defaulttextcolor dark:text-defaulttextcolor/70 hover:text-gray-700 focus:ring-gray-400 focus:ring-offset-white  dark:hover:text-white/80 dark:focus:ring-white/10 dark:focus:ring-offset-white/10"
+      data-hs-overlay="#switcher-canvas">
+      <span class="sr-only">Close modal</span>
+      <i class="ri-close-circle-line leading-none text-lg"></i>
+    </button>
+  </div>
+  <div class="ti-offcanvas-body !p-0 !border-b dark:border-white/10 z-10 relative !h-auto">
+    <div class="flex rtl:space-x-reverse" aria-label="Tabs" role="tablist">
+      <button type="button"
+        class="hs-tab-active:bg-success/20 w-full !py-2 !px-4 hs-tab-active:border-b-transparent text-defaultsize border-0 hs-tab-active:text-success dark:hs-tab-active:bg-success/20 dark:hs-tab-active:border-b-white/10 dark:hs-tab-active:text-success -mb-px bg-white font-semibold text-center  text-defaulttextcolor dark:text-defaulttextcolor/70 rounded-none hover:text-gray-700 dark:bg-bodybg dark:border-white/10  active"
+        id="switcher-item-1" data-hs-tab="#switcher-1" aria-controls="switcher-1" role="tab">
+        Theme Style
+      </button>
+      <button type="button"
+        class="hs-tab-active:bg-success/20 w-full !py-2 !px-4 hs-tab-active:border-b-transparent text-defaultsize border-0 hs-tab-active:text-success dark:hs-tab-active:bg-success/20 dark:hs-tab-active:border-b-white/10 dark:hs-tab-active:text-success -mb-px  bg-white font-semibold text-center  text-defaulttextcolor dark:text-defaulttextcolor/70 rounded-none hover:text-gray-700 dark:bg-bodybg dark:border-white/10  dark:hover:text-gray-300"
+        id="switcher-item-2" data-hs-tab="#switcher-2" aria-controls="switcher-2" role="tab">
+        Theme Colors
+      </button>
+    </div>
+  </div>
+  <div class="ti-offcanvas-body" id="switcher-body">
+    <div id="switcher-1" role="tabpanel" aria-labelledby="switcher-item-1" class="">
+      <div class="">
+        <p class="switcher-style-head">Theme Color Mode:</p>
+        <div class="grid grid-cols-3 switcher-style">
+          <div class="flex items-center">
+            <input type="radio" name="theme-style" class="ti-form-radio" id="switcher-light-theme" @onclick='() => colorthemeFn("light")' checked="@(currentState?.ColorTheme == "light")">
+            <label for="switcher-light-theme"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Light</label>
+          </div>
+          <div class="flex items-center">
+            <input type="radio" name="theme-style" class="ti-form-radio" id="switcher-dark-theme" @onclick='() => colorthemeFn("dark")' checked="@(currentState?.ColorTheme == "dark")">
+            <label for="switcher-dark-theme"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Dark</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="switcher-style-head">Directions:</p>
+        <div class="grid grid-cols-3  switcher-style">
+          <div class="flex items-center">
+            <input type="radio" name="direction" class="ti-form-radio" id="switcher-ltr" @onclick='() => directionFn("ltr")'  checked="@(currentState?.Direction == "ltr")">
+            <label for="switcher-ltr" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">LTR</label>
+          </div>
+          <div class="flex items-center">
+            <input type="radio" name="direction" class="ti-form-radio" id="switcher-rtl" @onclick='() => directionFn("rtl")'  checked="@(currentState?.Direction == "rtl")">
+            <label for="switcher-rtl" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">RTL</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="switcher-style-head">Navigation Styles:</p>
+        <div class="grid grid-cols-3  switcher-style">
+          <div class="flex items-center">
+            <input type="radio" name="navigation-style" class="ti-form-radio" id="switcher-vertical"  @onclick='() => navigationStylesFn("vertical")'  checked="@(currentState?.NavigationStyles == "vertical")">
+            <label for="switcher-vertical"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Vertical</label>
+          </div>
+          <div class="flex items-center">
+            <input type="radio" name="navigation-style" class="ti-form-radio" id="switcher-horizontal" @onclick='() => navigationStylesFn("horizontal")'  checked="@(currentState?.NavigationStyles == "horizontal")">
+            <label for="switcher-horizontal"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Horizontal</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="switcher-style-head">Navigation Menu Style:</p>
+        <div class="grid grid-cols-2 gap-2 switcher-style">
+          <div class="flex">
+            <input type="radio" name="navigation-data-menu-styles" class="ti-form-radio" id="switcher-menu-click" @onclick='() => menuStylesFn("menu-click")'  checked="@(currentState?.MenuStyles == "menu-click")">
+            <label for="switcher-menu-click" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Menu
+              Click</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="navigation-data-menu-styles" class="ti-form-radio" id="switcher-menu-hover" @onclick='() => menuStylesFn("menu-hover")'  checked="@(currentState?.MenuStyles == "menu-hover")">
+            <label for="switcher-menu-hover" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Menu
+              Hover</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="navigation-data-menu-styles" class="ti-form-radio" id="switcher-icon-click" @onclick='() => menuStylesFn("icon-click")'  checked="@(currentState?.MenuStyles == "icon-click")">
+            <label for="switcher-icon-click" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Icon
+              Click</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="navigation-data-menu-styles" class="ti-form-radio" id="switcher-icon-hover" @onclick='() => menuStylesFn("icon-hover")'  checked="@(currentState?.MenuStyles == "icon-hover")">
+            <label for="switcher-icon-hover" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Icon
+              Hover</label>
+          </div>
+        </div>
+        <div class="px-4 text-secondary text-xs"><b class="me-2">Note:</b>Works same for both Vertical and
+          Horizontal
+        </div>
+      </div>
+      <div class=" sidemenu-layout-styles">
+        <p class="switcher-style-head">Sidemenu Layout Syles:</p>
+        <div class="grid grid-cols-2 gap-2 switcher-style">
+          <div class="flex">
+            <input type="radio" name="sidemenu-layout-styles" class="ti-form-radio" id="switcher-default-menu" @onclick='() => layoutStylesFn("default-menu")'  checked="@(currentState?.LayoutStyles == "default-menu")">
+            <label for="switcher-default-menu"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Default
+              Menu</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="sidemenu-layout-styles" class="ti-form-radio" id="switcher-closed-menu"  @onclick='() => layoutStylesFn("closed-menu")'  checked="@(currentState?.LayoutStyles == "closed-menu")">
+            <label for="switcher-closed-menu" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">
+              Closed
+              Menu</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="sidemenu-layout-styles" class="ti-form-radio" id="switcher-icontext-menu"  @onclick='() => layoutStylesFn("icontext-menu")'  checked="@(currentState?.LayoutStyles == "icontext-menu")">
+            <label for="switcher-icontext-menu" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Icon
+              Text</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="sidemenu-layout-styles" class="ti-form-radio" id="switcher-icon-overlay"  @onclick='() => layoutStylesFn("icon-overlay")'  checked="@(currentState?.LayoutStyles == "icon-overlay")">
+            <label for="switcher-icon-overlay" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Icon
+              Overlay</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="sidemenu-layout-styles" class="ti-form-radio" id="switcher-detached"  @onclick='() => layoutStylesFn("detached")'  checked="@(currentState?.LayoutStyles == "detached")">
+            <label for="switcher-detached" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold ">Detached</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="sidemenu-layout-styles" class="ti-form-radio" id="switcher-double-menu"  @onclick='() => layoutStylesFn("double-menu")'  checked="@(currentState?.LayoutStyles == "double-menu")">
+            <label for="switcher-double-menu" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Double
+              Menu</label>
+          </div>
+        </div>
+        <div class="px-4 text-secondary text-xs"><b class="me-2">Note:</b>Navigation menu styles won't work here.</div>
+      </div>
+      <div>
+        <p class="switcher-style-head">Page Styles:</p>
+        <div class="grid grid-cols-3  switcher-style">
+          <div class="flex">
+            <input type="radio" name="data-page-styles" class="ti-form-radio" id="switcher-regular" @onclick='() => pageStyleFn("regular")'  checked="@(currentState?.PageStyles == "regular")">
+            <label for="switcher-regular" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Regular</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="data-page-styles" class="ti-form-radio" id="switcher-classic" @onclick='() => pageStyleFn("classic")' checked="@(currentState?.PageStyles == "classic")">
+            <label for="switcher-classic" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Classic</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="data-page-styles" class="ti-form-radio" id="switcher-modern" @onclick='() => pageStyleFn("modern")' checked="@(currentState?.PageStyles == "modern")">
+            <label for="switcher-modern" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold"> Modern</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="switcher-style-head">Layout Width Styles:</p>
+        <div class="grid grid-cols-3 switcher-style">
+          <div class="flex">
+            <input type="radio" name="layout-width" class="ti-form-radio" id="switcher-full-width" @onclick='() => widthStylessFn("full-width")'  checked="@(currentState?.WidthStyles == "full-width")">
+            <label for="switcher-full-width"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">FullWidth</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="layout-width" class="ti-form-radio" id="switcher-boxed" @onclick='() => widthStylessFn("boxed")'  checked="@(currentState?.WidthStyles == "boxed")">
+            <label for="switcher-boxed" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Boxed</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="switcher-style-head">Menu Positions:</p>
+        <div class="grid grid-cols-3  switcher-style">
+          <div class="flex">
+            <input type="radio" name="data-menu-positions" class="ti-form-radio" id="switcher-menu-fixed" @onclick='() => menuPositionFn("fixed")'  checked="@(currentState?.MenuPosition == "fixed")">
+            <label for="switcher-menu-fixed"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Fixed</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="data-menu-positions" class="ti-form-radio" id="switcher-menu-scroll" @onclick='() => menuPositionFn("scrollable")' checked="@(currentState?.MenuPosition == "scrollable")">
+            <label for="switcher-menu-scroll"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Scrollable </label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="switcher-style-head">Header Positions:</p>
+        <div class="grid grid-cols-3 switcher-style">
+          <div class="flex">
+            <input type="radio" name="data-header-positions" class="ti-form-radio" id="switcher-header-fixed" @onclick='() => headerPositionFn("fixed")'  checked="@(currentState?.HeaderPosition == "fixed")">
+            <label for="switcher-header-fixed" class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">
+              Fixed</label>
+          </div>
+          <div class="flex">
+            <input type="radio" name="data-header-positions" class="ti-form-radio" id="switcher-header-scroll" @onclick='() => headerPositionFn("scrollable")' checked="@(currentState?.HeaderPosition == "scrollable")">
+            <label for="switcher-header-scroll"
+              class="text-defaultsize text-defaulttextcolor dark:text-defaulttextcolor/70 ms-2  font-semibold">Scrollable
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="switcher-2" class="hidden" role="tabpanel" aria-labelledby="switcher-item-2">
+      <div class="theme-colors">
+        <p class="switcher-style-head">Menu Colors:</p>
+        <div class="flex switcher-style space-x-3 rtl:space-x-reverse">
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-white" type="radio" name="menu-colors" id="switcher-menu-light" @onclick='() => menuColorFn("light")' checked="@(currentState?.MenuColor == "light")">
+            <span class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black" role="tooltip">
+              Light Menu
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-dark" type="radio" name="menu-colors" id="switcher-menu-dark" @onclick='() => menuColorFn("dark")'  checked="@(currentState?.MenuColor == "dark")">
+            <span class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black" role="tooltip">
+              Dark Menu
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-primary" type="radio" name="menu-colors" id="switcher-menu-primary" @onclick='() => menuColorFn("color")' checked="@(currentState?.MenuColor == "color")">
+            <span class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black" role="tooltip">
+              Color Menu
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-gradient" type="radio" name="menu-colors" id="switcher-menu-gradient"  @onclick='() => menuColorFn("gradient")' checked="@(currentState?.MenuColor == "gradient")">
+            <span class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black" role="tooltip">
+              Gradient Menu
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-transparent" type="radio" name="menu-colors" @onclick='() => menuColorFn("transparent")' checked="@(currentState?.MenuColor == "transparent")"
+              id="switcher-menu-transparent">
+            <span
+              class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+              role="tooltip">
+              Transparent Menu
+            </span>
+          </div>
+        </div>
+        <div class="px-4 text-[#8c9097] dark:text-white/50 text-[.6875rem]"><b class="me-2">Note:</b>If you want to change color Menu
+          dynamically
+          change from below Theme Primary color picker.</div>
+      </div>
+      <div class="theme-colors">
+        <p class="switcher-style-head">Header Colors:</p>
+        <div class="flex switcher-style space-x-3 rtl:space-x-reverse">
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-white !border" type="radio" name="header-colors"
+              id="switcher-header-light" @onclick='() => headerColorFn("light")'  checked="@(currentState?.HeaderColor == "light")">
+            <span
+              class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+              role="tooltip">
+              Light Header
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-dark" type="radio" name="header-colors" @onclick='() => headerColorFn("dark")' checked="@(currentState?.HeaderColor == "dark")"
+              id="switcher-header-dark">
+            <span
+              class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+              role="tooltip">
+              Dark Header
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-primary" type="radio" name="header-colors" @onclick='() => headerColorFn("color")' checked="@(currentState?.HeaderColor == "color")"
+              id="switcher-header-primary">
+            <span
+              class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+              role="tooltip">
+              Color Header
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-gradient" type="radio" name="header-colors" @onclick='() => headerColorFn("gradient")' checked="@(currentState?.HeaderColor == "gradient")"
+              id="switcher-header-gradient">
+            <span
+              class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+              role="tooltip">
+              Gradient Header
+            </span>
+          </div>
+          <div class="hs-tooltip ti-main-tooltip ti-form-radio switch-select ">
+            <input class="hs-tooltip-toggle ti-form-radio color-input color-transparent" type="radio" @onclick='() => headerColorFn("transparent")' checked="@(currentState?.HeaderColor == "transparent")"
+              name="header-colors" id="switcher-header-transparent">
+            <span
+              class="hs-tooltip-content ti-main-tooltip-content !py-1 !px-2 !bg-black text-xs font-medium !text-white shadow-sm dark:!bg-black"
+              role="tooltip">
+              Transparent Header
+            </span>
+          </div>
+        </div>
+        <div class="px-4 text-[#8c9097] dark:text-white/50 text-[.6875rem]"><b class="me-2">Note:</b>If you want to change color
+          Header dynamically
+          change from below Theme Primary color picker.</div>
+      </div>
+      <div class="theme-colors">
+        <p class="switcher-style-head">Theme Primary:</p>
+        <div class="flex switcher-style space-x-3 rtl:space-x-reverse">
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-primary-1" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("58 88 146","58 88 146")' checked="@(currentState?.ThemePrimary == "58 88 146")"
+              id="switcher-primary">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-primary-2" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("92 144 163","92 144 163")' checked="@(currentState?.ThemePrimary == "92 144 163")"
+              id="switcher-primary1">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-primary-3" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("161 90 223","161 90 223")' checked="@(currentState?.ThemePrimary == "161 90 223")"
+              id="switcher-primary2">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-primary-4" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("78 172 76","78 172 76")' checked="@(currentState?.ThemePrimary == "78 172 76")"
+              id="switcher-primary3">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-primary-5" type="radio" name="theme-primary" @onclick='() => themePrimaryFn("223 90 90","223 90 90")' checked="@(currentState?.ThemePrimary == "223 90 90")"
+              id="switcher-primary4">
+          </div>
+          <div class="ti-form-radio switch-select ps-0 color-primary-light">
+            <a href="javascript:void(0);" @onclick="PrimaryModal">
+                <div style="background-color:rgb(@primarycolor)" class="buttonColor m-0"></div>
+            </a>
+            <ColorPicker IsOpened="isPrimaryOpened" Closed="PrimaryClosedEvent" MyColor="@primarycolor" />
+          </div>
+        </div>
+      </div>
+      <div class="theme-colors">
+        <p class="switcher-style-head">Theme Background:</p>
+        <div class="flex switcher-style space-x-3 rtl:space-x-reverse">
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-bg-1" type="radio" name="theme-background" @onclick='() => themeBackgroundFn("20 30 96", "25 38 101")'
+              id="switcher-background">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-bg-2" type="radio" name="theme-background" @onclick='() => themeBackgroundFn("8 78 115", "13 86 120")'
+              id="switcher-background1">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-bg-3" type="radio" name="theme-background" @onclick='() => themeBackgroundFn("90 37 135", "95 45 140")'
+              id="switcher-background2">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-bg-4" type="radio" name="theme-background" @onclick='() => themeBackgroundFn("24 101 51", "29 109 56")'
+              id="switcher-background3">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio color-input color-bg-5" type="radio" name="theme-background" @onclick='() => themeBackgroundFn("120 66 20", "125 74 25")'
+              id="switcher-background4">
+          </div>
+          <div class="ti-form-radio switch-select ps-0 color-bg-transparent">
+             <a href="javascript:void(0);" @onclick="BackgroundModal">
+                <div style="background-color:rgb(@Backgroundcolor)" class="buttonColor m-0"></div>
+            </a>
+            <ColorPicker IsOpened="isBackgroundOpened" Closed="BackgroundClosedEvent" MyColor="@Backgroundcolor" />
+          </div>
+        </div>
+      </div>
+      <div class="menu-image theme-colors">
+        <p class="switcher-style-head">Menu With Background Image:</p>
+        <div class="flex switcher-style space-x-3 rtl:space-x-reverse flex-wrap gap-3">
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio bgimage-input bg-img1" type="radio" name="theme-images" id="switcher-bg-img" @onclick='() => backgroundImageFn("bgimg1")' checked="@(currentState?.BackgroundImage == "bgimg1")">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio bgimage-input bg-img2" type="radio" name="theme-images" id="switcher-bg-img1" @onclick='() => backgroundImageFn("bgimg2")' checked="@(currentState?.BackgroundImage == "bgimg2")">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio bgimage-input bg-img3" type="radio" name="theme-images" id="switcher-bg-img2"  @onclick='() => backgroundImageFn("bgimg3")' checked="@(currentState?.BackgroundImage == "bgimg3")">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio bgimage-input bg-img4" type="radio" name="theme-images" id="switcher-bg-img3" @onclick='() => backgroundImageFn("bgimg4")' checked="@(currentState?.BackgroundImage == "bgimg4")">
+          </div>
+          <div class="ti-form-radio switch-select">
+            <input class="ti-form-radio bgimage-input bg-img5" type="radio" name="theme-images" id="switcher-bg-img4" @onclick='() => backgroundImageFn("bgimg5")' checked="@(currentState?.BackgroundImage == "bgimg5")">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ti-offcanvas-footer grid">
+    <a href="javascript:void(0);" id="reset-all" @onclick='() => reset()' class="ti-btn ti-btn-block ti-btn-danger-full">Reset</a>
+  </div>
+</div>
+<!-- ========== END Switcher  ========== -->
+
+
+@code {
+    string[] colors = new string[] { "#FFFFFF", "#000000", "#999999","#845adf" };
+    bool isPrimaryOpened = false;
+    string primarycolor = "132 90 223";
+
+
+    void PrimaryModal() => isPrimaryOpened = true;
+    
+    public static (int R, int G, int B) HexToRgb(string hex)
+    {
+        // Remove the leading '#' if it exists
+        hex = hex.TrimStart('#');
+
+        // Ensure the hex string is 6 characters long
+        if (hex.Length != 6)
+        {
+            throw new ArgumentException("Invalid hex color code.");
+        }
+
+        // Parse the hex string into RGB values   
+        int r = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+        int g = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+        int b = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+        return (r, g, b);
+    }
+    async void PrimaryClosedEvent(string value)
+    {
+        var rgbValue = HexToRgb(value);
+        var val = $"{rgbValue.R} {rgbValue.G} {rgbValue.B}";
+        var val2 = $"{rgbValue.R}, {rgbValue.G}, {rgbValue.B}";
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimary", val);
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimaryRGB", val2);
+        await stateService.themePrimaryFn(val, val2);
+        primarycolor = val;
+        isPrimaryOpened = false;
+        StateHasChanged(); // Force re-render
+    }
+    
+    bool isBackgroundOpened = false;
+    string Backgroundcolor = "132 90 223";
+
+
+    void BackgroundModal() => isBackgroundOpened = true;
+    
+    async void BackgroundClosedEvent(string value)
+    {
+        
+        var rgbValue = HexToRgb(value);
+        var val = $"{rgbValue.R} {rgbValue.G} {rgbValue.B}";
+        var val2 = $"{rgbValue.R + 14} {rgbValue.G + 14} {rgbValue.B + 14}";    
+        await stateService.themeBackgroundFn(val, val2,true);
+        Backgroundcolor = val;
+        isBackgroundOpened = false;
+    }
+}
+
+
+@code {
+    private AppState currentState => stateService.GetAppState();
+
+    void TriggerAction(string actionValue)
+    {
+        // Invoke the event with the action value
+        ActionService?.TriggerAction(actionValue);
+    }
+    private async void colorthemeFn(string val)
+    {
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexcolortheme", val);
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexbgColor");
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexbgColor1");
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexMenu");
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexHeader");
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexbgimg");
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexprimary");
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexprimaryRGB");
+        await stateService.colorthemeFn(val, true);
+        StateHasChanged(); // Force re-render
+    }
+
+     private async Task directionFn(string val)
+    {
+        //Localstorage
+        await stateService.directionFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    
+    [Inject] private NavScrollService? scrollService { get; set; }
+    private async void navigationStylesFn(string val)
+    {   
+        if(scrollService != null){
+            if(val== "vertical"){
+                scrollService.IsVertical = true;
+            }
+            else {
+                scrollService.IsVertical  = false;
+                await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexverticalstyles");
+            }
+        }
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexnavstyles", val);
+        await stateService.navigationStylesFn(val, true);
+         TriggerAction(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void layoutStylesFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexverticalstyles", val);
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexmenuStyles");
+        await stateService.layoutStylesFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void menuStylesFn(string val)
+    {
+         if(scrollService != null){
+            scrollService.IsMenuType  = val;
+        }
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexmenuStyles", val);
+        await JSRuntime.InvokeAsync<string>("interop.removeLocalStorageItem", "ynexverticalstyles");
+        await stateService.menuStylesFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void pageStyleFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexpageStyle", val);
+        await stateService.pageStyleFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void widthStylessFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexwidthStyles", val);
+        await stateService.widthStylessFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void menuPositionFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexmenuposition", val);
+        await stateService.menuPositionFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void headerPositionFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexheaderposition", val);
+        await stateService.headerPositionFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void menuColorFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexMenu", val);
+        await stateService.menuColorFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void headerColorFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexHeader", val);
+        await stateService.headerColorFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void themePrimaryFn(string val, string val2)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimary", val);
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexprimaryRGB", val2);
+        await stateService.themePrimaryFn(val, val2);
+        StateHasChanged(); // Force re-render
+    }
+    private async void themeBackgroundFn(string val, string val2)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexbgColor", val);
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexbgColor1", val2);
+        await stateService.themeBackgroundFn(val, val2,true);
+        StateHasChanged(); // Force re-render
+    }
+    private async void backgroundImageFn(string val)
+    {
+        //Localstorage
+        await JSRuntime.InvokeAsync<string>("interop.setLocalStorageItem", "ynexbgimg", val);
+        await stateService.backgroundImageFn(val);
+        StateHasChanged(); // Force re-render
+    }
+    private async void reset(){
+        await stateService.reset();
+        StateHasChanged(); // Force re-render
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged(); // Force re-render
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        stateService.OnStateChanged += RefreshState;
+        await base.OnInitializedAsync();
+    }
+
+    private async void RefreshState()
+    {
+        // Trigger a re-render when the state changes
+        await InvokeAsync(StateHasChanged);
+    }
+}

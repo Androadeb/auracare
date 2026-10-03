@@ -1,0 +1,69 @@
+﻿@page "/legal/terms-and-conditions"
+@layout MainLayout
+
+@attribute [Authorize(Roles = "LAB")]
+
+<div class="container-fluid py-8 px-4 sm:px-10 bg-gray-50 min-h-screen">
+    <div class="max-w-5xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#002B49] mb-2">Terms & Conditions</h1>
+            <p class="text-sm text-gray-500">Last Revised: December 16, 2023</p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-100 leading-relaxed">
+
+            <div class="space-y-8 text-gray-600">
+                <p class="text-sm">
+                    Welcome to our platform. This site is provided as a service to our visitors and may be used for informational purposes only. Because the Terms and Conditions contain legal obligations, please read them carefully.
+                </p>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">1. Your Agreement</h2>
+                    <p class="text-sm mb-4">
+                        By using this Site, you agree to be bound by, and to comply with, these Terms and Conditions. If you do not agree to these Terms and Conditions, please do not use this site.
+                    </p>
+                    <p class="text-sm italic bg-orange-50 p-4 rounded-xl border-l-4 border-[#f1a68e]">
+                        <strong>PLEASE NOTE:</strong> We reserve the right, at our sole discretion, to change, modify or otherwise alter these Terms and Conditions at any time. Unless otherwise indicated, amendments will become effective immediately.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">2. Privacy</h2>
+                    <p class="text-sm">
+                        Please review our Privacy Policy, which also governs your visit to this Site, to understand our practices regarding data handling and patient confidentiality in accordance with local healthcare regulations.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">3. Linked Sites</h2>
+                    <p class="text-sm">
+                        This Site may contain links to other independent third-party Web sites ("Linked Sites"). These Linked Sites are provided solely as a convenience to our visitors. Such Linked Sites are not under our control, and we are not responsible for and does not endorse the content of such Linked Sites.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">4. Forward Looking Statements</h2>
+                    <p class="text-sm">
+                        All materials reproduced on this site speak as of the original date of publication or filing. The fact that a document is available on this site does not mean that the information contained in such document has not been modified or superseded by events or by a subsequent document or filing.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-[#002B49] mb-3 uppercase tracking-wide">5. Disclaimer of Warranties</h2>
+                    <p class="text-xs uppercase leading-6 border-t pt-6">
+                        A. THIS SITE MAY CONTAIN INACCURACIES AND TYPOGRAPHICAL ERRORS. WE DOES NOT WARRANT THE ACCURACY OR COMPLETENESS OF THE MATERIALS OR THE RELIABILITY OF ANY ADVICE, OPINION, STATEMENT OR OTHER INFORMATION DISPLAYED OR DISTRIBUTED THROUGH THE SITE. YOU EXPRESSLY UNDERSTAND AND AGREE THAT YOUR USE OF THE SITE IS AT YOUR SOLE RISK.
+                    </p>
+                </section>
+            </div>
+
+            <div class="mt-12 pt-8 border-t flex justify-end gap-4">
+                <button class="px-8 py-3 border-2 border-gray-200 text-gray-400 font-bold rounded-2xl hover:bg-gray-50 transition-all">
+                    Decline
+                </button>
+                <button class="px-8 py-3 bg-[#f1a68e] text-white font-bold rounded-2xl shadow-sm hover:bg-[#e0957d] transition-all">
+                    Accept Terms
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

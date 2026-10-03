@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+		--font-rtl: 'Almarai', sans-serif;
+	}
+
+	html {
+		font-family: var(--font-sans);
+	}
+
+	/* Use Almarai for RTL contexts */
+	[dir="rtl"], .dir-rtl {
+		direction: rtl;
+		font-family: var(--font-rtl) !important;
+	}
+}

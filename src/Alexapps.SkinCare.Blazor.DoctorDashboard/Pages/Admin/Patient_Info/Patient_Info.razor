@@ -1,0 +1,1311 @@
+﻿@page "/admin/patient-details/{Id}"
+@using AlexApps.Classat.Blazor.Superadmin.Services
+@inject AlexApps.Classat.Blazor.Superadmin.Services.JsonLocalizationService Loc
+@attribute [Authorize(Roles = "DOCTOR")]
+
+
+<div class="p-6">
+
+    @* --- Back Button --- *@
+    <div class="flex items-center justify-between mb-6">
+        @* --- زر الرجوع (جهة اليسار) --- *@
+        <div>
+            <button @onclick='() => Nav.NavigateTo("/admin/sessions")'
+                    class="text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm shadow-md transition-all hover:opacity-90"
+                    style="background-color: #F1A68E !important;
+                       color: #ffffff !important;
+                       border: 1px solid rgba(0,0,0,0.1) !important;
+                       font-weight: 600 !important;">
+                <i class="ri-arrow-left-s-line" style="font-size: 18px !important;"></i>
+                @Loc["BackToSessions"]
+            </button>
+        </div>
+
+       
+        <div class="flex items-center gap-2">
+            @if (session?.status?.ToLower() != "completed" && session?.status?.ToLower() != "complete")
+            {
+                <button @onclick="HandleCompleteSession"
+                        disabled="@isSubmitting"
+                        class="text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm shadow-md transition-all hover:opacity-90 disabled:opacity-50"
+                        style="background-color: #F1A68E !important;
+                               color: #ffffff !important;
+                               border: 1px solid rgba(0,0,0,0.1) !important;
+                               font-weight: 600 !important;">
+
+                    @if (isSubmitting)
+                    {
+                        <i class="ri-loader-4-line animate-spin"></i>
+                    }
+                    else
+                    {
+                        <i class="ri-checkbox-circle-line" style="font-size: 18px !important;"></i>
+                    }
+                    @Loc["EndSession"]
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex flex-col items-center justify-center h-[50vh]">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary dark:border-white"></div>
+            <p class="mt-4 text-gray-500 dark:text-[#8c9097]">@Loc["LoadingDetails"]...</p>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage) || session == null)
+    {
+        <div class="p-6 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg border border-red-100 dark:border-red-900/30 flex items-center gap-3">
+            <i class="ri-error-warning-line text-xl"></i>
+            <span>@(errorMessage ?? Loc["FetchError"])</span>
+        </div>
+    }
+    else
+    {
+        @* --- Header Section (Profile) --- *@
+        <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+            <div class="p-8 flex flex-col md:flex-row items-center gap-6">
+                <div class="relative">
+                    <img src="@(string.IsNullOrEmpty(session.clientImage)
+                                 ? $"https://ui-avatars.com/api/?name={session.clientName}&background=F1A68E&color=000"
+                                                    : $"https://auraskin.runasp.net{session.clientImage}")"
+                         class="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-[#111827] shadow-xl" />
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-800 dark:text-white mb-4">@session.clientName</h2>
+
+                    @* Tab Menu *@
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        @* Patient Info *@
+                        <button @onclick='() => activeTab = "info"'
+                                style='@(activeTab == "info" ? "background-color: #111827 !important; border-color: rgba(255,255,255,0.1) !important; color: white !important;" : "")'
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all @(activeTab == "info" ? "shadow-sm font-bold" : "text-slate-400 hover:text-slate-600 dark:text-[#8c9097]")">
+                            <i class="ri-user-heart-line text-lg"></i> @Loc["PatientInfo"]
+                        </button>
+
+                        @* Chat *@
+                        <button @onclick='() => activeTab = "chat"'
+                                style='@(activeTab == "chat" ? "background-color: #111827 !important; border-color: rgba(255,255,255,0.1) !important; color: white !important;" : "")'
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all @(activeTab == "chat" ? "shadow-sm font-bold" : "text-slate-400 hover:text-slate-600 dark:text-[#8c9097]")">
+                            <i class="ri-chat-3-line text-lg"></i> @Loc["Chat"]
+                        </button>
+
+                        @* Medical Test *@
+                        <button @onclick='() => activeTab = "medical_test"'
+                                style='@(activeTab == "medical_test" ? "background-color: #111827 !important; border-color: rgba(255,255,255,0.1) !important; color: white !important;" : "")'
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all @(activeTab == "medical_test" ? "shadow-sm font-bold" : "text-slate-400 hover:text-slate-600 dark:text-[#8c9097]")">
+                            <i class="ri-flask-line text-lg"></i> @Loc["MedicalTest"]
+                        </button>
+
+                        @* Treatment Plan *@
+                        <button @onclick='() => activeTab = "treatment_plan"'
+                                style='@(activeTab == "treatment_plan" ? "background-color: #111827 !important; border-color: rgba(255,255,255,0.1) !important; color: white !important;" : "")'
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all @(activeTab == "treatment_plan" ? "shadow-sm font-bold" : "text-slate-400 hover:text-slate-600 dark:text-[#8c9097]")">
+                            <i class="ri-microscope-line text-lg"></i> @Loc["TreatmentPlan"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (activeTab == "info")
+        {
+           
+            @* --- Personal Information Card --- *@
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+                <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-8 border-b border-gray-50 dark:border-white/5 pb-4">@Loc["PersonalInformation"]</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
+                    <div class="space-y-1">
+                        <span class="text-sm text-slate-400 dark:text-[#8c9097] font-medium">@Loc["FullName"]</span>
+                        <p class="text-lg font-bold text-slate-800 dark:text-white">@session.clientName</p>
+                    </div>
+
+                    <div class="space-y-1">
+                        <span class="text-sm text-slate-400 dark:text-[#8c9097] font-medium">@Loc["Email"]</span>
+                        <div class="flex items-center gap-2 text-slate-800 dark:text-white font-bold">
+                            <i class="ri-mail-line text-slate-400 dark:text-[#8c9097]"></i> @session.clientEmail
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-sm text-slate-400 dark:text-[#8c9097] font-medium">@Loc["Phone"]</span>
+                        <div class="flex items-center gap-2 text-slate-800 dark:text-white font-bold">
+                            <i class="ri-phone-line text-slate-400 dark:text-[#8c9097]"></i> @session.clientPhone
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-sm text-slate-400 dark:text-[#8c9097] font-medium">@Loc["Age"]</span>
+                        <div class="flex items-center gap-2 text-slate-800 dark:text-white font-bold">
+                            <i class="ri-calendar-line text-slate-400 dark:text-[#8c9097]"></i>
+                            @if (PatientAge.HasValue)
+                            {
+                                <span>@PatientAge @Loc["Years"]</span>
+                            }
+                            else
+                            {
+                                <span>--</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-sm text-slate-400 dark:text-[#8c9097] font-medium">@Loc["Condition"]</span>
+                        <p class="text-lg font-bold text-slate-800 dark:text-white">@session.medicalHistory</p>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-sm text-slate-400 dark:text-[#8c9097] font-medium">@Loc["Gender"]</span>
+                        <p class="text-lg font-bold text-slate-800 dark:text-white">
+                            @Loc[session.clientGender.ToLower()]
+                        </p>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-sm text-slate-400 dark:text-[#8c9097] font-medium">@Loc["Status"]</span>
+                        <div>
+                            <span class="px-4 py-1.5 rounded-lg text-xs font-bold inline-block mt-1 dark:shadow-md" style="@GetStatusStyle(session.status)">
+                                @Loc[session.status]
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* --- Case Images --- *@
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+                <div class="mb-4">
+                    <h4 class="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-wider">@Loc["CaseImages"]</h4>
+                    <p class="text-[11px] text-slate-400 dark:text-[#8c9097]">
+                        @string.Format(Loc["ImagesProvided"], session.images?.Count ?? 0)
+                    </p>
+                </div>
+
+                @if (session.images != null && session.images.Any())
+                {
+                    <div class="flex flex-wrap gap-4">
+                        @foreach (var img in session.images)
+                        {
+                            <div class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 shadow-sm transition-all hover:shadow-md"
+                                 style="cursor: zoom-in !important;"
+                                 @onclick="() => OpenImage(img)">
+                                <img src="@img"
+                                     class="w-32 h-32 object-cover hover:scale-110 transition-transform duration-500"
+                                     style="cursor: zoom-in !important;"
+                                     alt="Case Image" />
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="p-6 text-center border-2 border-dashed border-gray-100 dark:border-white/5 rounded-xl text-slate-400 italic text-sm">
+                        @Loc["NoImages"]
+                    </div>
+                }
+        </div>
+       
+
+            @* --- Case Description --- *@
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+                <div class="mb-4">
+                    <h4 class="text-xl font-bold text-slate-800 dark:text-white">@Loc["CaseDescription"]</h4>
+                    <p class="text-xs text-slate-400 dark:text-[#8c9097] mt-1">@Loc["PatientDescriptionHint"]</p>
+                </div>
+                <div class="p-6 bg-[#f8fafc] dark:bg-[#111827] rounded-xl border-2 border-gray-300 dark:border-gray-700">
+                    <p class="text-slate-600 dark:text-gray-300 leading-relaxed text-sm">
+                        @session.description
+                    </p>
+                </div>
+            </div>
+        }
+        else if (activeTab == "chat")
+        {
+            @* --- Chat Section --- *@
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+                @* Chat Header *@
+                <div class="p-5 border-b flex justify-between items-center relative"
+                     style="background-color: transparent !important; border-bottom: 1px solid rgba(0,0,0,0.05) !important;">
+                    <div>
+                        <h4 class="font-bold text-slate-800 dark:text-white" style="margin:0 !important;">
+                            &rlm;  @string.Format(Loc["ChatWith"], session.clientName)
+                        </h4>
+                        <p class="text-[11px] text-slate-400 uppercase tracking-tighter" style="margin:0 !important;">@Loc["SecureMessaging"]</p>
+                    </div>
+
+                    @* Dropdown Menu Button *@
+                    <div class="relative" style="position: relative !important;">
+                        <button class="text-slate-400 p-2" style="background: none !important; border: none !important; cursor: pointer !important;"
+                                @onclick="ToggleChatMenu">
+                            <i class="ri-more-2-fill" style="font-size: 24px !important;"></i>
+                        </button>
+
+                        @if (isChatMenuOpen)
+                        {
+                            @* Dropdown Content *@
+                            <div class="animate-zoom-in"
+                                 style="position: absolute !important; top: 100% !important; right: 0 !important; width: 260px !important;
+                                            background-color: white !important; border-radius: 16px !important;
+                                            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; border: 1px solid #f0f0f0 !important;
+                                            z-index: 9999 !important; padding: 8px 0 !important; margin-top: 5px !important;">
+
+                                @* Option 1: Video Consultation *@
+                                <div @onclick="OpenScheduleModal"
+                                     style="display: flex !important; align-items: center !important; gap: 12px !important; padding: 12px 20px !important; cursor: pointer !important;">
+                                    <i class="ri-video-line" style="font-size: 20px; color: #334155;"></i>
+                                    <span>@Loc["EnableVideoConsultation"]</span>
+                                </div>
+
+                               
+                            </div>
+
+                            @* Overlay *@
+                            <div style="position: fixed !important; inset: 0 !important; z-index: 9998 !important; background: transparent !important;"
+                                 @onclick="ToggleChatMenu"></div>
+                        }
+                    </div>
+                </div>
+                @if (isDoctorScheduleModalOpen)
+                {
+                    <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center;">
+                        <div style="background: white; width: 650px; border-radius: 20px; padding: 30px; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+
+                            @* Close Icon *@
+                            <button @onclick="DismissDoctorScheduleModal" style="position: absolute; top: 20px; right: 20px; border:none; background:none; cursor:pointer; font-size:24px; color: #64748b;">&times;</button>
+
+                            <h3 style="margin: 0; color: #1e293b; font-size: 1.5rem;">Consultation Schedule</h3>
+                            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Set your available days and working hours so patients can book video consultations.</p>
+
+                            <div style="max-height: 450px; overflow-y: auto; padding-right: 5px;">
+                                @if (doctorSchedules != null && doctorSchedules.Any())
+                                {
+                                    @foreach (var schedule in doctorSchedules)
+                                    {
+                                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 1px solid #f1f5f9; border-radius: 12px; margin-bottom: 10px;">
+
+                                            @* Switch & Day Name *@
+                                            <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                                                @* Toggle Switch Inline Design *@
+                                                <label style="position: relative; display: inline-block; width: 44px; height: 22px;">
+                                                    <input type="checkbox" @bind="schedule.IsAvailable" style="opacity: 0; width: 0; height: 0;">
+                                                    <span style="position: absolute; cursor: pointer; inset: 0; background-color: @(schedule.IsAvailable ? "#22c55e" : "#ccc"); transition: .4s; border-radius: 22px;">
+                                                        <span style="position: absolute; content: ''; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; transform: @(schedule.IsAvailable ? "translateX(22px)" : "none");"></span>
+                                                    </span>
+                                                </label>
+
+                                                <span style="font-weight: 600; color: #334155; font-size: 1.1rem; min-width: 100px;">
+                                                    @GetDayName(schedule.DayOfWeek)
+                                                </span>
+                                            </div>
+
+                                            @* Time Inputs *@
+                                            <div style="display: flex; align-items: center; gap: 10px;">
+                                                @* Start Time *@
+                                                <div style="display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px 10px;">
+                                                    <i class="ri-time-line" style="color: #94a3b8; font-size: 14px; margin-right: 5px;"></i>
+                                                    <input type="time"
+                                                           value="@ConvertToLocal(schedule.StartTime).ToString(@"hh\:mm")"
+                                                           @onchange="@(e => schedule.StartTime = ConvertToUtc(TimeSpan.Parse(e.Value.ToString())))"
+                                                           style="border: none; background: transparent; width: 100px; text-align: center; font-size: 14px; color: #475569; outline: none;" />
+                                                </div>
+
+                                                <span style="color: #cbd5e1;">-</span>
+
+                                                @* End Time *@
+                                                <div style="display: flex; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px 10px;">
+                                                    <i class="ri-time-line" style="color: #94a3b8; font-size: 14px; margin-right: 5px;"></i>
+                                                    <input type="time"
+                                                           value="@ConvertToLocal(schedule.EndTime).ToString(@"hh\:mm")"
+                                                           @onchange="@(e => schedule.EndTime = ConvertToUtc(TimeSpan.Parse(e.Value.ToString())))"
+                                                           style="border: none; background: transparent; width: 100px; text-align: center; font-size: 14px; color: #475569; outline: none;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div style="text-align: center; padding: 20px; color: #94a3b8;">
+                                        <p>No schedules found or loading...</p>
+                                    </div>
+                                }
+                            </div>
+
+                            @* Buttons *@
+                            <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+                                <button @onclick="DismissDoctorScheduleModal"
+                                        style="padding: 12px 25px; border: 1px solid #f87171; color: #f87171; background: white; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                                    Cancel
+                                </button>
+                                <button @onclick="SaveSchedules"
+                                        style="padding: 12px 25px; background: #fb923c; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+                                    Update Schedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @* Chat Messages *@
+                <div class="flex-1 p-6 space-y-6 bg-[#fcfdfe] dark:bg-[#111827]/30"
+                     style="overflow-y: auto !important; display: block !important; max-height: 70vh !important; height: 70vh !important; position: relative !important;">
+
+                    @if (messages == null || !messages.Any())
+                    {
+                        <p class="text-center text-slate-400 mt-10">@Loc["NoMessages"]</p>
+                    }
+
+                    @foreach (var msg in messages)
+                    {
+                        @if (!msg.IsMe)
+                        {
+                            @* Patient Message *@
+                            <div class="flex items-end gap-3 max-w-[80%] mb-4">
+                                <img src="@(string.IsNullOrEmpty(session.clientImage) ? $"https://ui-avatars.com/api/?name={session.clientName}" : $"https://auraskin.runasp.net{session.clientImage}")"
+                                     class="w-8 h-8 rounded-full shadow-sm" />
+
+                                <div class="flex flex-col max-w-[75%] md:max-w-[60%]">
+                                    @if (msg.Type == 8) // Video Call Type
+                                    {
+                                        <div class="p-4 shadow-sm border border-orange-200 bg-orange-50 w-fit"
+                                             style="border-radius: 18px 18px 18px 2px !important;">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white shadow-sm">
+                                                    <i class="ri-vidicon-fill text-xl"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="font-bold text-orange-900 block text-[14px]">@Loc["VideoConsultation"]</span>
+                                                    <span class="text-[12px] text-orange-700">@msg.Message</span>
+                                                </div>
+                                            </div>
+                                            <button @onclick="() => JoinMeeting(msg)"
+                                                    class="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all font-semibold text-sm shadow-sm flex items-center justify-center gap-2">
+                                                <i class="ri-play-fill"></i> @Loc["JoinNow"]
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="p-3 shadow-sm border w-fit"
+                                             style="background-color: var(--card-bg) !important; border-radius: 18px 18px 18px 2px !important; border: 1px solid rgba(128, 128, 128, 0.15) !important;">
+
+                                            @* Media Display (Image/Video/File) *@
+                                            @if (!string.IsNullOrEmpty(msg.FileUrl))
+                                            {
+                                                if (msg.FileUrl.Contains(".jpg") || msg.FileUrl.Contains(".png") || msg.FileUrl.Contains(".jpeg") || msg.FileUrl.StartsWith("data:image"))
+                                                {
+                                                    <img src="@msg.FileUrl" @onclick="() => OpenImage(msg.FileUrl)"
+                                                         class="rounded-lg cursor-zoom-in hover:opacity-95 transition-opacity"
+                                                         style="max-width: 100%; max-height: 300px; display: block; object-fit: cover; margin-bottom: @(string.IsNullOrEmpty(msg.Message) ? "0" : "8px")" />
+                                                }
+                                                else if (msg.FileUrl.Contains(".mp4"))
+                                                {
+                                                    <video controls class="rounded-lg w-full"
+                                                           style="max-height: 250px; min-width : 200px; display: block; margin-bottom: @(string.IsNullOrEmpty(msg.Message) ? "0" : "8px")">
+                                                        <source src="@msg.FileUrl" type="video/mp4">
+                                                    </video>
+                                                }
+                                                else if (msg.Type == 5 || !msg.FileUrl.StartsWith("data:image"))
+                                                {
+                                                    <a href="@msg.FileUrl" target="_blank"
+                                                       class="flex items-center gap-2 p-2 rounded-lg text-sm no-underline border border-gray-700 bg-[#1e293b] hover:bg-[#334155] transition-all mb-2 shadow-sm">
+                                                        <div class="flex items-center justify-center w-8 h-8 rounded-md ">
+                                                            <i class="ri-file-text-line text-xl text-primary"></i>
+                                                        </div>
+                                                        <div class="flex flex-col overflow-hidden">
+                                                            <span class="text-xs font-semibold truncate dark:text-white">@Loc["Preview"]</span>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            }
+
+                                            @* Text Content & Booking Details *@
+                                            @if (!string.IsNullOrEmpty(msg.Message))
+                                            {
+                                                <div class="flex flex-col gap-1">
+                                                    <p class="text-[14px] @(msg.Type == 3 ? "font-bold text-blue-600" : "") @(msg.Type == 9 ? "text-green-600 font-semibold" : "")"
+                                                       style="color: var(--chat-text) !important; line-height: 1.4 !important; word-break: break-word; margin: 0;">
+
+                                                        @* Medical Text Icon *@
+                                                        @if (msg.Type == 3)
+                                                        {
+                                                            <i class="ri-health-book-line mr-1"></i>
+                                                            @msg.Message
+                                                        }
+                                                        @* Booking Confirmation Logic *@
+                                                        else if (msg.Type == 9)
+                                                        {
+                                                            <i class="ri-calendar-check-line mr-1 text-green-500"></i>
+
+                                                            @if (msg.Type == 9 && DateTime.TryParse(msg.Message, out DateTime utcBookingTime))
+                                                            {
+                                                            
+                                                                <span class="local-datetime" data-utc="@utcBookingTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                                                  
+                                                                    @utcBookingTime.ToString("g")
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                @msg.Message
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @msg.Message
+                                                        }
+                                                    </p>
+
+                                                  
+                                                    @if (msg.Type == 9 && msg.CreationTime != default)
+                                                    {
+                                                        <div class="flex items-center gap-1 opacity-70 mt-1">
+                                                            <i class="ri-time-line text-[10px]"></i>
+                                                            <span class="text-[11px] italic local-datetime" data-utc="@msg.CreationTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                                                @msg.CreationTime.ToString("g")
+                                                            </span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    <span class="text-[10px] text-green-600/60 mt-1 block local-time-only"
+                                          data-utc="@msg.CreationTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                        @msg.CreationTime.ToString("h:mm tt")
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @* Doctor Message *@
+                            <div class="flex w-full justify-end" style="margin-bottom: 1.5rem !important;">
+                                <div class="flex flex-row-reverse items-end gap-3 max-w-[80%]">
+                                    @* Doctor Avatar *@
+                                    <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 text-xs font-bold"
+                                         style="flex-shrink: 0 !important; background-color: #ffedd5 !important; color: #f97316 !important;">
+                                        @Loc["DoctorAbbreviation"]
+                                    </div>
+
+                                    <div>
+                                        <div class="p-4 shadow-sm border"
+                                             style="background-color: #dcfce7 !important; border-radius: 25px 25px 5px 25px !important; border: 1px solid #d1fae5 !important;">
+
+                                            @* --- المرفقات العامة (صور، فيديو، ملفات) --- *@
+                                            @if (!string.IsNullOrEmpty(msg.FileUrl))
+                                            {
+                                                var fileUrl = msg.FileUrl.StartsWith("http") ? msg.FileUrl : $"https://api-staging.softetouch.com{msg.FileUrl}";
+                                                var extension = System.IO.Path.GetExtension(msg.FileUrl).ToLower();
+
+                                                <div class="chat-media-content mb-2">
+                                                    @if (msg.Type == 1 || extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".gif" || extension == ".webp")
+                                                    {
+                                                        <a href="@fileUrl" target="_blank" class="glightbox">
+                                                            <img src="@fileUrl" alt="Attachment" class="rounded-lg max-w-[200px] border dark:border-white/10 shadow-sm hover:opacity-90 transition-opacity" />
+                                                        </a>
+                                                    }
+                                                    else if (msg.Type == 2 || extension == ".mp4" || extension == ".webm" || extension == ".ogg")
+                                                    {
+                                                        <video controls class="rounded-lg max-w-[250px] border dark:border-white/10">
+                                                            <source src="@fileUrl" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    }
+                                                    else if (msg.Type == 5)
+                     @* التعامل مع النوع File بشكل صريح *@
+                                                    {
+                                                        <a href="@fileUrl" target="_blank"
+                                                           class="flex items-center gap-2 p-3 rounded-xl bg-white/50 border border-emerald-200 hover:bg-white/80 transition-all no-underline">
+                                                            <div class="w-10 h-10 flex items-center justify-center bg-emerald-100 rounded-lg">
+                                                                <i class="ri-file-text-line text-xl text-emerald-600"></i>
+                                                            </div>
+                                                            <div class="flex flex-col overflow-hidden">
+                                                                <span class="text-xs font-semibold truncate text-emerald-900">@Loc["File"]</span>
+                                                                <span class="text-[10px] text-emerald-600 uppercase">@extension.Replace(".", "")</span>
+                                                            </div>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            }
+                                            else if (msg.Type == 10)
+                                            {
+                                                @* Feedback Request Status Card *@
+                                                <div class="flex w-full justify-center my-6">
+                                                    <div class="flex flex-col items-center gap-3 p-5 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/40 max-w-[85%] shadow-sm">
+
+                                                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-emerald-100 shadow-sm text-emerald-500">
+                                                            <i class="ri-checkbox-circle-fill text-3xl"></i>
+                                                        </div>
+
+                                                        <div class="text-center">
+                                                            <h6 class="text-sm font-extrabold text-emerald-900 mb-1">
+                                                                @Loc["Session Completed"]
+                                                            </h6>
+                                                            @* هنا نتجاهل msg.Message ونعرض نصاً موجهاً للدكتور *@
+                                                            <p class="text-xs text-emerald-700/80 font-medium">
+                                                                @Loc["FeedbackRequestMessage"]
+                                                            </p>
+                                                        </div>
+
+                                                      
+                                                    </div>
+                                                </div>
+                                            }
+                                            @* --- التعديل: فصل Test Result كنوع مستقل (Type 7) --- *@
+                                            @if (msg.Type == 7 && msg.TestResult != null)
+                                            {
+                                                <div class="mt-3 p-3 rounded-lg border border-emerald-200 bg-emerald-50/30 shadow-sm">
+                                                    <div class="flex items-center gap-2 mb-2">
+                                                        <div class="p-1.5 bg-emerald-100 rounded-md">
+                                                            <i class="ri-microscope-line text-emerald-600"></i>
+                                                        </div>
+                                                        <span class="font-bold text-sm" style="color: #064e3b !important;">
+                                                            @msg.TestResult.TestName
+                                                        </span>
+                                                    </div>
+
+                                                    @if (!string.IsNullOrEmpty(msg.TestResult.ResultFileUrl))
+                                                    {
+                                                        <a href="@msg.TestResult.ResultFileUrl"
+                                                           target="_blank"
+                                                           class="flex items-center justify-between p-2 rounded-md transition-all no-underline group"
+                                                           style="background-color: #ffffff !important; border: 1px solid #d1fae5 !important; color: #064e3b !important;">
+                                                            <div class="flex flex-col overflow-hidden">
+                                                                <span class="text-xs font-semibold truncate" style="color: #064e3b !important;">
+                                                                    @(string.IsNullOrEmpty(msg.TestResult.ResultFileName) ? Loc["Preview"] : msg.TestResult.ResultFileName)
+                                                                </span>
+                                                            </div>
+                                                            <i class="ri-file-text-line text-xl"></i>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            }
+
+                                            @* --- عرض النص --- *@
+                                            @if (!string.IsNullOrEmpty(msg.Message))
+                                            {
+                                                <div class="chat-text-content text-sm"
+                                                     style="color: #064e3b !important; line-height: 1.4 !important; word-break: break-word;">
+                                                    @if (msg.Type == 3)
+                                                    {
+                                                        <i class="ri-health-book-line mr-1"></i>
+                                                    }
+                                                    else if (msg.Type == 6)
+                                                    {
+                                                        <i class="ri-capsule-line mr-1 text-green-600"></i>
+                                                    }
+                                                    @msg.Message
+                                                </div>
+                                            }
+
+                                            @* --- Specialized Cards --- *@
+                                            @if (msg.Type == 3 && msg.MedicalTest != null)
+                                            {
+                                                <div class="medical-test-card mt-2" style="color: #064e3b !important; background-color: rgba(6, 78, 59, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(6, 78, 59, 0.2);">
+                                                    <h6 style="color: #064e3b !important; font-weight: bold; border-bottom: 1px solid rgba(6, 78, 59, 0.2); padding-bottom: 4px; margin-bottom: 8px;">@Loc["MedicalTestRequest"]</h6>
+                                                    <p style="color: #064e3b !important; margin-bottom: 2px;"><strong>@Loc["Category"]:</strong> @msg.MedicalTest.CategoryName</p>
+                                                    <p style="color: #064e3b !important; margin-bottom: 2px;"><strong>@Loc["Test"]:</strong> @msg.MedicalTest.TestName</p>
+                                                    <p style="color: #064e3b !important; margin-bottom: 2px;"><strong>@Loc["SampleType"]:</strong> @msg.MedicalTest.SampleTypeName</p>
+                                                    @if (!string.IsNullOrEmpty(msg.MedicalTest.preparationInstructions))
+                                                    {
+                                                        <div class="mt-2 pt-2" style="border-top: 1px dashed rgba(6, 78, 59, 0.3);">
+                                                            <p style="color: #064e3b !important; margin: 0; font-size: 0.85rem;">
+                                                                <strong>@Loc["PreparationInstructions"]:</strong><br />
+                                                                <span style="opacity: 0.9;">@msg.MedicalTest.preparationInstructions</span>
+                                                            </p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                            else if (msg.Type == 6 && msg.TreatmentPlanItems != null && msg.TreatmentPlanItems.Any())
+                                            {
+                                                <div class="treatment-plan-message-card mt-2"
+                                                     style="color: #064e3b !important; background-color: rgba(6, 78, 59, 0.05); padding: 16px; border-radius: 12px; border: 1px solid rgba(6, 78, 59, 0.2); width: 100%; max-width: 450px;">
+
+                                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(6, 78, 59, 0.15); padding-bottom: 8px;">
+                                                        <i class="ri-capsule-fill" style="font-size: 1.2rem; color: #059669;"></i>
+                                                        <h6 style="color: #064e3b !important; font-weight: 800; margin: 0; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">@Loc["Treatment Plan"]</h6>
+                                                    </div>
+
+                                                    @foreach (var item in msg.TreatmentPlanItems)
+                                                    {
+                                                        <div style="margin-bottom: 16px; padding: 10px; background: rgba(255, 255, 255, 0.4); border-radius: 8px; border-left: 4px solid #059669;">
+                                                            <p style="color: #064e3b !important; margin-bottom: 6px; font-size: 0.95rem;">
+                                                                <i class="ri-medicine-bottle-line" style="margin-right: 4px; opacity: 0.7;"></i>
+                                                                <strong>@Loc["Medication"]:</strong> <span style="font-weight: 600;">@(item.MedicationName ?? "")</span>
+                                                            </p>
+
+                                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.85rem;">
+                                                                <p style="margin: 0; color: #064e3b !important;"><strong>@Loc["Dosage"]:</strong> @(item.Dosage ?? "-")</p>
+                                                                <p style="margin: 0; color: #064e3b !important;"><strong>@Loc["Frequency"]:</strong> @Loc[item.Frequency ?? ""]</p>
+                                                                <p style="margin: 0; color: #064e3b !important;"><strong>@Loc["Duration"]:</strong> @(item.Duration ?? "-")</p>
+                                                                <p style="margin: 0; color: #064e3b !important;"><strong>@Loc["Quantity"]:</strong> @item.Quantity</p>
+                                                                <p style="margin: 0; color: #064e3b !important;"><strong>@Loc["Refills"]:</strong> @item.Refills</p>
+                                                            </div>
+
+                                                            @if (!string.IsNullOrEmpty(item.SpecialInstructions))
+                                                            {
+                                                                <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(6, 78, 59, 0.1);">
+                                                                    <p style="color: #064e3b !important; margin: 0; font-style: italic; font-size: 0.85rem;">
+                                                                        <i class="ri-information-line"></i> @item.SpecialInstructions
+                                                                    </p>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                    <div style="text-align: right; margin-top: 8px;">
+                                                        <span style="font-size: 10px; opacity: 0.6; color: #064e3b;">@Loc["Digital Prescription"]</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <span class="text-[10px] text-green-600/60 mt-1 block chat-time"
+                                              data-utc="@msg.CreationTime.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                        
+                                            @msg.CreationTime.ToString("h:mm tt")
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                @* Chat Input *@
+                <div class="p-4 border-t">
+                    @if (session?.status?.ToLower() == "completed" || session?.status == "2")
+                    {
+                        @* رسالة تظهر بدلاً من صندوق الكتابة *@
+                        <div class="text-center py-2 px-4 bg-gray-100 rounded-xl text-gray-500 text-sm italic">
+                            <i class="ri-lock-line mr-1"></i> @Loc["ChatClosedSessionCompleted"]
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="flex items-center gap-3 px-4 py-3 rounded-xl border">
+                            <input type="text"
+                                   placeholder='@Loc["TypeMessage"]'
+                                   @bind="newMessageText"
+                                   @onkeyup="@HandleKeyUp"
+                                   class="flex-1 bg-transparent border-none outline-none text-sm"
+                                   style="color: inherit !important; background: transparent !important; border: none !important;" />
+
+                            <div class="flex gap-3 border-l pl-3" style="border-color: rgba(128, 128, 128, 0.2) !important; color: #94a3b8 !important;">
+                                <label class="cursor-pointer hover:text-orange-400 transition-colors">
+                                    <i class="ri-image-add-line text-xl"></i>
+                                    <InputFile OnChange="@(e => selectedFile = e.File)" style="display:none;" />
+                                </label>
+
+                                @if (selectedFile != null)
+                                {
+                                    <span class="text-xs text-orange-500 font-bold">@selectedFile.Name</span>
+                                }
+
+                                <button @onclick="SendMessage" class="transition-colors" style="background: none !important; border: none !important; color: #d17d6c !important;">
+                                    <i class="ri-send-plane-2-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else if (activeTab == "medical_test")
+        {
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+                <div class="flex justify-between items-center mb-8">
+                    <div class="text-left">
+                        <h4 class="text-2xl font-bold text-slate-800 dark:text-white mb-1">@Loc["MedicalTestsTitle"]</h4>
+                        <p class="text-[11px] text-slate-400 uppercase tracking-tighter">@Loc["MedicalTestsSubTitle"]</p>
+                    </div>
+                    <button @onclick="OpenModal" class="text-white px-5 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:opacity-90 active:scale-95"
+                            style="background-color: #F1A68E !important;">
+                        <i class="ri-add-line text-lg"></i>
+                        @Loc["MedicalTestRequest"]
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    @if (CompletedOrders != null && CompletedOrders.Any())
+                    {
+                        <div class="space-y-3">
+                            @foreach (var order in CompletedOrders)
+                            {
+                                <div class="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                    <div class="flex items-center gap-4 text-left">
+                                        <div class="flex items-center justify-center bg-orange-50 dark:bg-orange-500/10 p-2 rounded-lg">
+                                            <i class="ri-file-list-3-fill text-3xl text-orange-400"></i>
+                                        </div>
+                                        <div>
+                                           
+                                            <h5 class="font-bold text-slate-800 dark:text-white mb-0">@order.FileName</h5>
+                                            <span class="text-[11px] text-gray-400">@Loc["PDF Document"]</span>
+                                        </div>
+                                    </div>
+
+                                    
+                                    <a href="@order.FullFileUrl"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="flex items-center gap-2 px-8 py-2 text-white rounded-xl font-bold text-sm transition-all hover:brightness-110"
+                                       style="background-color: #F1A68E !important; text-decoration: none; cursor: pointer;">
+                                        <i class="ri-eye-line"></i> @Loc["Preview"]
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-8 text-center bg-[#f8fafc] dark:bg-[#111827] rounded-xl border-2 border-gray-300 dark:border-gray-700">
+                            <p class="text-[11px] text-slate-400 uppercase tracking-tighter">@Loc["NoAttachmentsFound"]</p>
+                        </div>
+                    }
+                </div>
+
+                @if (isModalVisible)
+                {
+                    <div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+
+                        <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+                            <EditForm Model="@testModel" OnValidSubmit="HandleCreateTest">
+                                <DataAnnotationsValidator />
+
+                                <div class="p-8 space-y-6">
+                                    @* --- قسم تصنيف الفحص (Test Category) --- *@
+                                    <div>
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2">@Loc["Category"]</label>
+                                        <div class="relative">
+                                            <select value="@selectedCategoryId"
+                                                    @onchange="OnCategoryChanged"
+                                                    class="w-full p-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-2xl appearance-none focus:outline-none">
+                                                <option value="">-- @Loc["SelectCategory"] --</option>
+                                                @foreach (var cat in categories)
+                                                {
+                                                    
+                                                    <option value="@cat.Id">@cat.Name</option>
+                                                }
+                                            </select>
+                                            <i class="ri-arrow-down-s-line absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                        </div>
+                                    </div>
+
+                                    @* --- اسم الفحص (Test Name) --- *@
+                                    <div>
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2">@Loc["Test"]</label>
+                                        <div class="relative">
+                                            @if (isTestsLoading)
+                                            {
+                                                <div class="absolute right-12 top-1/2 -translate-y-1/2">
+                                                    <span class="spinner-border spinner-border-sm text-primary"></span>
+                                                </div>
+                                            }
+                                            <select value="@testModel.MedicalTestId"
+                                                    @onchange="OnTestChanged"
+                                                    disabled="@(isTestsLoading || !testNames.Any())"
+                                                    class="w-full p-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-2xl appearance-none focus:outline-none disabled:opacity-60">
+                                                <option value="">-- @Loc["SelectTest"] --</option>
+                                                @foreach (var test in testNames)
+                                                {
+                                                    @* نستخدم test.Name المترجم *@
+                                                    <option value="@test.Id">@test.Name</option>
+                                                }
+                                            </select>
+                                            <i class="ri-arrow-down-s-line absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                        </div>
+                                        <ValidationMessage For="@(() => testModel.MedicalTestId)" class="text-red-500 text-xs mt-1" />
+                                    </div>
+
+                                    @* --- نوع العينة (Sample Type) --- *@
+                                    <div>
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2">@Loc["SampleType"]</label>
+                                        <div class="relative">
+                                            <InputSelect @bind-Value="testModel.SampleTypeId"
+                                                         disabled="@(isSamplesLoading || !sampleTypes.Any())"
+                                                         class="w-full p-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-2xl appearance-none focus:outline-none disabled:opacity-60">
+
+                                                @if (isSamplesLoading)
+                                                {
+                                                    <option value="">@Loc["LoadingDetails"]</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="">-- @Loc["SelectSample"] --</option>
+                                                    @foreach (var sample in sampleTypes)
+                                                    {
+                                                        @* نستخدم sample.Name المترجم *@
+                                                        <option value="@sample.Id">@sample.Name</option>
+                                                    }
+                                                }
+                                            </InputSelect>
+                                            <i class="ri-arrow-down-s-line absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                        </div>
+                                        <ValidationMessage For="@(() => testModel.SampleTypeId)" class="text-red-500 text-xs mt-1" />
+                                    </div>
+
+                                    @* --- تعليمات التحضير (Preparation Instructions) --- *@
+                                    <div>
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2">@Loc["PreparationInstructions"]</label>
+                                        <InputTextArea @bind-Value="testModel.PreparationInstructions"
+                                                       placeholder="@Loc["PatientDescriptionHint"]"
+                                                       class="w-full p-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-2xl h-32 resize-none focus:outline-none" />
+                                    </div>
+
+                                 
+                                    <div class="flex justify-end gap-3 pt-4">
+                                        <button type="button" @onclick="CloseModal"
+                                                class="px-8 py-3 rounded-xl font-bold border-2 border-red-500 text-red-500 hover:bg-red-50 transition-colors">
+                                            @Loc["Cancel"]
+                                        </button>
+
+                                        <button type="submit"
+                                                disabled="@isSubmitting"
+                                                class="px-8 py-3 rounded-xl text-white font-bold transition-all hover:opacity-90 disabled:opacity-50"
+                                                style="background-color: #F1A68E !important;">
+                                            @if (isSubmitting)
+                                            {
+                                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                                <span>@Loc["Creating..."]</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Loc["MedicalTestRequest"]</span>
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else if (activeTab == "treatment_plan")
+        {
+           
+            <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+
+                <div class="flex flex-wrap justify-between items-center mb-8 gap-4">
+                  
+                    <div class="text-left">
+                        <h4 class="text-2xl font-bold text-slate-800 dark:text-white mb-1">@Loc["Treatment Plan"]</h4>
+                        <p class="text-[11px] text-slate-400 uppercase tracking-tighter">@Loc["Current treatment protocol"]</p>
+                    </div>
+
+                   
+                    <div class="flex items-center gap-3">
+                       
+                        @if (currentAddedItems != null && currentAddedItems.Any())
+                        {
+                            <button @onclick="SendFinalTreatmentPlan"
+                                    disabled="@isSubmitting"
+                                    class="flex items-center justify-center gap-2 px-5 py-2.5 font-bold rounded-xl shadow-sm border transition-all hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                                    style="background-color: white !important; color: #1e293b !important; border: 1px solid #e2e8f0 !important;">
+
+                                @if (isSubmitting)
+                                {
+                                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                                    <span>@Loc["Sending..."]</span>
+                                }
+                                else
+                                {
+                                    <i class="ri-send-plane-fill text-lg"></i>
+                                    <span>@Loc["Send To Patient"]</span>
+                                }
+                            </button>
+                        }
+
+                        @* زرار إضافة دواء جديد *@
+                        <button @onclick="OpenTreatmentModal"
+                                class="text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all hover:opacity-90 active:scale-95 shadow-sm"
+                                style="background-color: #F1A68E !important; border: none !important;">
+                            <i class="ri-add-line text-lg"></i>
+                            <span>@Loc["Add Medication"]</span>
+                        </button>
+                    </div>
+                </div>
+
+                @* SECTION: Treatment Plan Tab Content *@
+                <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+                    @if (currentAddedItems != null && currentAddedItems.Any())
+                    {
+                        @foreach (var item in currentAddedItems)
+                        {
+
+                            <div @key="item.Id" class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+
+
+                                <div style="position: absolute !important; top: 15px !important; right: 15px !important; z-index: 10 !important;">
+                                    <button @onclick="() => HandleDeleteItem(item.Id)"
+                                            type="button"
+                                            style="background: transparent !important; border: none !important; cursor: pointer !important; color: #94a3b8 !important; padding: 5px !important; transition: color 0.2s;"
+                                            onmouseover="this.style.color='#ef4444'"
+                                            onmouseout="this.style.color='#94a3b8'"
+                                            title="@Loc["Delete"]">
+                                        <i class="ri-delete-bin-line" style="font-size: 1.5rem !important; display: block !important;"></i>
+                                    </button>
+                                </div>
+
+                                <h5 class="text-lg font-bold text-slate-800 dark:text-gray-100 mb-6">@Loc["Prescribed Products"]</h5>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+                                    @* Medication Name *@
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-800 dark:text-white min-w-[100px]">@Loc["Medication"] :</span>
+                                        <span class="text-slate-500 dark:text-gray-300">@item.MedicationName</span>
+                                    </div>
+
+                                    @* Dosage *@
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-800 dark:text-white min-w-[100px]">@Loc["Dosage"] :</span>
+                                        <span class="text-slate-500 dark:text-gray-300">@item.Dosage</span>
+                                    </div>
+
+                                    @* Frequency *@
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-800 dark:text-white min-w-[100px]">@Loc["Frequency"] :</span>
+                                        <span class="text-slate-500 dark:text-gray-300">@item.Frequency</span>
+                                    </div>
+
+                                    @* Duration *@
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-800 dark:text-white min-w-[100px]">@Loc["Duration"] :</span>
+                                        <span class="text-slate-500 dark:text-gray-300">@item.Duration</span>
+                                    </div>
+
+                                    @* Quantity *@
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-800 dark:text-white min-w-[100px]">@Loc["Quantity"] :</span>
+                                        <span class="text-slate-500 dark:text-gray-300">@item.Quantity</span>
+                                    </div>
+
+                                    @* Refills *@
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-800 dark:text-white min-w-[100px]">@Loc["Refills"] :</span>
+                                        <span class="text-slate-500 dark:text-gray-300">@item.Refills @Loc["Refills"]</span>
+                                    </div>
+                                </div>
+
+                                @* Instructions Section *@
+                                @if (!string.IsNullOrWhiteSpace(item.SpecialInstructions))
+                                {
+                                    <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                                        <h6 class="text-md font-bold text-slate-800 dark:text-white mb-3">@Loc["Instructions"]</h6>
+                                        <p class="text-slate-500 dark:text-gray-400 leading-relaxed">
+                                            @item.SpecialInstructions
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                      
+                    }
+                    else
+                    {
+                        @* Empty State - يظهر في حالة عدم وجود أدوية مضافة بعد *@
+                        <div class="p-12 text-center box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden p-8 mb-6 shadow-sm animate-zoom-in">
+                            <div class="mb-4">
+                                <i class="ri-medicine-bottle-line text-5xl text-slate-300"></i>
+                            </div>
+                            <p class="text-slate-400 text-lg">@Loc["No treatment plan prescribed yet."]</p>
+                            <p class="text-sm text-slate-400 mt-1">@Loc["Click 'Add Medication' to start building the plan."]</p>
+                        </div>
+                    }
+                </div>
+                @if (isTreatmentModalVisible)
+                {
+                    <div class="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+                        <div class="box custom-box border border-gray-100 dark:border-gray-700 rounded-xl bg-white dark:bg-[#1f2937] overflow-hidden shadow-sm animate-zoom-in max-w-2xl w-full">
+
+                            @* Header *@
+                            <div class="p-6 pb-0 flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-[#1e293b] dark:text-white mb-1">@Loc["Add Medication to Plan"]</h3>
+                                    <p class="text-sm text-gray-400">@Loc["Fill in the details to add a new medication to the draft list."]</p>
+                                </div>
+                                <button @onclick="CloseTreatmentModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+                                    <i class="ri-close-line text-2xl"></i>
+                                </button>
+                            </div>
+
+                            @* Form Content using EditForm *@
+                            <EditForm Model="@treatmentModel" OnValidSubmit="HandleCreateTreatmentPlan">
+                                <DataAnnotationsValidator />
+
+                                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                                    @* Medication Selection *@
+                                    <div class="col-span-1">
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2 text-sm">@Loc["Medication"] *</label>
+                                        <select @onchange="OnMedicationChanged"
+                                                class="w-full p-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#F1A68E]">
+                                            <option value="">@Loc["Search Medication ..."]</option>
+                                            @foreach (var med in medicationsList)
+                                            {
+                                                <option value="@med.Name" selected="@(med.Name == treatmentModel.MedicationName)">@med.Name</option>
+                                            }
+                                        </select>
+                                        <ValidationMessage For="@(() => treatmentModel.MedicationName)" class="text-red-500 text-xs mt-1" />
+                                    </div>
+
+                                    @* Dosage Input *@
+                                    <div class="col-span-1">
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2 text-sm">@Loc["Dosage"] *</label>
+                                        <InputText placeholder="@Loc["e.g., 10 mg"]"
+                                                   @bind-Value="treatmentModel.Dosage"
+                                                   class="w-full p-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#F1A68E]" />
+                                        <ValidationMessage For="@(() => treatmentModel.Dosage)" class="text-red-500 text-xs mt-1" />
+                                    </div>
+
+                                    @* Frequency Selection *@
+                                    <div class="col-span-1">
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2 text-sm">@Loc["Frequency"] *</label>
+                                        <InputSelect @bind-Value="treatmentModel.Frequency" class="w-full p-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#F1A68E]">
+                                            <option value="">@Loc["Select Frequency"]</option>
+                                            <option value="Once Daily">@Loc["Once Daily"]</option>
+                                            <option value="Twice Daily">@Loc["Twice Daily"]</option>
+                                            <option value="Thrice Daily">@Loc["Thrice Daily"]</option>
+                                            <option value="Every 8 Hours">@Loc["Every 8 Hours"]</option>
+                                            <option value="As Needed">@Loc["As Needed"]</option>
+                                        </InputSelect>
+                                        <ValidationMessage For="@(() => treatmentModel.Frequency)" class="text-red-500 text-xs mt-1" />
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        @* Duration *@
+                                        <div class="col-span-1">
+                                            <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2 text-sm">@Loc["Duration"] *</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                                    <i class="ri-calendar-line"></i>
+                                                </span>
+                                                <InputText placeholder="@Loc["Duration (Days)"]" @bind-Value="treatmentModel.Duration"
+                                                           class="w-full pl-10 pr-3 py-3 bg-white dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#F1A68E] focus:ring-2 focus:ring-[#F1A68E]/20 transition-all shadow-sm" />
+                                            </div>
+                                            <ValidationMessage For="@(() => treatmentModel.Duration)" class="text-red-500 text-xs mt-1" />
+                                        </div>
+
+                                        @* Quantity *@
+                                        <div class="col-span-1">
+                                            <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2 text-sm">@Loc["Quantity"] *</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                                    <i class="ri-formula-trader"></i>
+                                                </span>
+                                                <InputNumber @bind-Value="treatmentModel.Quantity"
+                                                             class="w-full pl-10 pr-3 py-3 bg-white dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#F1A68E] focus:ring-2 focus:ring-[#F1A68E]/20 transition-all shadow-sm" />
+                                            </div>
+                                            <ValidationMessage For="@(() => treatmentModel.Quantity)" class="text-red-500 text-xs mt-1" />
+                                        </div>
+
+                                        @* Refills *@
+                                        <div class="col-span-1">
+                                            <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2 text-sm">@Loc["Refills"] *</label>
+                                            <div class="relative">
+                                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                                    <i class="ri-refresh-line"></i>
+                                                </span>
+                                                <InputNumber @bind-Value="treatmentModel.Refills"
+                                                             class="w-full pl-10 pr-3 py-3 bg-white dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#F1A68E] focus:ring-2 focus:ring-[#F1A68E]/20 transition-all shadow-sm" />
+                                            </div>
+                                            <ValidationMessage For="@(() => treatmentModel.Refills)" class="text-red-500 text-xs mt-1" />
+                                        </div>
+                                    </div>
+
+                                    @* Special Instructions *@
+                                    <div class="col-span-2">
+                                        <label class="block text-[#1e293b] dark:text-gray-200 font-bold mb-2 text-sm">@Loc["Special Instructions"]</label>
+                                        <InputTextArea placeholder="@Loc["Add any special instructions for the patient..."]" @bind-Value="treatmentModel.SpecialInstructions"
+                                                       class="w-full p-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 rounded-xl h-24 resize-none focus:outline-none focus:border-[#F1A68E]" />
+                                    </div>
+
+                                    @* Footer Buttons *@
+                                    <div class="col-span-2 flex justify-end gap-3 pt-4">
+                                        <button type="button" @onclick="CloseTreatmentModal" class="px-8 py-3 rounded-xl font-bold border-2 border-red-500 text-red-500 hover:bg-red-50 transition-colors">
+                                           
+                                            @Loc["Cancel"]
+                                        </button>
+
+                                        <button type="submit"
+                                                disabled="@isSubmitting"
+                                                class="px-8 py-3 rounded-xl text-white font-bold transition-all shadow-lg hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                                                style="background-color: #F1A68E !important;">
+
+                                            @if (isSubmitting)
+                                            {
+                                                <span class="spinner-border spinner-border-sm"></span>
+                                                <span>@Loc["Adding..."]</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="ri-add-circle-line"></i>
+                                                <span>@Loc["Add to Draft"]</span>
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+                            </EditForm>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@* --- Lightbox Modal --- *@
+@if (!string.IsNullOrEmpty(selectedImageUrl))
+{
+    <div class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+         @onclick="CloseImage">
+        <div class="relative flex flex-col items-center justify-center p-4 max-w-full max-h-full">
+            <button class="absolute top-0 right-0 m-4 text-white hover:text-red-500 text-5xl z-[100000]" @onclick="CloseImage">
+                <i class="ri-close-line"></i>
+            </button>
+            <div class="bg-white dark:bg-[#1f2937] p-1 rounded-xl shadow-2xl animate-zoom-in inline-block border dark:border-white/10">
+                <img src="@selectedImageUrl"
+                     style="max-height: 85vh; max-width: 90vw; width: auto; height: auto; display: block; margin: 0 auto; border-radius: 8px;"
+                     class="object-contain shadow-inner"
+                     @onclick:stopPropagation />
+            </div>
+            <p class="text-gray-400 mt-4 text-xs tracking-widest uppercase">Tap anywhere to close</p>
+        </div>
+      
+    </div>
+}
+
+<style>
+    :root {
+        --bg-color: #f9fafb;
+        --card-bg: #ffffff;
+        --chat-text: #111b21;
+    }
+
+    :host-context(.dark), .dark {
+        --bg-color: #111827 !important;
+        --card-bg: #1f2937 !important;
+        --chat-text: #e9edef !important; 
+    }
+
+    .animate-zoom-in {
+        animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+  
+    @@keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+</style>
+@if (isMeetingActive)
+{
+    <div class="video-call-overlay"
+         style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 9999; display: flex; align-items: center; justify-content: center;">
+
+        <div id="video-sdk-container" style="width: 100vw; height: 100vh; position: fixed; top: 0; left: 0;"></div>
+
+    </div>
+}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://sdk.videosdk.live/rtc-js-prebuilt/0.3.43/rtc-js-prebuilt.js"></script>
+<script>
+       window.videoSDKHandler = {
+        meeting: null,
+
+        init: async function (roomId, token, displayName) {
+            console.log("Attempting to break browser lock...");
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+                stream.getTracks().forEach(track => track.stop());
+                console.log("Browser permissions granted.");
+            } catch (err) {
+                console.error("Browser lock detected:", err);
+                alert("يرجى الضغط على علامة القفل بجانب الرابط وتفعيل الكاميرا والمايك، ثم أعد تحميل الصفحة.");
+                return;
+            }
+
+            this.startMeeting(roomId, token, displayName);
+        },
+
+        startMeeting: function (roomId, token, displayName) {
+            const config = {
+                meetingId: roomId,
+                token: token,
+                name: displayName,
+                apiKey: "efb2aa08-8462-42ef-b414-c4cd3c058cce",
+                containerId: "video-sdk-container",
+                 participantCanToggleSelfMic: true,   
+    participantCanToggleSelfWebcam: true, // مهم جداً لظهور الزرار
+                micEnabled: false, // Start with mic on
+                webcamEnabled: false, // Start with webcam on
+                theme: "DARK",
+                precallVideocheck: true,
+
+
+                  permissions: {
+      pin: true,
+      askToJoin: false,
+      toggleParticipantWebcam: true,
+      toggleParticipantMic: true,
+      toggleParticipantMode: true,
+      canToggleParticipantTab: true,
+      toggleParticipantScreenshare: true,
+      removeParticipant: true,
+      endMeeting: true,
+      drawOnWhiteboard: true,
+      toggleWhiteboard: true,
+      toggleVirtualBackground: true,
+      toggleRecording: true,
+      toggleLivestream: true,
+      changeLayout: true,
+    },
+
+                responsive: {
+                    enabled: false
+                }
+            };
+
+            this.meeting = new VideoSDKMeeting();
+            this.meeting.init(config);
+        }
+    };
+
+    // الدوال الإضافية الخاصة بك
+    window.createObjectURL = (elementId) => {
+        const input = document.getElementById(elementId);
+        if (input && input.files && input.files[0]) {
+            return URL.createObjectURL(input.files[0]);
+        }
+        return null;
+    };
+
+    window.scrollToBottom = (elementId) => {
+        const el = document.getElementById(elementId);
+        if (el) el.scrollTop = el.scrollHeight;
+    };
+    function formatChatTimes() {
+        document.querySelectorAll('.chat-time').forEach(el => {
+            const utcString = el.getAttribute('data-utc');
+            if (utcString) {
+                const date = new Date(utcString);
+               
+                el.innerText = date.toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+        });
+    }
+
+    // استدعاء الوظيفة عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', formatChatTimes);
+</script>

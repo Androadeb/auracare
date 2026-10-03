@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace ynex.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager // This line is used to generate URLs dynamically //
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-nav-layout="horizontal" data-nav-style="menu-click" data-menu-position="fixed" class="light" data-toggled="close">
+
+    <head>
+        <!-- META DATA -->
+        <meta charset="UTF-8">
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="Description" content="Tailwind Css Responsive Admin Web Dashboard HTML5 Template">
+        <meta name="Author" content="Spruko Technologies Private Limited">
+        <meta name="keywords" content="tailwind admin dashboard template, admin panel template, dashboard, dashboard tailwind, dashboard admin, template admin panel, admin panel template, admin, tailwind css, net blazor, admin dashboard design, admin dashboard ui, admin panel design, tailwind dashboard, blazor server">
+        <base href="~/" />
+
+        <!-- TITLE -->
+    <title> Softé - Doctor Dashboard </title>
+
+        <!-- Favicon -->
+    <link rel="icon" href="@($"{NavigationManager.BaseUri}assets/images/authentication/logo-icon.png")" type="image/x-icon">
+
+        <!-- Style Css -->
+        <link href="@($"{NavigationManager.BaseUri}assets/css/style.css")" rel="stylesheet" >
+
+
+        <!-- ColorPicker CSS -->
+        <link href="_content/BlazorColorPicker/colorpicker.css" rel="stylesheet" />
+        <link href="_content/BlazorColorPicker/BlazorColorPicker.bundle.scp.css" rel="stylesheet" />
+
+        <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+        
+    </head>
+
+    <body class="landing-body jobs-landing">
+
+        @RenderBody()
+
+        <!-- Scroll To Top -->
+
+        <script>
+            setInterval(() => {
+                try {
+                    window.HSStaticMethods?.autoInit();
+                } catch (error) {}
+            }, 1000);
+        </script>
+
+        <!-- Popper JS -->
+        <script src="@($"{NavigationManager.BaseUri}assets/libs/@popperjs/core/umd/popper.min.js")"></script>
+        
+        <script src="js/javaScriptInterop.js"></script>
+        <script src="_framework/blazor.server.js"></script>
+  
+    </body>
+
+</html>

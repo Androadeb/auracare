@@ -1,0 +1,202 @@
+﻿@page "/profile"
+@attribute [Authorize(Roles = "LAB")]
+@layout MainLayout
+
+<section class="p-6 my-4 bg-white rounded-lg">
+    <h2 class="text-xl font-bold text-[#002B49] mb-1">Lab Information</h2>
+    <p class="text-sm text-gray-400 mb-6">Name, phone Number, Type Of services</p>
+    @if (_isLoading)
+    {
+        <div class="p-10 text-center">Loading Profile Data...</div>
+    }
+    else if (_labData != null)
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-[#002B49]" for="labName">Lab Name</label>
+                <input type="text" @bind="_labData.Name"
+                       class="w-full p-3 bg-gray-100 border border-gray-300 rounded-xl transition text-sm sm:text-base opacity-75 "
+                       id="labName" disabled readonly/>
+            </div>
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-[#002B49]" for="phone">Phone Number</label>
+                <input type="text" @bind="_labData.PhoneNumber"
+                       class="w-full p-3 bg-gray-100 border border-gray-300 rounded-xl transition text-sm sm:text-base opacity-75"
+                       id="phone" disabled readonly/>
+            </div>
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-[#002B49]" for="email">Email address</label>
+                <input type="email" @bind="_labData.Email"
+                       class="w-full p-3 bg-gray-100 border border-gray-300 rounded-xl transition text-sm sm:text-base opacity-75"
+                       id="email" disabled readonly/>
+            </div>
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-[#002B49]" for="address">Address</label>
+                @* <input type="text" value="@(_labData.Branches.FirstOrDefault()?.FullAddress ?? "No Address")" *@
+                       class="w-full p-3 bg-gray-100 border border-gray-300 rounded-xl transition text-sm sm:text-base opacity-75"
+                       id="address" disabled readonly/>
+            </div>
+        </div>
+    }
+</section>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-4 ">
+
+    <div class="bg-white rounded-lg">
+        <div class="flex justify-between items-center py-4 px-6 bg-gray-100 rounded-t-lg">
+            <h3 class="font-bold text-[#002B49] flex items-center gap-2">
+                <img src="assets/images/icons/clock.svg" alt="Clock Icon"/>
+                <i class="bi bi-clock"></i> Operating Hours
+            </h3>
+            @* <button type="button" aria-label="button" data-hs-overlay="#appointment-modal"
+                    @onclick="OpenAppointmentModal" class="text-xs font-bold text-[#002B49] hover:underline">
+                Update Hours
+            </button> *@
+        </div>
+
+        @if (_isScheduleLoading)
+        {
+            <div class="p-10 text-center">Loading Schedule...</div>
+        }
+        else if (_schedule.Count == 0)
+        {
+            <div class="p-10 text-center text-gray-500">No schedule data available.</div>
+        }
+        else
+        {
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                        <tr class="border-b border-gray-100">
+                            <th class="pb-3 font-medium text-gray-500 uppercase tracking-wider">Day</th>
+                            <th class="pb-3 font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="pb-3 font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                            <th class="pb-3 font-medium text-gray-500 uppercase tracking-wider text-center">Capacity</th>
+                            <th class="pb-3 font-medium text-gray-500 uppercase tracking-wider text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                        @foreach (var day in _schedule)
+                        {
+                            <tr>
+                                <td class="py-4 text-gray-600">@day.DayName</td>
+                                <td class="py-4">
+                                    <span class="font-bold @(day.IsOpen ? "text-green-500" : "text-red-400")">
+                                        @(day.IsOpen ? "OPEN" : "CLOSED")
+                                    </span>
+                                </td>
+                                <td class="py-4 text-gray-500">@($"{DateTime.Today.Add(day.OpeningTime):hh:mm tt} - {DateTime.Today.Add(day.ClosingTime):hh:mm tt}")</td>
+                                <td class="py-4 text-gray-500 text-center">
+                                    <span class="bg-gray-100 px-2 py-1 rounded-md">
+                                        @day.CapacityPerHour
+                                    </span>
+                                </td>
+                                <td class="py-4 text-center">
+                                    <button type="button" aria-label="button" data-hs-overlay="#appointment-modal" @onclick="() => OpenAppointmentModal(day)">
+                                        <img src="assets/images/icons/edit.svg" alt="Edit Icon" class="w-5 h-5" title="Edit the schedule for the chosen day."/>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="space-y-4 bg-white rounded-lg">
+        <div class="flex justify-between items-center py-4 px-6 bg-gray-100 rounded-t-lg">
+            <h3 class="font-bold text-[#002B49] flex items-center gap-2">
+                <img src="assets/images/icons/map-pin.svg" alt="Alternate Text"/> Laboratory Locations
+            </h3>
+            <button class="text-xs font-bold text-[#002B49] hover:underline" aria-label="button"
+                    data-hs-overlay="#add-branch-modal" @onclick="OpenBranchModal">
+                + Add Branch
+            </button>
+        </div>
+
+        <div class="space-y-4 p-6">
+            @* Primary Branch Card *@
+            <div class="p-4 border border-gray-100 rounded-xl bg-white shadow-sm relative">
+                <span
+                    class="absolute top-4 right-4 text-[10px] font-bold bg-blue-100 text-blue-600 px-2 py-0.5 rounded">
+                    PRIMARY
+                </span>
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 bg-gray-50 rounded flex items-center justify-center text-gray-400">
+                        <img src="assets/images/icons/building.svg" alt="Alternate Text"/>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-[#002B49]">Main Headquarters</h4>
+                        <p class="text-[11px] text-gray-400 max-w-[200px]">
+                            123 Medical Plaza, Health District, Metro
+                            City, 54000
+                        </p>
+                        <div class="flex gap-3 mt-2 text-[10px] font-bold text-gray-400">
+                            <button class="hover:text-blue-500">Edit</button>
+                            <button class="hover:text-red-500">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                class="w-full py-3 border border-gray-200 rounded-xl text-xs font-bold text-[#002B49] flex items-center justify-center gap-2 hover:bg-gray-50">
+                <i class="bi bi-map"></i> View Branches on Map
+            </button>
+        </div>
+    </div>
+</div>
+
+<section class="p-6 mb-8 bg-white rounded-lg">
+    <h2 class="text-xl font-bold text-[#002B49] mb-1">Bank Information</h2>
+    <p class="text-sm text-gray-400 mb-6">Payment and billing details</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-[#002B49]">Bank Name</label>
+            <input type="text"
+                   class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                   placeholder="First Bank Name.."/>
+        </div>
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-[#002B49]">Account Number</label>
+            <input type="text"
+                   class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                   placeholder="Account Number .."/>
+        </div>
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-[#002B49]">IBAN Bank</label>
+            <input type="text"
+                   class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                   placeholder="IBAN Bank..."/>
+        </div>
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-[#002B49]">Routing Number</label>
+            <input type="text"
+                   class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                   placeholder="Routing Number .."/>
+        </div>
+    </div>
+
+    <div class="mt-6 p-4 bg-cyan-50 rounded-xl flex items-center gap-3 text-cyan-700 text-xs">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>
+            <strong>Note :</strong> Your banking information is encrypted and secure. It's used solely for payment
+            processing.
+        </span>
+    </div>
+
+    <div class="flex justify-end mt-8">
+        <button
+            class="bg-[#f1a68e] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-[#e0957d] transition-colors flex items-center gap-2">
+            <img src="assets/images/icons/save.svg" alt="Alternate Text" class="white-filter"/> Update Bank Details
+        </button>
+    </div>
+</section>
+
+<UpdateSchedualModal DayData="_selectedDay" OnSaveSuccess="LoadLabSchedule"/>
+
+<AddBranchModal/>

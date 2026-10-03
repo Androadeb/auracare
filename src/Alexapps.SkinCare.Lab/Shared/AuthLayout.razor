@@ -1,0 +1,21 @@
+@inherits LayoutComponentBase
+
+<PageTitle>Lab Dashboard - Sign in</PageTitle>
+
+<div class="grid grid-cols-1 md:grid-cols-2 h-screen w-full overflow-hidden bg-[#F8F5F2]" dir="rtl">
+
+  <div class="flex flex-col items-center justify-center p-8 md:p-16">
+    <div class="w-full max-w-md">
+      @Body
+    </div>
+  </div>
+
+  <div class="hidden md:block relative w-full h-full">
+    <img src="assets/images/auth/banner.png" class="absolute inset-0 w-full h-full object-cover"
+         alt="Laboratory Background"/>
+    <div class="absolute top-0 left-0 w-full p-4 bg-black/40 text-white text-sm">
+      تسجيل الدخول
+    </div>
+  </div>
+
+</div>
