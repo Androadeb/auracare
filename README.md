@@ -1,4 +1,4 @@
-# 🌿 Skincare – Tele-Dermatology & Healthcare Platform
+# 🌿 Skincare – Healthcare Platform
 
 **A comprehensive tele-dermatology and skincare platform connecting clients, dermatologists, medical laboratories, and healthcare providers through an integrated digital healthcare ecosystem.**
 
